@@ -1,0 +1,2555 @@
+digraph model_graph {
+  // Dotfile by Django-Extensions graph_models
+  // Created: 2023-04-10 19:36
+  // Cli Options: gwm -o gwm.dot
+
+  fontname = "Roboto"
+  fontsize = 8
+  splines  = true
+  rankdir = "TB"
+
+  node [
+    fontname = "Roboto"
+    fontsize = 8
+    shape = "plaintext"
+  ]
+
+  edge [
+    fontname = "Roboto"
+    fontsize = 8
+  ]
+
+  // Labels
+
+
+  gwm_models_Historicalspr_change_reason [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    Historicalspr_change_reason
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>history_id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>AutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>history_user</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>lastuser</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">author</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">extra</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">JSONField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_change_reason</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_date</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_type</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">id</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">BigIntegerField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">modified</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">name</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">remote_addr</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">GenericIPAddressField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">search_vector</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">SearchVectorField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">uuid</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">UUIDField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  gwm_models_spr_change_reason [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    spr_change_reason
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>lastuser</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">author</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">extra</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">JSONField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">modified</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">name</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">remote_addr</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">GenericIPAddressField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">search_vector</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">SearchVectorField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">uuid</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">UUIDField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  gwm_models_Historicalspr_pumps [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    Historicalspr_pumps
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>history_id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>AutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>history_user</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>lastuser</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">author</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">extra</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">JSONField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_change_reason</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_date</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_type</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">id</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">BigIntegerField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">modified</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">name</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">remote_addr</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">GenericIPAddressField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">search_vector</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">SearchVectorField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">uuid</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">UUIDField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  gwm_models_spr_pumps [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    spr_pumps
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>lastuser</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">author</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">extra</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">JSONField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">modified</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">name</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">remote_addr</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">GenericIPAddressField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">search_vector</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">SearchVectorField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">uuid</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">UUIDField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  gwm_models_Historicalspr_datasource [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    Historicalspr_datasource
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>history_id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>AutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>history_user</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>lastuser</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">author</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">extra</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">JSONField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_change_reason</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_date</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_type</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">id</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">BigIntegerField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">modified</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">name</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">remote_addr</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">GenericIPAddressField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">search_vector</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">SearchVectorField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">uuid</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">UUIDField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  gwm_models_spr_datasource [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    spr_datasource
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>lastuser</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">author</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">extra</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">JSONField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">modified</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">name</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">remote_addr</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">GenericIPAddressField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">search_vector</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">SearchVectorField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">uuid</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">UUIDField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  gwm_models_Historicalspr_entity [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    Historicalspr_entity
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>history_id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>AutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>history_user</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>lastuser</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">author</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">extra</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">JSONField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_change_reason</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_date</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_type</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">id</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">BigIntegerField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">modified</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">name</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">remote_addr</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">GenericIPAddressField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">search_vector</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">SearchVectorField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">uuid</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">UUIDField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  gwm_models_spr_entity [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    spr_entity
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>lastuser</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">author</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">extra</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">JSONField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">modified</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">name</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">remote_addr</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">GenericIPAddressField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">search_vector</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">SearchVectorField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">uuid</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">UUIDField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  gwm_models_Historicalspr_type [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    Historicalspr_type
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>history_id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>AutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>apply_to</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>history_user</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>lastuser</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">author</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">extra</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">JSONField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_change_reason</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_date</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_type</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">id</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">BigIntegerField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">modified</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">name</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">remote_addr</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">GenericIPAddressField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">search_vector</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">SearchVectorField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">uuid</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">UUIDField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  gwm_models_spr_type [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    spr_type
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>apply_to</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>lastuser</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">author</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">extra</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">JSONField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">modified</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">name</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">remote_addr</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">GenericIPAddressField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">search_vector</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">SearchVectorField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">uuid</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">UUIDField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  gwm_models_Historicalspr_vzu [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    Historicalspr_vzu
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>history_id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>AutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>history_user</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>lastuser</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">author</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">extra</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">JSONField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_change_reason</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_date</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_type</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">id</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">BigIntegerField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">modified</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">name</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">remote_addr</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">GenericIPAddressField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">search_vector</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">SearchVectorField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">uuid</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">UUIDField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  gwm_models_spr_vzu [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    spr_vzu
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>lastuser</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">author</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">extra</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">JSONField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">modified</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">name</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">remote_addr</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">GenericIPAddressField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">search_vector</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">SearchVectorField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">uuid</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">UUIDField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  gwm_models_Foto [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    Foto
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>lastuser</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>observation</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">author</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">description</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">image</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">ImageField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">modified</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">remote_addr</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">GenericIPAddressField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">search_vector</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">SearchVectorField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">uuid</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">UUIDField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  gwm_models_HistoricalPoi [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    HistoricalPoi
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>history_id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>AutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>history_user</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>lastuser</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>typo</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>vzu</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">author</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">extra</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">JSONField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">geom</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">PointField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">geom_error</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">FloatField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">gvk</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">height</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">FloatField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_change_reason</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_date</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_type</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">id</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">BigIntegerField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">modified</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">nom</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">remote_addr</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">GenericIPAddressField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">search_vector</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">SearchVectorField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">uuid</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">UUIDField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  gwm_models_Poi [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    Poi
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>lastuser</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>typo</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>vzu</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">author</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">extra</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">JSONField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">geom</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">PointField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">geom_error</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">FloatField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">gvk</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">height</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">FloatField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">modified</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">nom</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">remote_addr</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">GenericIPAddressField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">search_vector</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">SearchVectorField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">uuid</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">UUIDField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  gwm_models_HistoricalObservation [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    HistoricalObservation
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>history_id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>AutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>datasource</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>history_user</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>lastuser</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>poi</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>pump</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>state</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>typo</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>vzu</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">author</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">date_end</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">depth</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">FloatField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">econ_dppog</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">BooleanField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">econ_osv</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">BooleanField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">econ_ppog</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">BooleanField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">econ_pts</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">BooleanField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">econ_vbu</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">BooleanField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">econ_ztopo</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">BooleanField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">extra</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">JSONField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">height_cap</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">FloatField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_change_reason</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_date</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">history_type</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">id</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">BigIntegerField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">modified</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">note</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">TextField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">passport</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">TextField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">pump_depth</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">FloatField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">remote_addr</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">GenericIPAddressField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">search_vector</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">SearchVectorField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">uuid</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">UUIDField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  gwm_models_Observation [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    Observation
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>datasource</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>lastuser</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>poi</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>pump</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>state</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>typo</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>vzu</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">author</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">date_end</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">depth</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">FloatField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">econ_dppog</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">BooleanField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">econ_osv</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">BooleanField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">econ_ppog</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">BooleanField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">econ_pts</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">BooleanField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">econ_vbu</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">BooleanField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">econ_ztopo</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">BooleanField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">extra</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">JSONField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">height_cap</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">FloatField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">modified</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">note</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">TextField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">passport</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">FileField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">pump_depth</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">FloatField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">remote_addr</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">GenericIPAddressField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">search_vector</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">SearchVectorField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">uuid</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">UUIDField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+
+
+
+  // Relations
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_Historicalspr_change_reason -> groundwater_users_models_User
+  [label=" lastuser (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_Historicalspr_change_reason -> groundwater_users_models_User
+  [label=" history_user (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_spr_change_reason -> groundwater_users_models_User
+  [label=" lastuser (spr_change_reason)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_Historicalspr_pumps -> groundwater_users_models_User
+  [label=" lastuser (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_Historicalspr_pumps -> groundwater_users_models_User
+  [label=" history_user (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_spr_pumps -> groundwater_users_models_User
+  [label=" lastuser (spr_pumps)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_Historicalspr_datasource -> groundwater_users_models_User
+  [label=" lastuser (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_Historicalspr_datasource -> groundwater_users_models_User
+  [label=" history_user (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_spr_datasource -> groundwater_users_models_User
+  [label=" lastuser (spr_datasource)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_Historicalspr_entity -> groundwater_users_models_User
+  [label=" lastuser (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_Historicalspr_entity -> groundwater_users_models_User
+  [label=" history_user (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_spr_entity -> groundwater_users_models_User
+  [label=" lastuser (spr_entity)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  gwm_models_Historicalspr_type -> gwm_models_spr_entity
+  [label=" apply_to (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_Historicalspr_type -> groundwater_users_models_User
+  [label=" lastuser (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_Historicalspr_type -> groundwater_users_models_User
+  [label=" history_user (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  gwm_models_spr_type -> gwm_models_spr_entity
+  [label=" apply_to (spr_type)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_spr_type -> groundwater_users_models_User
+  [label=" lastuser (spr_type)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_Historicalspr_vzu -> groundwater_users_models_User
+  [label=" lastuser (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_Historicalspr_vzu -> groundwater_users_models_User
+  [label=" history_user (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_spr_vzu -> groundwater_users_models_User
+  [label=" lastuser (spr_vzu)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  gwm_models_Foto -> gwm_models_Observation
+  [label=" observation (foto)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_Foto -> groundwater_users_models_User
+  [label=" lastuser (foto)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  gwm_models_HistoricalPoi -> gwm_models_spr_type
+  [label=" typo (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  gwm_models_HistoricalPoi -> gwm_models_spr_vzu
+  [label=" vzu (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_HistoricalPoi -> groundwater_users_models_User
+  [label=" lastuser (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_HistoricalPoi -> groundwater_users_models_User
+  [label=" history_user (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  gwm_models_Poi -> gwm_models_spr_type
+  [label=" typo (poi)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  gwm_models_Poi -> gwm_models_spr_vzu
+  [label=" vzu (poi)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_Poi -> groundwater_users_models_User
+  [label=" lastuser (poi)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  gwm_models_HistoricalObservation -> gwm_models_spr_pumps
+  [label=" pump (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  gwm_models_HistoricalObservation -> gwm_models_spr_type
+  [label=" state (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  gwm_models_HistoricalObservation -> gwm_models_Poi
+  [label=" poi (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  gwm_models_HistoricalObservation -> gwm_models_spr_type
+  [label=" typo (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  gwm_models_HistoricalObservation -> gwm_models_spr_vzu
+  [label=" vzu (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  gwm_models_HistoricalObservation -> gwm_models_spr_datasource
+  [label=" datasource (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_HistoricalObservation -> groundwater_users_models_User
+  [label=" lastuser (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_HistoricalObservation -> groundwater_users_models_User
+  [label=" history_user (+)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  gwm_models_Observation -> gwm_models_spr_pumps
+  [label=" pump (observation)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  gwm_models_Observation -> gwm_models_spr_type
+  [label=" state (observation_poi_state)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  gwm_models_Observation -> gwm_models_Poi
+  [label=" poi (observation)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  gwm_models_Observation -> gwm_models_spr_type
+  [label=" typo (observation)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  gwm_models_Observation -> gwm_models_spr_vzu
+  [label=" vzu (observation)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  gwm_models_Observation -> gwm_models_spr_datasource
+  [label=" datasource (observation)"] [arrowhead=none, arrowtail=dot, dir=both];
+  groundwater_users_models_User [label=<
+  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
+  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">User</FONT>
+  </TD></TR>
+  </TABLE>
+  >]
+  gwm_models_Observation -> groundwater_users_models_User
+  [label=" lastuser (poi_lastuser)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+
+}
