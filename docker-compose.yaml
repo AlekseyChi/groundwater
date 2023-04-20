@@ -1,0 +1,45 @@
+version: '3.3'
+services:
+  db:
+    image: postgis/postgis:12-3.1
+    restart: always
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env
+    expose:
+      - "5433"
+    ports:
+      - "5433:5433"
+    command: -p 5433
+      
+  web:
+    build: .
+    command: gunicorn darcy.wsgi:application --bind 0.0.0.0:8000 --reload
+    restart: always
+    expose:
+      - 8000
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+    volumes:
+      - ./darcy:/usr/src/app
+      - static_volume:/usr/src/app/staticfiles
+
+  nginx:
+    image: nginx:1.19.0-alpine
+    expose:
+      - "9080"
+    ports:
+      - "9080:9080"
+    volumes:
+      - static_volume:/usr/src/app/staticfiles
+      - ./nginx:/etc/nginx/conf.d/
+    depends_on:
+      - web
+    restart: always
+      
+volumes:
+  postgres-data:
+  static_volume:
