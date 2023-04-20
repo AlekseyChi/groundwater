@@ -5,7 +5,7 @@ __pycache__/
 # Django stuff:
 *.log
 *.pot
-darcy_front/
+./darcy_front
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
