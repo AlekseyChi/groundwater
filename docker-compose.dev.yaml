@@ -1,32 +1,18 @@
 version: '3.3'
-services:
-  db:
-    image: postgis/postgis:12-3.1
-    restart: always
-    volumes:
-      - postgres-data:/var/lib/postgresql/data/
-    env_file:
-      - ./.env
-    expose:
-      - "5432"
-    ports:
-      - "5432:5432"
-      
-  web:
+services:  
+  webgeo:
     build: .
-    command: gunicorn darcy.wsgi:application --bind 0.0.0.0:8000 --reload
+    command: gunicorn darcy.wsgi:application --bind 0.0.0.0:8000 --reload --limit-request-line 8100
     restart: always
     expose:
       - 8000
-    depends_on:
-      - db
     env_file:
-      - ./.env
+      - ./.env.dev
     volumes:
       - ./darcy:/usr/src/app
       - static_volume:/usr/src/app/staticfiles
 
-  nginx:
+  nginxgeo:
     image: nginx:1.19.0-alpine
     expose:
       - "8080"
@@ -36,9 +22,8 @@ services:
       - static_volume:/usr/src/app/staticfiles
       - ./nginx:/etc/nginx/conf.d/
     depends_on:
-      - web
+      - webgeo
     restart: always
       
 volumes:
-  postgres-data:
   static_volume:
