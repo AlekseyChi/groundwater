@@ -132,9 +132,12 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:8080',
+    'http://darcydb.ru:7080',
+    'http://213.189.218.15:7080',
+    
       # Replace with the correct origin of your React app
 ]
-CSRF_TRUSTED_ORIGINS = ["http://localhost:8080"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8080", "http://darcydb.ru:7080", "http://213.189.218.15:7080"]
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
