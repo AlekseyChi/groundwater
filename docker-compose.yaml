@@ -40,9 +40,9 @@ services:
   nginx:
     image: nginx:1.19.0-alpine
     expose:
-      - "7080"
+      - "443"
     ports:
-      - "7080:7080"
+      - "443:443"
     volumes:
       - static_volume:/usr/src/app/staticfiles
       - ./nginx:/etc/nginx/conf.d/
