@@ -5,6 +5,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.auth import get_user_model
+from django.utils.html import mark_safe
 from simple_history.models import HistoricalRecords
 
 
@@ -126,13 +127,16 @@ class Documents(BaseModel):
 
 class DocumentsPath(BaseModel):
     doc = models.ForeignKey('Documents', on_delete=models.CASCADE)
-    path = models.FileField(upload_to=user_directory_path)
+    path = models.FileField(upload_to=user_directory_path, verbose_name='Файл документа')
     history = HistoricalRecords(table_name='documents_path_history')
 
     class Meta:
         verbose_name = 'Путь к документу'
         verbose_name_plural = 'Пути к документам'
         db_table = 'documents_path'
+
+    def __str__(self):
+        return self.path.name
  
 
 class AquiferCodes(models.Model):
@@ -254,6 +258,9 @@ class WellsWaterDepth(BaseModel):
         db_table = 'wells_water_depth'
         unique_together = (('object_id', 'content_type'),)
 
+    def __str__(self):
+        return ''
+
 
 class WellsRate(BaseModel):
     """
@@ -272,9 +279,11 @@ class WellsRate(BaseModel):
     class Meta:
         verbose_name = 'Замер дебита'
         verbose_name_plural = 'Замеры дебита'
-
         db_table = 'wells_rate'
         unique_together = (('object_id', 'content_type'),)
+
+    def __str__(self):
+        return ''
 
 
 class WellsDepth(BaseModel):
@@ -296,6 +305,9 @@ class WellsDepth(BaseModel):
         verbose_name_plural = 'Глубина скважин'
         db_table = 'wells_depth'
         unique_together = (('object_id', 'content_type'),)
+
+    def __str__(self):
+        return ''
 
 
 class WellsAquifers(BaseModel):
@@ -323,6 +335,9 @@ class WellsAquifers(BaseModel):
         db_table = 'wells_aquifers'
         unique_together = (('well', 'aquifer'),)
 
+    def __str__(self):
+        return ''
+
 
 class WellsEfw(BaseModel):
     """
@@ -338,7 +353,6 @@ class WellsEfw(BaseModel):
             'DictEntities', models.DO_NOTHING, db_column='type_efw',
             related_name='type_efw', verbose_name='Тип опыта'
             )
-    # pump_type: погружной насос, аэрлифт и проч...
     pump_type = models.ForeignKey(
             'DictEntities', models.DO_NOTHING, db_column='pump_type',
             related_name='pump_type',
@@ -385,6 +399,9 @@ class WellsDepression(BaseModel):
         verbose_name_plural = 'Журнал ОФР'
         db_table = 'wells_depression'
         unique_together = (('efw_id', 'time_measure'),)
+
+    def __str__(self):
+        return ''
 
 
 class WellsSample(BaseModel):
@@ -453,6 +470,9 @@ class WellsChem(BaseModel):
         db_table = 'wells_chem'
         unique_together = (('parameter', 'object_id', 'content_type'),)
 
+    def __str__(self):
+        return ''
+
 
 class Fields(BaseModel):
     """
@@ -515,9 +535,12 @@ class Balance(BaseModel):
         verbose_name_plural = 'Утвержденные запасы'
         db_table = 'fields_balance'
 
+    def __str__(self):
+        return ''
+
 
 class Attachments(BaseModel):
-    img = models.ImageField(upload_to='images/')
+    img = models.ImageField(upload_to='images/', verbose_name='Вложение')
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
@@ -527,3 +550,13 @@ class Attachments(BaseModel):
         verbose_name = 'Вложение'
         verbose_name_plural = 'Вложения'
         db_table = 'attachments'
+
+    def image_tag(self):
+        return mark_safe('<img src="/media/%s" width="150" height="150" />' % (self.img))
+    
+
+    def __str__(self):
+        return self.img.name
+
+    image_tag.short_description = 'Image'
+    image_tag.allow_tags = True

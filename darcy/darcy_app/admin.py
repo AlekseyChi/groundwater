@@ -170,6 +170,7 @@ class BalanceInline(GenericTabularInline):
 class WellsInline(admin.StackedInline):
     # fields = (('name', 'typo'), ('head', 'aquifer'), 'geom')
     form = WellsForm
+    classes = ('collapse',)
     model = Wells
     extra = 1
 
@@ -210,6 +211,8 @@ class DocumentsInline(GenericStackedInline):
 
 class AttachmentsInline(GenericTabularInline):
     model = Attachments
+    fields = ( 'img', 'image_tag', )
+    readonly_fields = ('image_tag',)
     extra = 1
 
 
