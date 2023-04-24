@@ -15,3 +15,5 @@ WORKDIR /usr/src/app
 COPY darcy .
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
+COPY script.sh /
+RUN chmod +x /script.sh
