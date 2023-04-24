@@ -56,7 +56,7 @@ services:
     depends_on:
       - webgeo
     networks:
-      - my_network
+      - darcy_network
     restart: always
     
   certbot:
