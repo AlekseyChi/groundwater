@@ -36,20 +36,42 @@ services:
     volumes:
       - ./darcy:/usr/src/app
       - static_volume:/usr/src/app/staticfiles
+    networks:
+      - darcy_network
 
   nginx:
     image: nginx:1.19.0-alpine
     expose:
-      - "443"
+      - "80:80"
+      - "443:443"
     ports:
+      - "80:80"
       - "443:443"
     volumes:
       - static_volume:/usr/src/app/staticfiles
-      - ./nginx:/etc/nginx/conf.d/
+      - ./nginx/conf.d:/etc/nginx/conf.d/
+      - ./nginx/nginx:/etc/nginx/
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
     depends_on:
       - webgeo
+    networks:
+      - my_network
     restart: always
+    
+  certbot:
+    image: certbot/certbot
+    container_name: certbot_container
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    depends_on:
+      - nginx
       
+networks:
+  my_network:
+    driver: bridge
+          
 volumes:
   postgres-data:
   static_volume:
