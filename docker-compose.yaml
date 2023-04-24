@@ -23,7 +23,7 @@ services:
     depends_on:
       - db
             
-  web:
+  webgeo:
     build: .
     command: /script.sh
     restart: always
@@ -47,7 +47,7 @@ services:
       - static_volume:/usr/src/app/staticfiles
       - ./nginx:/etc/nginx/conf.d/
     depends_on:
-      - web
+      - webgeo
     restart: always
       
 volumes:
