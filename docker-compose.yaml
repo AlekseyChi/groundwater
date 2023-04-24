@@ -69,7 +69,7 @@ services:
       - nginx
       
 networks:
-  my_network:
+  darcy_network:
     driver: bridge
           
 volumes:
