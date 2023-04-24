@@ -8,6 +8,9 @@ from django.contrib.auth import get_user_model
 from simple_history.models import HistoricalRecords
 
 
+def user_directory_path(instance, filename):
+	return 'doc_{0}/{1}'.format(instance.doc.pk, filename)
+
 class BaseModel(models.Model):
     """
     Абстрактный класс модели базы данных, который добавляет
@@ -28,7 +31,6 @@ class BaseModel(models.Model):
     remote_addr = models.GenericIPAddressField(editable=False, null=True, blank=True,)
     extra = models.JSONField(editable=False, blank=True, null=True)
     uuid = models.UUIDField(editable=False, default=uuid.uuid4)
-    # может добавить поле Примечаний?, где editable=True
 
     class Meta:
         abstract = True
@@ -119,8 +121,19 @@ class Documents(BaseModel):
         unique_together = (('content_type', 'object_id'),)
 
     def __str__(self):
-        return self.doc_name
+        return self.name
 
+
+class DocumentsPath(BaseModel):
+    doc = models.ForeignKey('Documents', on_delete=models.CASCADE)
+    path = models.FileField(upload_to=user_directory_path)
+    history = HistoricalRecords(table_name='documents_path_history')
+
+    class Meta:
+        verbose_name = 'Путь к документу'
+        verbose_name_plural = 'Пути к документам'
+        db_table = 'documents_path'
+ 
 
 class AquiferCodes(models.Model):
     aquifer_name = models.CharField(max_length=150, verbose_name='Название гидрогеологического подразделения')
@@ -172,6 +185,9 @@ class Wells(BaseModel):
         verbose_name_plural = 'Скважины'
         db_table = 'wells'
 
+    def __str__(self):
+        return self.name
+
 
 class Intakes(BaseModel):
     """
@@ -190,6 +206,9 @@ class Intakes(BaseModel):
         verbose_name = 'Водозабор'
         verbose_name_plural = 'Водозаборы'
         db_table = 'intakes'
+
+    def __str__(self):
+        return self.intake_name
 
 
 class WellsRegime(BaseModel):
@@ -210,6 +229,9 @@ class WellsRegime(BaseModel):
         verbose_name_plural = 'Режимные наблюдения'
         db_table = 'wells_regime'
         unique_together = (('well', 'date'),)
+
+    def __str__(self):
+        return(f'{self.well} {self.date}')
 
 
 class WellsWaterDepth(BaseModel):
@@ -286,7 +308,7 @@ class WellsAquifers(BaseModel):
     (к примеру: паспорт скважины, геол.описание скажины, учетная карточка скважины и т.д.)
     """
     well = models.ForeignKey('Wells', models.CASCADE, verbose_name='Номер скважины')
-    aquifer = models.ForeignKey('DictEntities', models.DO_NOTHING, verbose_name='Водоносный горизонт')
+    aquifer = models.ForeignKey('AquiferCodes', models.DO_NOTHING, verbose_name='Водоносный горизонт')
     bot_elev = models.DecimalField(
             max_digits=6, decimal_places=2,
             verbose_name='Глубина подошвы горизонта, м',
@@ -340,6 +362,9 @@ class WellsEfw(BaseModel):
         db_table = 'wells_efw'
         unique_together = (('well', 'date'),)
 
+    def __str__(self):
+        return f'{self.well}-{self.date} {self.type_efw}'
+
 
 class WellsDepression(BaseModel):
     """
@@ -381,6 +406,9 @@ class WellsSample(BaseModel):
         verbose_name_plural = 'Хим. опробования'
         db_table = 'wells_sample'
         unique_together = (('well', 'date'),)
+
+    def __str__(self):
+        return f'{self.well}-{self.date} {self.name}'
 
 
 class ChemCodes(models.Model):
@@ -486,3 +514,16 @@ class Balance(BaseModel):
         verbose_name = 'Утвержденные запасы'
         verbose_name_plural = 'Утвержденные запасы'
         db_table = 'fields_balance'
+
+
+class Attachments(BaseModel):
+    img = models.ImageField(upload_to='images/')
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey()
+    history = HistoricalRecords(table_name='attachments_history')
+
+    class Meta:
+        verbose_name = 'Вложение'
+        verbose_name_plural = 'Вложения'
+        db_table = 'attachments'

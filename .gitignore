@@ -11,6 +11,10 @@ pip-log.txt
 pip-delete-this-directory.txt
 .idea/
 venv/
+darcy/media/
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py
 .env
 .env.dev
 entrypoint.sh

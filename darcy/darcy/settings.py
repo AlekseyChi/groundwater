@@ -28,12 +28,13 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    # 'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -63,7 +64,7 @@ ROOT_URLCONF = 'darcy.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates/')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -90,13 +91,6 @@ DATABASES = {
     }
 }
 
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ALLOW_CREDENTIALS = True
-
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',  # Replace with the correct origin of your React app
-]
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -115,11 +109,37 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Additional options for Django REST Framework and Jazzmin
+# X_FRAME_OPTIONS = 'SAMEORIGIN'
+#
+# JAZZMIN_SETTINGS = {
+#         "site_title": "Darcy",
+#         "related_modal_active": True,
+#         "changeform_format": "collapsible",
+#         }
+# JAZZMIN_UI_TWEAKS = {
+#     "theme": "litera",
+#     "body_small_text": True,
+#     "sidebar_nav_compact_style": True,
+#     "sidebar_nav_legacy_style": True,
+#     "misc_sticky_actions": True,
+#     "actions_sticky_top": True
+# }
+
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://localhost:8080',
+      # Replace with the correct origin of your React app
+]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8080"]
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-rus'
 
 TIME_ZONE = 'UTC'
 
@@ -143,3 +163,6 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
