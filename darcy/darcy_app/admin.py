@@ -3,6 +3,7 @@ from django.apps import apps
 from django.contrib.gis import forms
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.admin import GenericTabularInline, GenericStackedInline
+from .forms import WellsForm
 from .models import (Documents, Wells, Intakes, WellsRegime, WellsWaterDepth, 
                      WellsRate, WellsAquifers, WellsDepression, WellsEfw,
                      WellsChem, WellsSample, DictEntities, Fields, Balance,
@@ -35,25 +36,6 @@ class DarcyAdminArea(admin.AdminSite):
 
 
 darcy_admin = DarcyAdminArea(name='darcy_admin')
-
-
-class WellsForm(forms.ModelForm):
-    class Meta:
-        model = Wells
-        fields = '__all__'
-        widgets = {
-                'geom': forms.OSMWidget(
-                    attrs={
-                        "display_raw": True,
-                        "default_lat": 54.5,
-                        "default_lon": 36.28,
-                        },
-                    )
-                }
-
-    def __init__(self, *args, **kwargs):
-        super(WellsForm, self).__init__(*args, **kwargs)
-        self.fields['typo'].queryset = DictEntities.objects.filter(entity=1)
 
 
 class IntakesForm(forms.ModelForm):
