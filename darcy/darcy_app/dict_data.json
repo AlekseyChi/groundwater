@@ -27,7 +27,7 @@
     "model": "darcy_app.entities",
     "pk": 4,
     "fields": {
-      "name": "тип водоподъемного оборудования",
+      "name": "организация",
       "last_user_id": 1
     }
   },
@@ -35,7 +35,15 @@
     "model": "darcy_app.entities",
     "pk": 5,
     "fields": {
-      "name": "организация",
+      "name": "точность местоположения",
+      "last_user_id": 1
+    }
+  },
+  {
+    "model": "darcy_app.entities",
+    "pk": 6,
+    "fields": {
+      "name": "способы замера дебита",
       "last_user_id": 1
     }
   },
@@ -106,7 +114,7 @@
     "model": "darcy_app.dictentities",
     "pk": 8,
     "fields": {
-      "name": "насос",
+      "name": "Дарси",
       "entity_id": 4,
       "last_user_id": 1
     }
@@ -115,8 +123,8 @@
     "model": "darcy_app.dictentities",
     "pk": 9,
     "fields": {
-      "name": "эйрлифт",
-      "entity_id": 4,
+      "name": "не установлено",
+      "entity_id": 5,
       "last_user_id": 1
     }
   },
@@ -124,8 +132,8 @@
     "model": "darcy_app.dictentities",
     "pk": 10,
     "fields": {
-      "name": "Дарси",
-      "entity_id": 5,
+      "name": "датчик",
+      "entity_id": 6,
       "last_user_id": 1
     }
   },
