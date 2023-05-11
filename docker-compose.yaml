@@ -9,22 +9,20 @@ services:
       - ./.env
     expose:
       - "5432"
-    ports:
-      - "5432:5432"
     networks:
       - darcy_network
- 
-  pgadmin:
-    container_name: pgadmin4_container
-    image: dpage/pgadmin4:6.14
-    restart: always
-    environment:
-      - ./.env
-    ports:
-      - "5051:5051"
-    depends_on:
-      - db
-            
+
+#  pgadmin:
+#    container_name: pgadmin4_container
+#    image: dpage/pgadmin4:6.14
+#    restart: always
+#    environment:
+#      - ./.env
+#    ports:
+#      - "5051:5051"
+#    depends_on:
+#      - db
+
   webgeo:
     build: .
     command: /script.sh
@@ -59,7 +57,7 @@ services:
     networks:
       - darcy_network
     restart: always
-    
+
   certbot:
     image: certbot/certbot
     container_name: certbot_container
@@ -68,7 +66,7 @@ services:
       - ./certbot/www:/var/www/certbot
     depends_on:
       - nginx
-      
+
 networks:
   darcy_network:
     driver: bridge
