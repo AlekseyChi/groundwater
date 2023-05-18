@@ -4,9 +4,16 @@ from django.contrib.admin.widgets import AdminTextInputWidget
 from django.contrib.postgres.forms import SimpleArrayField
 from .models import (Wells, DictEntities, Intakes, Fields, Documents, Balance,
                      WellsRegime, WellsDepression, WellsEfw)
+from django.contrib.gis.geos import Point
 
 
 class WellsForm(forms.ModelForm):
+    latitude_degrees = forms.IntegerField(min_value=-90, max_value=90, required=True, label='CШ (град.)')
+    latitude_minutes = forms.IntegerField(min_value=0, max_value=60, required=True, label='CШ (мин.)')
+    latitude_seconds = forms.DecimalField(min_value=0, max_value=60, required=True, label='CШ (сек.)')
+    longitude_degrees = forms.IntegerField(min_value=-180, max_value=180, required=True, label='ВД (град.)')
+    longitude_minutes = forms.IntegerField(min_value=0, max_value=60, required=True, label='ВД (мин.)')
+    longitude_seconds = forms.DecimalField(min_value=0, max_value=60, required=True, label='ВД (сек.)')
     name_gwk = forms.IntegerField(label='Номер ГВК', required=False, widget=AdminTextInputWidget)
     name_drill = forms.CharField(label='Номер при бурении', required=False, widget=AdminTextInputWidget)
     name_subject = SimpleArrayField(
@@ -19,7 +26,6 @@ class WellsForm(forms.ModelForm):
         widgets = {
                 'geom': forms.OSMWidget(
                     attrs={
-                        "display_raw": True,
                         "default_lat": 54.5,
                         "default_lon": 36.28,
                         },
@@ -36,6 +42,23 @@ class WellsForm(forms.ModelForm):
             self.fields['name_drill'].initial = self.instance.extra.get('name_drill', '')
             self.fields['name_subject'].initial = self.instance.extra.get('name_subject', '')
 
+        if self.instance.pk and self.instance.geom:
+            point = self.instance.geom
+            lat_d, lat_m, lat_s = self._decimal_to_dms(point.y)
+            lon_d, lon_m, lon_s = self._decimal_to_dms(point.x)
+            self.initial['latitude_degrees'], self.initial['latitude_minutes'], self.initial['latitude_seconds'] = lat_d, lat_m, lat_s
+            self.initial['longitude_degrees'], self.initial['longitude_minutes'], self.initial['longitude_seconds'] = lon_d, lon_m, lon_s
+
+    def _decimal_to_dms(self, dec):
+        d = int(dec)
+        md = abs(dec - d) * 60
+        m = int(md)
+        sd = (md - m) * 60
+        return [d, m, sd]
+
+    def _dms_to_decimal(self, d, m, s):
+        return d + float(m)/60 + float(s)/3600
+
     def save(self, commit=True):
         instance = super().save(commit=False)
         instance.extra = {
@@ -43,6 +66,10 @@ class WellsForm(forms.ModelForm):
             'name_drill': self.cleaned_data['name_drill'],
             'name_subject': self.cleaned_data['name_subject'],
         }
+        lat = self._dms_to_decimal(self.cleaned_data['latitude_degrees'], self.cleaned_data['latitude_minutes'], self.cleaned_data['latitude_seconds'])
+        lon = self._dms_to_decimal(self.cleaned_data['longitude_degrees'], self.cleaned_data['longitude_minutes'], self.cleaned_data['longitude_seconds'])
+        instance.geom = Point(lon, lat)
+
         if commit:
             instance.save()
         return instance
@@ -92,10 +119,10 @@ class DocumentsForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(DocumentsForm, self).__init__(*args, **kwargs)
-        self.fields['typo'].queryset = DictEntities.objects.filter(entity=2)
-        self.fields['source'].queryset = DictEntities.objects.filter(entity=5)
-        self.fields['org_executor'].queryset = DictEntities.objects.filter(entity=5)
-        self.fields['org_customer'].queryset = DictEntities.objects.filter(entity=5)
+        self.fields['typo'].queryset = DictEntities.objects.filter(entity=6)
+        self.fields['source'].queryset = DictEntities.objects.filter(entity=7)
+        self.fields['org_executor'].queryset = DictEntities.objects.filter(entity=7)
+        self.fields['org_customer'].queryset = DictEntities.objects.filter(entity=7)
 
 
 class WellsRegimeForm(forms.ModelForm):
@@ -114,7 +141,8 @@ class WellsEfwForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(WellsEfwForm, self).__init__(*args, **kwargs)
-        self.fields['type_efw'].queryset = DictEntities.objects.filter(entity=3)
+        self.fields['type_efw'].queryset = DictEntities.objects.filter(entity=2)
+        self.fields['method_measure'].queryset = DictEntities.objects.filter(entity=4)
         self.fields['date'].initial = timezone.now()
 
 
@@ -161,5 +189,5 @@ class BalanceForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(BalanceForm, self).__init__(*args, **kwargs)
-        self.fields['typo'].queryset = DictEntities.objects.filter(entity=6)
+        self.fields['typo'].queryset = DictEntities.objects.filter(entity=5)
 

@@ -84,6 +84,7 @@ class DictPump(BaseModel):
     def __str__(self):
         return self.name
 
+
 class Documents(BaseModel):
     """
     Представляет собой документ с различными атрибутами,
@@ -121,7 +122,7 @@ class Documents(BaseModel):
             max_length=200, blank=True, null=True,
             verbose_name='Место создания документа'
             )
-    links = models.ManyToManyField('self', symmetrical=False, blank=True, null=True)
+    links = models.ManyToManyField('self', symmetrical=False, blank=True, null=True, verbose_name='Связанные документы')
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
@@ -132,6 +133,7 @@ class Documents(BaseModel):
         verbose_name_plural = 'Документация'
         db_table = 'documents'
         unique_together = (('content_type', 'object_id'),)
+        ordering = ('-creation_date',)
 
     def __str__(self):
         return self.name
@@ -210,9 +212,12 @@ class Wells(BaseModel):
         verbose_name = 'Скважина'
         verbose_name_plural = 'Скважины'
         db_table = 'wells'
-    #
-    # def __str__(self):
-    #     return self.name or self.typo
+
+    def __str__(self):
+        name_gwk = self.extra.get('name_gwk')
+        if name_gwk:
+            name_gwk = f'ГВК: {name_gwk}'
+        return f'{str(self.uuid)[-5:]} {name_gwk}'
 
 
 class WellsAquiferUsage(BaseModel):
@@ -246,6 +251,7 @@ class Intakes(BaseModel):
         verbose_name = 'Водозабор'
         verbose_name_plural = 'Водозаборы'
         db_table = 'intakes'
+        ordering = ('intake_name',)
 
     def __str__(self):
         return self.intake_name
@@ -259,7 +265,7 @@ class WellsRegime(BaseModel):
     """
     well = models.ForeignKey('Wells', models.CASCADE, verbose_name='Номер скважины')
     date = models.DateTimeField(verbose_name='Дата и время замера')
-    doc = models.ForeignKey('Documents', models.CASCADE, blank=True, null=True)
+    doc = models.ForeignKey('Documents', models.CASCADE, blank=True, null=True, verbose_name='Документ')
     waterdepths = GenericRelation('WellsWaterDepth')
     rates = GenericRelation('WellsRate')
     history = HistoricalRecords(table_name='wells_regime_history')
@@ -269,6 +275,7 @@ class WellsRegime(BaseModel):
         verbose_name_plural = 'Режимные наблюдения'
         db_table = 'wells_regime'
         unique_together = (('well', 'date'),)
+        ordering = ('-date', 'well',)
 
     def __str__(self):
         return(f'{self.well} {self.date}')
@@ -362,7 +369,7 @@ class WellsAquifers(BaseModel):
             verbose_name='Глубина подошвы горизонта, м',
             help_text='до двух знаков после запятой'
             )
-    doc = models.ForeignKey('Documents', models.CASCADE, blank=True, null=True)
+    doc = models.ForeignKey('Documents', models.CASCADE, blank=True, null=True, verbose_name='Документ')
     history = HistoricalRecords(table_name='wells_aquifers_history')
 
     class Meta:
@@ -370,6 +377,7 @@ class WellsAquifers(BaseModel):
         verbose_name_plural = 'Гидрогеологические колонки'
         db_table = 'wells_aquifers'
         unique_together = (('well', 'aquifer'),)
+        ordering = ('bot_elev',)
 
     def __str__(self):
         return ''
@@ -405,7 +413,7 @@ class WellsEfw(BaseModel):
             verbose_name='Метод замера дебита', blank=True, null=True)
     pump_time = models.TimeField(verbose_name='Продолжительность опыта')
     rates = GenericRelation('WellsRate')
-    doc = models.ForeignKey('Documents', models.CASCADE, blank=True, null=True)
+    doc = models.ForeignKey('Documents', models.CASCADE, blank=True, null=True, verbose_name='Документ')
     waterdepths = GenericRelation('WellsWaterDepth')
     history = HistoricalRecords(table_name='wells_efw_history')
 
@@ -414,6 +422,7 @@ class WellsEfw(BaseModel):
         verbose_name_plural = 'Опытно-фильтрационные работы'
         db_table = 'wells_efw'
         unique_together = (('well', 'date'),)
+        ordering = ('-date', 'well',)
 
     def __str__(self):
         return f'{self.well}-{self.date} {self.type_efw}'
@@ -439,6 +448,7 @@ class WellsDepression(BaseModel):
         verbose_name_plural = 'Журнал ОФР'
         db_table = 'wells_depression'
         unique_together = (('efw_id', 'time_measure'),)
+        ordering = ('time_measure',)
 
     def __str__(self):
         return ''
@@ -454,7 +464,7 @@ class WellsSample(BaseModel):
     well = models.ForeignKey('Wells', models.CASCADE, verbose_name='Номер скважины')
     date = models.DateField(verbose_name='Дата опробования')
     name = models.CharField(max_length=150, verbose_name='Номер пробы')
-    doc = models.ForeignKey('Documents', models.CASCADE, blank=True, null=True)
+    doc = models.ForeignKey('Documents', models.CASCADE, blank=True, null=True, verbose_name='Документ')
     chemvalues = GenericRelation('WellsChem')
     history = HistoricalRecords(table_name='wells_sample_history')
 
@@ -463,6 +473,7 @@ class WellsSample(BaseModel):
         verbose_name_plural = 'Хим. опробования'
         db_table = 'wells_sample'
         unique_together = (('well', 'date'),)
+        ordering = ('-date', 'well',)
 
     def __str__(self):
         return f'{self.well}-{self.date} {self.name}'
@@ -482,6 +493,7 @@ class ChemCodes(models.Model):
         verbose_name = 'Показатель хим. состава'
         verbose_name_plural = 'Словарь показателей хим. состава'
         db_table = 'chem_codes'
+        ordering = ('chem_name',)
 
     def __str__(self):
         return self.chem_name
@@ -510,6 +522,7 @@ class WellsChem(BaseModel):
         verbose_name_plural = 'Гидрогеохимия'
         db_table = 'wells_chem'
         unique_together = (('parameter', 'object_id', 'content_type'),)
+        ordering = ('parameter__chem_name',)
 
     def __str__(self):
         return ''
@@ -538,6 +551,7 @@ class Fields(BaseModel):
         verbose_name = 'Участок месторождения ПВ'
         verbose_name_plural = 'Участки месторождения ПВ'
         db_table = 'fields'
+        ordering = ('field_name',)
 
 
 class Balance(BaseModel):

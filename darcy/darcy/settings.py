@@ -34,7 +34,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    # 'jazzmin',
+    'jet',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
+    'import_export',
     'simple_history',
     'corsheaders',
     'rest_framework',
@@ -110,21 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Additional options for Django REST Framework and Jazzmin
-# X_FRAME_OPTIONS = 'SAMEORIGIN'
-#
-# JAZZMIN_SETTINGS = {
-#         "site_title": "Darcy",
-#         "related_modal_active": True,
-#         "changeform_format": "collapsible",
-#         }
-# JAZZMIN_UI_TWEAKS = {
-#     "theme": "litera",
-#     "body_small_text": True,
-#     "sidebar_nav_compact_style": True,
-#     "sidebar_nav_legacy_style": True,
-#     "misc_sticky_actions": True,
-#     "actions_sticky_top": True
-# }
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOW_CREDENTIALS = True
@@ -169,3 +156,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+JET_DEFAULT_THEME = 'default'
+JET_SIDE_MENU_COMPACT = True
+

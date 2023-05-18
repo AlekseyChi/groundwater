@@ -23,6 +23,7 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('darcy_admin/', darcy_admin.urls),
+    path('jet/', include('jet.urls', 'jet')),
     path('api/', include('darcy_app.urls')),
 ]
 
