@@ -11,7 +11,7 @@ from .models import (Documents, Wells, Intakes, WellsRegime, WellsWaterDepth,
                      WellsRate, WellsAquifers, WellsDepression, WellsEfw,
                      WellsChem, WellsSample, DictEntities, Fields, Balance,
                      Attachments, DocumentsPath, DictPump, WellsAquiferUsage,
-                     ChemCodes, AquiferCodes)
+                     ChemCodes, AquiferCodes, Entities)
 from .filters import WellsTypeFilter, TypeEfwFilter, DocTypeFilter, DocSourceFilter
 from jet.admin import CompactInline
 from import_export.admin import ImportExportModelAdmin
@@ -31,6 +31,10 @@ ADMIN_ORDERING = [
         # 'AquiferCodes',
     ]),
 ]
+
+
+admin.site.register(DictEntities)
+admin.site.register(Entities)
 
 
 class DarcyAdminArea(admin.AdminSite):
