@@ -243,7 +243,7 @@ class Intakes(BaseModel):
     """
     intake_name = models.CharField(
         max_length=100, blank=True, null=True,
-        verbose_name='Название водозабора', unique=True)
+        verbose_name='Название водозабора')
     geom = models.MultiPolygonField(
         srid=4326, blank=True, null=True,
         verbose_name='Геометрия',
