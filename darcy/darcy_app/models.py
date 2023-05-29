@@ -387,7 +387,7 @@ class WellsAquifers(BaseModel):
         return ''
 
 
-class WellsConstruction(models.Model):
+class WellsConstruction(BaseModel):
     well = models.ForeignKey('Wells', models.CASCADE, verbose_name='Номер скважины')
     date = models.DateTimeField(verbose_name='Дата установки')
     construction_type = models.ForeignKey('DictEntities', models.DO_NOTHING, db_column='construction_type', verbose_name='Тип конструкции')
