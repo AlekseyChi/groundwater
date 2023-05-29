@@ -290,8 +290,9 @@ class WellsWaterDepth(BaseModel):
     Модель для представления замеров глубины УГВ. Содержит значения
     глубины УГВ и обобщенные связи с другими возможными моделями.
     """
+    type_level = models.BooleanField(verbose_name='Статический', blank=True, null=True, default=False)
     water_depth = models.DecimalField(
-        max_digits=6, decimal_places=2, verbose_name='Глубина УГВ, м',
+        max_digits=6, decimal_places=2, verbose_name='Глубина подземных вод, м',
         help_text='до двух знаков после запятой'
     )
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
@@ -357,6 +358,29 @@ class WellsDepth(BaseModel):
         return ''
 
 
+class WellsCondition(BaseModel):
+    """
+    Модель для представления замеров глубины скважин. Содержит значения глубины
+    и обобщенные связи с другими возможными моделями.
+    """
+    condition = models.ForeignKey(
+        'DictEntities', on_delete=models.DO_NOTHING, verbose_name='Тех. состояние'
+    )
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey()
+    history = HistoricalRecords(table_name='wells_condition_history')
+
+    class Meta:
+        verbose_name = 'Тех.состояние скважины'
+        verbose_name_plural = 'Тех.состояние скважин'
+        db_table = 'wells_condition'
+        unique_together = (('object_id', 'content_type'),)
+
+    def __str__(self):
+        return ''
+
+
 class WellsAquifers(BaseModel):
     """
     Модель гидрогеологического описание скважин.
@@ -367,7 +391,7 @@ class WellsAquifers(BaseModel):
     (к примеру: паспорт скважины, геол.описание скажины, учетная карточка скважины и т.д.)
     """
     well = models.ForeignKey('Wells', models.CASCADE, verbose_name='Номер скважины')
-    aquifer = models.ForeignKey('AquiferCodes', models.DO_NOTHING, verbose_name='Водоносный горизонт')
+    aquifer = models.ForeignKey('AquiferCodes', models.DO_NOTHING, verbose_name='Гидрогеологическое подразделение')
     bot_elev = models.DecimalField(
         max_digits=6, decimal_places=2,
         verbose_name='Глубина подошвы горизонта, м',
@@ -389,12 +413,13 @@ class WellsAquifers(BaseModel):
 
 class WellsConstruction(BaseModel):
     well = models.ForeignKey('Wells', models.CASCADE, verbose_name='Номер скважины')
-    date = models.DateTimeField(verbose_name='Дата установки')
+    date = models.DateField(verbose_name='Дата установки')
     construction_type = models.ForeignKey('DictEntities', models.DO_NOTHING, db_column='construction_type', verbose_name='Тип конструкции')
     diameter = models.IntegerField(verbose_name='Диаметр')
     depth_from = models.DecimalField(max_digits=6, decimal_places=2, verbose_name='Глубина от, м')
     depth_till = models.DecimalField(max_digits=6, decimal_places=2, verbose_name='Глубина до, м')
     doc = models.ForeignKey('Documents', models.CASCADE, blank=True, null=True, verbose_name='Документ')
+    history = HistoricalRecords(table_name='wells_construction_history')
 
     class Meta:
         verbose_name = 'Конструкция скважины'
@@ -551,11 +576,11 @@ class WellsChem(BaseModel):
 
 class Fields(BaseModel):
     """
-    Участок месторождений подземных вод
+    Месторождения подземных вод
     --------
     Полигон
     """
-    field_name = models.CharField(max_length=100, verbose_name='Название УМПВ', unique=True)
+    field_name = models.CharField(max_length=100, verbose_name='Название месторождения', unique=True)
     geom = models.MultiPolygonField(
         srid=4326, blank=True, null=True,
         verbose_name='Геометрия',
@@ -569,8 +594,8 @@ class Fields(BaseModel):
         return self.field_name
 
     class Meta:
-        verbose_name = 'Участок месторождения ПВ'
-        verbose_name_plural = 'Участки месторождения ПВ'
+        verbose_name = 'Месторождение подземных вод'
+        verbose_name_plural = 'Месторождения подземных вод'
         db_table = 'fields'
         ordering = ('field_name',)
 

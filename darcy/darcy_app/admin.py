@@ -3,7 +3,7 @@ from django.contrib.admin import DateFieldListFilter
 from django.contrib.contenttypes.admin import GenericTabularInline, GenericStackedInline
 from .forms import (WellsForm, WellsRegimeForm, WellsDepressionForm,
                     WellsEfwForm, DocumentsForm, BalanceForm, FieldsForm,
-                    IntakesForm)
+                    IntakesForm, WellsWaterDepthForm)
 from .models import (Documents, Wells, Intakes, WellsRegime, WellsWaterDepth, 
                      WellsRate, WellsAquifers, WellsDepression, WellsEfw,
                      WellsChem, WellsSample, DictEntities, Fields, Balance,
@@ -39,15 +39,6 @@ class DarcyAdminArea(admin.AdminSite):
     site_title = 'Dарси'
     index_title = 'Админпанель Дарси'
 
-    # def get_app_list(self, request, app_label=None):
-    #     app_dict = self._build_app_dict(request)
-    #     ordered_app_list = []
-    #     for app_name, object_list in ADMIN_ORDERING:
-    #         app = app_dict[app_name]
-    #         app['models'].sort(key=lambda x: object_list.index(x['object_name']))
-    #         ordered_app_list.append(app)  # add the app to the list
-    #     return ordered_app_list
-
 
 darcy_admin = DarcyAdminArea(name='darcy_admin')
 
@@ -72,6 +63,7 @@ class WellsAquifersUsageInline(admin.TabularInline):
 
 
 class WellsWaterDepthInline(GenericTabularInline):
+    form = WellsWaterDepthForm
     model = WellsWaterDepth
     extra = 1
 
