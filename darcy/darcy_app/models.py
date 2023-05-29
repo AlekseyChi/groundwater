@@ -10,7 +10,8 @@ from simple_history.models import HistoricalRecords
 
 
 def user_directory_path(instance, filename):
-	return 'doc_{0}/{1}'.format(instance.doc.pk, filename)
+    return 'doc_{0}/{1}'.format(instance.doc.pk, filename)
+
 
 class BaseModel(models.Model):
     """
@@ -29,7 +30,7 @@ class BaseModel(models.Model):
     modified = models.DateTimeField(editable=False, null=True, blank=True)
     author = models.CharField(editable=False, null=True, blank=True, default='ufo')
     last_user = models.ForeignKey(get_user_model(), editable=False, on_delete=models.CASCADE)
-    remote_addr = models.GenericIPAddressField(editable=False, null=True, blank=True,)
+    remote_addr = models.GenericIPAddressField(editable=False, null=True, blank=True, )
     extra = models.JSONField(editable=False, blank=True, null=True)
     uuid = models.UUIDField(editable=False, default=uuid.uuid4)
 
@@ -96,32 +97,32 @@ class Documents(BaseModel):
     """
     name = models.CharField(max_length=1200, verbose_name='Название документа')
     typo = models.ForeignKey(
-            'DictEntities', models.DO_NOTHING, related_name='doc_type',
-            verbose_name='Тип документа'
-            )
+        'DictEntities', models.DO_NOTHING, related_name='doc_type',
+        verbose_name='Тип документа'
+    )
     source = models.ForeignKey(
-            'DictEntities', models.DO_NOTHING, db_column='doc_source',
-            related_name='doc_source', verbose_name='Источник поступления',
-            blank=True, null=True
-            )
+        'DictEntities', models.DO_NOTHING, db_column='doc_source',
+        related_name='doc_source', verbose_name='Источник поступления',
+        blank=True, null=True
+    )
     org_executor = models.ForeignKey(
-            'DictEntities', models.DO_NOTHING, db_column='org_executor',
-            related_name='org_executor', verbose_name='Организация-исполнитель',
-            blank=True, null=True
-            )
+        'DictEntities', models.DO_NOTHING, db_column='org_executor',
+        related_name='org_executor', verbose_name='Организация-исполнитель',
+        blank=True, null=True
+    )
     org_customer = models.ForeignKey(
-            'DictEntities', models.DO_NOTHING, db_column='org_customer',
-            related_name='org_customer', verbose_name='Организация-заказчик',
-            blank=True, null=True
-            )
+        'DictEntities', models.DO_NOTHING, db_column='org_customer',
+        related_name='org_customer', verbose_name='Организация-заказчик',
+        blank=True, null=True
+    )
     creation_date = models.DateField(
-            blank=True, null=True,
-            verbose_name='Дата создания документа'
-            )
+        blank=True, null=True,
+        verbose_name='Дата создания документа'
+    )
     creation_place = models.CharField(
-            max_length=200, blank=True, null=True,
-            verbose_name='Место создания документа'
-            )
+        max_length=200, blank=True, null=True,
+        verbose_name='Место создания документа'
+    )
     links = models.ManyToManyField('self', symmetrical=False, blank=True, null=True, verbose_name='Связанные документы')
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
@@ -151,16 +152,17 @@ class DocumentsPath(BaseModel):
 
     def __str__(self):
         return self.path.name
- 
+
 
 class AquiferCodes(models.Model):
     aquifer_id = models.IntegerField(primary_key=True)
-    aquifer_name = models.CharField(max_length=150, unique=True, verbose_name='Название гидрогеологического подразделения')
+    aquifer_name = models.CharField(max_length=150, unique=True,
+                                    verbose_name='Название гидрогеологического подразделения')
     aquifer_index = models.CharField(
-            max_length=50, 
-            verbose_name='Индекс геологического подразделения',
-            blank=True, null=True
-            )
+        max_length=50,
+        verbose_name='Индекс геологического подразделения',
+        blank=True, null=True
+    )
 
     class Meta:
         verbose_name = 'Гидрогеологическое подразделение'
@@ -180,31 +182,31 @@ class Wells(BaseModel):
     """
     name = models.CharField(max_length=50, blank=True, null=True, verbose_name='Название скважины')
     typo = models.ForeignKey(
-            'DictEntities', models.DO_NOTHING,
-            related_name='well_type', verbose_name='Тип скважины'
-            )
+        'DictEntities', models.DO_NOTHING,
+        related_name='well_type', verbose_name='Тип скважины'
+    )
     head = models.DecimalField(
-            max_digits=6, decimal_places=2, blank=True, null=True,
-            verbose_name='Абсолютная отметка устья, м',
-            help_text='до двух знаков после запятой'
-            )
+        max_digits=6, decimal_places=2, blank=True, null=True,
+        verbose_name='Абсолютная отметка устья, м',
+        help_text='до двух знаков после запятой'
+    )
     moved = models.ForeignKey(
-            'DictEntities', models.DO_NOTHING,
-            verbose_name='Точность местоположения', blank=True, null=True
-            )
+        'DictEntities', models.DO_NOTHING,
+        verbose_name='Точность местоположения', blank=True, null=True
+    )
     intake = models.ForeignKey(
-            'Intakes', models.DO_NOTHING, blank=True, null=True,
-            verbose_name='Название водозабора'
-            )
+        'Intakes', models.DO_NOTHING, blank=True, null=True,
+        verbose_name='Название водозабора'
+    )
     field = models.ForeignKey(
-            'Fields', models.DO_NOTHING, blank=True, null=True,
-            verbose_name='Месторождение'
-            )
+        'Fields', models.DO_NOTHING, blank=True, null=True,
+        verbose_name='Месторождение'
+    )
     geom = models.PointField(
-            srid=4326, blank=True, null=True, 
-            verbose_name='Геометрия',
-            help_text='WGS84',
-            )
+        srid=4326, blank=True, null=True,
+        verbose_name='Геометрия',
+        help_text='WGS84',
+    )
     docs = GenericRelation('Documents')
     history = HistoricalRecords(table_name='wells_history')
 
@@ -223,9 +225,9 @@ class Wells(BaseModel):
 class WellsAquiferUsage(BaseModel):
     well = models.ForeignKey('Wells', models.CASCADE, verbose_name='Скважина')
     aquifer = models.ForeignKey(
-            'AquiferCodes', models.DO_NOTHING, blank=True, null=True,
-            verbose_name='Водоносный горизонт'
-            )
+        'AquiferCodes', models.DO_NOTHING, blank=True, null=True,
+        verbose_name='Водоносный горизонт'
+    )
 
     class Meta:
         verbose_name = 'Целевой водоносный горизонт скважины'
@@ -239,12 +241,14 @@ class Intakes(BaseModel):
      Модель для представления водозаборов. Содержит
      название и геометрию водозабора.
     """
-    intake_name = models.CharField(max_length=100, blank=True, null=True, verbose_name='Название водозабора')
+    intake_name = models.CharField(
+        max_length=100, blank=True, null=True,
+        verbose_name='Название водозабора', unique=True)
     geom = models.MultiPolygonField(
-            srid=4326, blank=True, null=True,
-            verbose_name='Геометрия',
-            help_text='WGS84'
-            )
+        srid=4326, blank=True, null=True,
+        verbose_name='Геометрия',
+        help_text='WGS84'
+    )
     history = HistoricalRecords(table_name='intakes_history')
 
     class Meta:
@@ -278,7 +282,7 @@ class WellsRegime(BaseModel):
         ordering = ('-date', 'well',)
 
     def __str__(self):
-        return(f'{self.well} {self.date}')
+        return (f'{self.well} {self.date}')
 
 
 class WellsWaterDepth(BaseModel):
@@ -287,9 +291,9 @@ class WellsWaterDepth(BaseModel):
     глубины УГВ и обобщенные связи с другими возможными моделями.
     """
     water_depth = models.DecimalField(
-            max_digits=6, decimal_places=2, verbose_name='Глубина УГВ, м',
-            help_text='до двух знаков после запятой'
-            )
+        max_digits=6, decimal_places=2, verbose_name='Глубина УГВ, м',
+        help_text='до двух знаков после запятой'
+    )
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
@@ -311,9 +315,9 @@ class WellsRate(BaseModel):
     и обобщенные связи с другими возможными моделями.
     """
     rate = models.DecimalField(
-            max_digits=7, decimal_places=3, verbose_name='Дебит л/с',
-            help_text='до трех знаков после запятой'
-            )
+        max_digits=7, decimal_places=3, verbose_name='Дебит л/с',
+        help_text='до трех знаков после запятой'
+    )
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
@@ -335,9 +339,9 @@ class WellsDepth(BaseModel):
     и обобщенные связи с другими возможными моделями.
     """
     depth = models.DecimalField(
-            max_digits=6, decimal_places=2, verbose_name='Глубина скважины, м',
-            help_text='до двух знаков после запятой'
-            )
+        max_digits=6, decimal_places=2, verbose_name='Глубина скважины, м',
+        help_text='до двух знаков после запятой'
+    )
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
@@ -365,10 +369,10 @@ class WellsAquifers(BaseModel):
     well = models.ForeignKey('Wells', models.CASCADE, verbose_name='Номер скважины')
     aquifer = models.ForeignKey('AquiferCodes', models.DO_NOTHING, verbose_name='Водоносный горизонт')
     bot_elev = models.DecimalField(
-            max_digits=6, decimal_places=2,
-            verbose_name='Глубина подошвы горизонта, м',
-            help_text='до двух знаков после запятой'
-            )
+        max_digits=6, decimal_places=2,
+        verbose_name='Глубина подошвы горизонта, м',
+        help_text='до двух знаков после запятой'
+    )
     doc = models.ForeignKey('Documents', models.CASCADE, blank=True, null=True, verbose_name='Документ')
     history = HistoricalRecords(table_name='wells_aquifers_history')
 
@@ -383,6 +387,22 @@ class WellsAquifers(BaseModel):
         return ''
 
 
+class WellsConstruction(models.Model):
+    well = models.ForeignKey('Wells', models.CASCADE, verbose_name='Номер скважины')
+    construction_type = models.IntegerField(verbose_name='Тип конструкции')
+    diameter = models.ForeignKey('DictEntities', models.DO_NOTHING, db_column='diameter', verbose_name='Диаметр')
+    depth_from = models.DecimalField(max_digits=6, decimal_places=2, verbose_name='Глубина от, м')
+    depth_till = models.DecimalField(max_digits=6, decimal_places=2, verbose_name='Глубина до, м')
+    doc = models.ForeignKey('Documents', models.CASCADE, blank=True, null=True, verbose_name='Документ')
+
+    class Meta:
+        verbose_name = 'Конструкция скважины'
+        verbose_name_plural = 'Тип конструкции'
+        db_table = 'wells_construction'
+        unique_together = (('well', 'depth_from', 'construction_type', 'depth_till', 'diameter'),)
+        ordering = ('depth_from',)
+
+
 class WellsEfw(BaseModel):
     """
     Модель опытно-фильтрационных работ (ОФР) в скважинах.
@@ -394,23 +414,23 @@ class WellsEfw(BaseModel):
     well = models.ForeignKey('Wells', models.CASCADE, verbose_name='Номер скважины')
     date = models.DateTimeField(verbose_name='Дата и время опыта')
     type_efw = models.ForeignKey(
-            'DictEntities', models.DO_NOTHING, db_column='type_efw',
-            related_name='type_efw', verbose_name='Тип опыта'
-            )
+        'DictEntities', models.DO_NOTHING, db_column='type_efw',
+        related_name='type_efw', verbose_name='Тип опыта'
+    )
     pump_type = models.ForeignKey(
-            'DictPump', models.DO_NOTHING, db_column='pump_type',
-            related_name='pump_type',
-            verbose_name='Тип водоподъемного оборудования'
-            )
+        'DictPump', models.DO_NOTHING, db_column='pump_type',
+        related_name='pump_type',
+        verbose_name='Тип водоподъемного оборудования'
+    )
     pump_depth = models.DecimalField(
-            max_digits=6, decimal_places=2,
-            verbose_name='Глубина загрузки водоподъемного оборудования, м',
-            help_text='до двух знаков после запятой',
-            blank=True, null=True
-            )
+        max_digits=6, decimal_places=2,
+        verbose_name='Глубина загрузки водоподъемного оборудования, м',
+        help_text='до двух знаков после запятой',
+        blank=True, null=True
+    )
     method_measure = models.ForeignKey(
-            'DictEntities', models.DO_NOTHING, related_name='method_measure',
-            verbose_name='Метод замера дебита', blank=True, null=True)
+        'DictEntities', models.DO_NOTHING, related_name='method_measure',
+        verbose_name='Метод замера дебита', blank=True, null=True)
     pump_time = models.TimeField(verbose_name='Продолжительность опыта')
     rates = GenericRelation('WellsRate')
     doc = models.ForeignKey('Documents', models.CASCADE, blank=True, null=True, verbose_name='Документ')
@@ -436,9 +456,9 @@ class WellsDepression(BaseModel):
     """
     efw_id = models.ForeignKey('WellsEfw', models.CASCADE)
     time_measure = models.TimeField(
-            verbose_name='Время замера',
-            help_text='время от начала опыта'
-            )
+        verbose_name='Время замера',
+        help_text='время от начала опыта'
+    )
     waterdepths = GenericRelation('WellsWaterDepth')
     rates = GenericRelation('WellsRate')
     history = HistoricalRecords(table_name='wells_depression_history')
@@ -504,14 +524,14 @@ class WellsChem(BaseModel):
     Сведения о хим. показателях пробы, полученных в результате ее анализа
     """
     parameter = models.ForeignKey(
-            'ChemCodes', models.DO_NOTHING, db_column='parameter',
-            related_name='parameter', verbose_name='Хим. показатель'
-            )
+        'ChemCodes', models.DO_NOTHING, db_column='parameter',
+        related_name='parameter', verbose_name='Хим. показатель'
+    )
     chem_value = models.DecimalField(
-            max_digits=15, decimal_places=5, blank=True, null=True,
-            verbose_name='Значение показателя',
-            help_text='до пяти знаков после запятой'
-            )
+        max_digits=15, decimal_places=5, blank=True, null=True,
+        verbose_name='Значение показателя',
+        help_text='до пяти знаков после запятой'
+    )
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
@@ -534,12 +554,12 @@ class Fields(BaseModel):
     --------
     Полигон
     """
-    field_name = models.CharField(max_length=100, verbose_name='Название УМПВ')
+    field_name = models.CharField(max_length=100, verbose_name='Название УМПВ', unique=True)
     geom = models.MultiPolygonField(
-            srid=4326, blank=True, null=True,
-            verbose_name='Геометрия',
-            help_text='WGS84',
-            )
+        srid=4326, blank=True, null=True,
+        verbose_name='Геометрия',
+        help_text='WGS84',
+    )
     docs = GenericRelation('Documents')
     balances = GenericRelation('Balance')
     history = HistoricalRecords(table_name='fields_history')
@@ -561,25 +581,25 @@ class Balance(BaseModel):
     """
     aquifer = models.ForeignKey('AquiferCodes', models.CASCADE, verbose_name='Водоносный горизонт')
     typo = models.ForeignKey(
-            'DictEntities', models.CASCADE, verbose_name='Тип подземных вод',
-            related_name='mineral'
-            )
+        'DictEntities', models.CASCADE, verbose_name='Тип подземных вод',
+        related_name='mineral'
+    )
     a = models.DecimalField(
-            max_digits=9, decimal_places=2, blank=True, null=True,
-            verbose_name='A, м3'
-            )
+        max_digits=9, decimal_places=2, blank=True, null=True,
+        verbose_name='A, м3'
+    )
     b = models.DecimalField(
-            max_digits=9, decimal_places=2, blank=True, null=True,
-            verbose_name='B, м3'
-            )
+        max_digits=9, decimal_places=2, blank=True, null=True,
+        verbose_name='B, м3'
+    )
     c1 = models.DecimalField(
-            max_digits=9, decimal_places=2, blank=True, null=True,
-            verbose_name='C1, м3'
-            )
+        max_digits=9, decimal_places=2, blank=True, null=True,
+        verbose_name='C1, м3'
+    )
     c2 = models.DecimalField(
-            max_digits=9, decimal_places=2, blank=True, null=True,
-            verbose_name='C2, м3'
-            )
+        max_digits=9, decimal_places=2, blank=True, null=True,
+        verbose_name='C2, м3'
+    )
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
@@ -608,7 +628,6 @@ class Attachments(BaseModel):
 
     def image_tag(self):
         return mark_safe('<img src="/media/%s" width="150" height="150" />' % (self.img))
-    
 
     def __str__(self):
         return self.img.name
