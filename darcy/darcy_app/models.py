@@ -389,6 +389,7 @@ class WellsAquifers(BaseModel):
 
 class WellsConstruction(models.Model):
     well = models.ForeignKey('Wells', models.CASCADE, verbose_name='Номер скважины')
+    date = models.DateTimeField(verbose_name='Дата установки')
     construction_type = models.ForeignKey('DictEntities', models.DO_NOTHING, db_column='construction_type', verbose_name='Тип конструкции')
     diameter = models.IntegerField(verbose_name='Диаметр')
     depth_from = models.DecimalField(max_digits=6, decimal_places=2, verbose_name='Глубина от, м')
