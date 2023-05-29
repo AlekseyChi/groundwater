@@ -1,8 +1,5 @@
 from django.contrib.gis import admin
-from django.apps import apps
 from django.contrib.admin import DateFieldListFilter
-from django.contrib.gis import forms
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.admin import GenericTabularInline, GenericStackedInline
 from .forms import (WellsForm, WellsRegimeForm, WellsDepressionForm,
                     WellsEfwForm, DocumentsForm, BalanceForm, FieldsForm,
@@ -11,7 +8,7 @@ from .models import (Documents, Wells, Intakes, WellsRegime, WellsWaterDepth,
                      WellsRate, WellsAquifers, WellsDepression, WellsEfw,
                      WellsChem, WellsSample, DictEntities, Fields, Balance,
                      Attachments, DocumentsPath, DictPump, WellsAquiferUsage,
-                     ChemCodes, AquiferCodes, Entities)
+                     WellsConstruction, Entities)
 from .filters import WellsTypeFilter, TypeEfwFilter, DocTypeFilter, DocSourceFilter
 from jet.admin import CompactInline
 from import_export.admin import ImportExportModelAdmin
@@ -101,6 +98,12 @@ class WellsAquifersInline(admin.TabularInline):
     extra = 1
 
 
+class WellsConstructionInline(admin.TabularInline):
+    model = WellsConstruction
+    # classes = ('collapse',)
+    extra = 1
+
+
 class DocumentsInline(GenericStackedInline):
     form = DocumentsForm
     model = Documents
@@ -158,7 +161,7 @@ darcy_admin.register(Intakes, IntakesAdmin)
 class WellsAdmin(admin.ModelAdmin):
     form = WellsForm
     model = Wells
-    inlines = [WellsAquifersUsageInline, DocumentsInline, WellsAquifersInline, AttachmentsInline]
+    inlines = [WellsAquifersUsageInline, DocumentsInline, WellsAquifersInline, WellsConstructionInline, AttachmentsInline]
     fields = (
             'name', 'typo', 'head', 'moved', 'intake', 'field',
             ('latitude_degrees', 'latitude_minutes', 'latitude_seconds'),

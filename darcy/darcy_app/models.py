@@ -389,15 +389,15 @@ class WellsAquifers(BaseModel):
 
 class WellsConstruction(models.Model):
     well = models.ForeignKey('Wells', models.CASCADE, verbose_name='Номер скважины')
-    construction_type = models.IntegerField(verbose_name='Тип конструкции')
-    diameter = models.ForeignKey('DictEntities', models.DO_NOTHING, db_column='diameter', verbose_name='Диаметр')
+    construction_type = models.ForeignKey('DictEntities', models.DO_NOTHING, db_column='construction_type', verbose_name='Тип конструкции')
+    diameter = models.IntegerField(verbose_name='Диаметр')
     depth_from = models.DecimalField(max_digits=6, decimal_places=2, verbose_name='Глубина от, м')
     depth_till = models.DecimalField(max_digits=6, decimal_places=2, verbose_name='Глубина до, м')
     doc = models.ForeignKey('Documents', models.CASCADE, blank=True, null=True, verbose_name='Документ')
 
     class Meta:
         verbose_name = 'Конструкция скважины'
-        verbose_name_plural = 'Тип конструкции'
+        verbose_name_plural = 'Конструкция скважины'
         db_table = 'wells_construction'
         unique_together = (('well', 'depth_from', 'construction_type', 'depth_till', 'diameter'),)
         ordering = ('depth_from',)
