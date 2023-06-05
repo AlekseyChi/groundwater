@@ -360,8 +360,7 @@ class WellsDepth(BaseModel):
 
 class WellsCondition(BaseModel):
     """
-    Модель для представления замеров глубины скважин. Содержит значения глубины
-    и обобщенные связи с другими возможными моделями.
+    Модель для представления технический состояний
     """
     condition = models.ForeignKey(
         'DictEntities', on_delete=models.DO_NOTHING, verbose_name='Тех. состояние'
@@ -375,6 +374,29 @@ class WellsCondition(BaseModel):
         verbose_name = 'Тех.состояние скважины'
         verbose_name_plural = 'Тех.состояние скважин'
         db_table = 'wells_condition'
+        unique_together = (('object_id', 'content_type'),)
+
+    def __str__(self):
+        return ''
+
+
+class WellsTemperature(BaseModel):
+    """
+    Модель для представления замеров температур подземных вод в скважинах
+    """
+    temperature = models.DecimalField(
+        max_digits=6, decimal_places=2, verbose_name='Температура, ℃',
+        help_text='до двух знаков после запятой'
+    )
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey()
+    history = HistoricalRecords(table_name='wells_temperature_history')
+
+    class Meta:
+        verbose_name = 'Температура подземных вод'
+        verbose_name_plural = 'Температура подземных вод'
+        db_table = 'wells_temperature'
         unique_together = (('object_id', 'content_type'),)
 
     def __str__(self):

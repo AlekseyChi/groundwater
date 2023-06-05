@@ -8,7 +8,7 @@ from .models import (Documents, Wells, Intakes, WellsRegime, WellsWaterDepth,
                      WellsRate, WellsAquifers, WellsDepression, WellsEfw,
                      WellsChem, WellsSample, DictEntities, Fields, Balance,
                      Attachments, DocumentsPath, DictPump, WellsAquiferUsage,
-                     WellsConstruction, Entities)
+                     WellsConstruction, WellsTemperature, Entities)
 from .filters import WellsTypeFilter, TypeEfwFilter, DocTypeFilter, DocSourceFilter
 from jet.admin import CompactInline
 from import_export.admin import ImportExportModelAdmin
@@ -73,6 +73,11 @@ class WellsRateInline(GenericTabularInline):
     extra = 1
 
 
+class WellsTemperatureInline(GenericTabularInline):
+    model = WellsTemperature
+    extra = 1
+
+
 class WellsDepressionInline(admin.TabularInline):
     form = WellsDepressionForm
     model = WellsDepression
@@ -118,7 +123,7 @@ class DocumentsPathInline(admin.TabularInline):
 class WellsRegimeAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     form = WellsRegimeForm
     model = WellsRegime
-    inlines = [WellsWaterDepthInline, WellsRateInline]
+    inlines = [WellsWaterDepthInline, WellsTemperatureInline, WellsRateInline]
     list_display = ("well", "date")
     list_filter = ('well', ('date', DateFieldListFilter),)
     resource_class = WellsRegimeResource
