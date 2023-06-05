@@ -115,7 +115,7 @@ http:
     webmin:
       loadBalancer:
         servers:
-          - url: http://webmin:10000
+          - url: http://localhost:10000
           
     geoserver:
       loadBalancer:

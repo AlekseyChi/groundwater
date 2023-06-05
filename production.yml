@@ -57,17 +57,6 @@ services:
       - ./geoserver/tomcat-web.xml:/apache-tomcat-9.0.74/conf/web.xml
     expose:
       - "8080"
-  
-  webmin:
-    build:
-      context: .
-      dockerfile: ./compose/production/webmin/Dockerfile
-    ports:
-      - '10000:10000'
-    env_file:
-      - ./.envs/.production/.webmin
-    volumes:
-      - production_webmin_data:/etc/webmin
 
   traefik:
     build:
