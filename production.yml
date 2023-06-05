@@ -6,6 +6,7 @@ volumes:
   production_traefik: {}
   production_django_media: {}
   production_pgadmin_data: {}
+  production_webmin_data: {}
 
 services:
   django: &django
@@ -56,6 +57,15 @@ services:
       - ./geoserver/tomcat-web.xml:/apache-tomcat-9.0.74/conf/web.xml
     expose:
       - "8080"
+  
+  webmin:
+    build:
+      context: .
+      dockerfile: ./compose/production/webmin/Dockerfile
+    ports:
+      - '10000:10000'
+    volumes:
+      - production_webmin_data:/etc/webmin
 
   traefik:
     build:
