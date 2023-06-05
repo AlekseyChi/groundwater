@@ -5,6 +5,7 @@ volumes:
   production_postgres_data_backups: {}
   production_traefik: {}
   production_django_media: {}
+  production_pgadmin_data: {}
 
 services:
   django: &django
@@ -40,8 +41,8 @@ services:
     restart: always
     env_file:
       - ./.envs/.production/.pgadmin
-    ports:
-      - "5050:80"
+    volumes:
+      - production_pgadmin_data:/var/lib/pgadmin
     depends_on:
       - postgres
 
