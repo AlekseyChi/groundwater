@@ -31,7 +31,7 @@ certificatesResolvers:
 http:
   routers:
     web-secure-router:
-      rule: 'Host(`darcydb.ru`) || Host(`www.darcydb.ru`)'
+      rule: 'Host(`darcydb.ru`)'
       entryPoints:
         - web-secure
       middlewares:
@@ -51,7 +51,7 @@ http:
         certResolver: letsencrypt
 
     web-media-router:
-      rule: '(Host(`darcydb.ru`) || Host(`www.darcydb.ru`)) && PathPrefix(`/media/`)'
+      rule: '(Host(`darcydb.ru`)) && PathPrefix(`/media/`)'
       entryPoints:
         - web-secure
       middlewares:
