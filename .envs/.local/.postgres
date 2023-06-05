@@ -1,0 +1,7 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=darcydb
+POSTGRES_USER=thoSKpycKjHFOtwiUUndGtxVwlYFmltq
+POSTGRES_PASSWORD=k3go5oVbVJzOmTwDCeAmjKGNi01k3fsLbi3o1G6ZVWS50hGCZBtagdvIH19uxB0m
