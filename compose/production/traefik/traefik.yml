@@ -59,6 +59,14 @@ http:
       service: django-media
       tls:
         certResolver: letsencrypt
+    
+    pgadmin-router:
+      rule: 'Host(`pgadmin.darcydb.ru`)'
+      entryPoints:
+        - web-secure
+      service: pgadmin
+      tls:
+        certResolver: letsencrypt
 
   middlewares:
     csrf:
@@ -82,6 +90,11 @@ http:
       loadBalancer:
         servers:
           - url: http://nginx:80
+    
+    pgadmin:
+      loadBalancer:
+        servers:
+          - url: http://pgadmin:5050
 
 providers:
   # https://docs.traefik.io/master/providers/file/

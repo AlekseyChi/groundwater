@@ -38,10 +38,8 @@ services:
     container_name: pgadmin4_local
     image: dpage/pgadmin4
     restart: always
-    expose:
-      - "80"
     env_file:
-      - ./.envs/.local/.pgadmin
+      - ./.envs/.production/.pgadmin
     ports:
       - "5050:80"
     depends_on:
