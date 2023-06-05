@@ -59,6 +59,14 @@ http:
       service: django-media
       tls:
         certResolver: letsencrypt
+        
+    webmin-router:
+      rule: 'Host(`webmin.darcydb.ru`)'
+      entryPoints:
+        - web-secure
+      service: webmin
+      tls:
+        certResolver: letsencrypt
     
     pgadmin-router:
       rule: 'Host(`pgadmin.darcydb.ru`)'
@@ -103,6 +111,11 @@ http:
       loadBalancer:
         servers:
           - url: http://pgadmin:5050
+          
+    webmin:
+      loadBalancer:
+        servers:
+          - url: http://webmin:10000
           
     geoserver:
       loadBalancer:

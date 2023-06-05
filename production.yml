@@ -67,6 +67,8 @@ services:
       - django
     volumes:
       - production_traefik:/etc/traefik/acme
+    expose:
+      - "10000"
     ports:
       - '0.0.0.0:80:80'
       - '0.0.0.0:443:443'
