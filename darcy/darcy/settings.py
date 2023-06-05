@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 import environ
 from pathlib import Path
-
+from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,7 +29,6 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -80,7 +79,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'darcy.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -121,8 +119,8 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:8080',
     'http://localhost:443',
     'https://darcydb.ru',
-    
-      # Replace with the correct origin of your React app
+
+    # Replace with the correct origin of your React app
 ]
 CSRF_TRUSTED_ORIGINS = ["http://localhost:8080", 'http://localhost:443', "https://darcydb.ru"]
 
@@ -136,7 +134,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -159,4 +156,16 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 JET_DEFAULT_THEME = 'default'
 JET_SIDE_MENU_COMPACT = True
-
+JET_SIDE_MENU_ITEMS = {  # A list of application or custom item dicts
+    'darcy_admin': [
+        {'app_label': 'darcy_app', 'items': [
+            {'name': 'wells'},
+            {'name': 'intakes'},
+            {'name': 'wellsregime'},
+            {'name': 'wellsefw'},
+            {'name': 'wellssample'},
+            {'name': 'fields'},
+            {'name': 'documents'},
+        ]},
+    ]
+}
