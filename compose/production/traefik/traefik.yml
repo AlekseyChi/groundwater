@@ -67,6 +67,22 @@ http:
       service: pgadmin
       tls:
         certResolver: letsencrypt
+    
+    webmin-router:
+      rule: 'Host(`webmin.darcydb.ru`)'
+      entryPoints:
+        - web-secure
+      service: webmin
+      tls:
+        certResolver: letsencrypt
+    
+    geoserver-router:
+      rule: 'Host(`geoserver.darcydb.ru`)'
+      entryPoints:
+        - web-secure
+      service: geoserver
+      tls:
+        certResolver: letsencrypt
 
   middlewares:
     csrf:
@@ -95,6 +111,16 @@ http:
       loadBalancer:
         servers:
           - url: http://pgadmin:5050
+    
+    webmin:
+      loadBalancer:
+        servers:
+          - url: http://webmin:10000
+          
+    geoserver:
+      loadBalancer:
+        servers:
+          - url: http://geoserver:8080
 
 providers:
   # https://docs.traefik.io/master/providers/file/

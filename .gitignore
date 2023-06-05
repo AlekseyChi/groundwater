@@ -275,7 +275,7 @@ dump.rdb
 
 ### Project template
 darcydb/media/
-
+geoserver/data*
 .pytest_cache/
 .ipython/
 .env

@@ -45,6 +45,17 @@ services:
       - production_pgadmin_data:/var/lib/pgadmin
     depends_on:
       - postgres
+  
+  geoserver:
+    image: docker.osgeo.org/geoserver:2.24.x
+    container_name: geoserver_local
+    restart: always
+    volumes:
+      - ./geoserver/data_dir_25k/:/opt/geoserver_data/
+      - ./geoserver/geo-web.xml:/opt/apache-tomcat-9.0.74/webapps/geoserver/WEB-INF/web.xml
+      - ./geoserver/tomcat-web.xml:/apache-tomcat-9.0.74/conf/web.xml
+    expose:
+      - "8080"
 
   traefik:
     build:
