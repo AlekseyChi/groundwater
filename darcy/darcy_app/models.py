@@ -125,7 +125,7 @@ class Documents(BaseModel):
     )
     links = models.ManyToManyField('self', symmetrical=False, blank=True, null=True, verbose_name='Связанные документы')
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
+    object_id = models.PositiveIntegerField(blank=True, null=True)
     content_object = GenericForeignKey()
     history = HistoricalRecords(table_name='documents_history')
 

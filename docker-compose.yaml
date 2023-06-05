@@ -63,6 +63,7 @@ services:
   certbot:
     image: certbot/certbot
     container_name: certbot_container
+#    command: certonly --webroot --webroot-path=/var/www/certbot --register-unsafely-without-email -d pgadmin.darcydb.ru
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
