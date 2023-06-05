@@ -64,6 +64,7 @@ services:
     image: darcydb_production_traefik
     depends_on:
       - django
+      - geoserver
     volumes:
       - production_traefik:/etc/traefik/acme
     ports:
