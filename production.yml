@@ -64,6 +64,8 @@ services:
       dockerfile: ./compose/production/webmin/Dockerfile
     ports:
       - '10000:10000'
+    env_file:
+      - ./.envs/.production/.webmin
     volumes:
       - production_webmin_data:/etc/webmin
 
