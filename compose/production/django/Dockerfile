@@ -33,7 +33,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV BUILD_ENV ${BUILD_ENVIRONMENT}
 
 WORKDIR ${APP_HOME}
-
+RUN mkdir -p ./darcydb/media && chown -R django:django ./darcydb/media
 RUN addgroup --system django \
     && adduser --system --ingroup django django
     
