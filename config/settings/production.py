@@ -61,6 +61,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = env.bool("DJANGO_SECURE_CONTENT_TYPE_NOSNIFF", def
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # MEDIA
 # ------------------------------------------------------------------------------
+FILE_UPLOAD_PERMISSIONS = 0o644
 
 # EMAIL
 # ------------------------------------------------------------------------------
