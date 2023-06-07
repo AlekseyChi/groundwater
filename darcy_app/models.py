@@ -1,3 +1,4 @@
+import os
 import uuid
 from django.utils import timezone
 from django.contrib.gis.db import models
@@ -6,11 +7,15 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.auth import get_user_model
 from django.utils.html import mark_safe
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+from celery import shared_task
 from simple_history.models import HistoricalRecords
 
 
 def user_directory_path(instance, filename):
-    return 'doc_{0}/{1}'.format(instance.doc.pk, filename)
+    # file will be uploaded to MEDIA_ROOT / user_<id>/<filename>
+    return 'doc_{0}/{1}'.format(instance.pk, filename)
 
 
 class BaseModel(models.Model):
@@ -18,7 +23,7 @@ class BaseModel(models.Model):
     Абстрактный класс модели базы данных, который добавляет
     дополнительные поля и функциональность к другим моделям при наследовании.
 
-        created: Дата и время создания объекта 
+        created: Дата и время создания объекта
         modified: Дата и время последнего изменения объекта
         author: Имя автора объекта
         last_user: Ссылка на последнего пользователя, который внес изменения в объект
@@ -142,7 +147,7 @@ class Documents(BaseModel):
 
 class DocumentsPath(BaseModel):
     doc = models.ForeignKey('Documents', on_delete=models.CASCADE)
-    path = models.FileField(upload_to=user_directory_path, verbose_name='Файл документа')
+    path = models.FileField(verbose_name='Файл документа')
     history = HistoricalRecords(table_name='documents_path_history')
 
     class Meta:
@@ -153,6 +158,34 @@ class DocumentsPath(BaseModel):
     def __str__(self):
         return self.path.name
 
+    def save(self, *args, **kwargs):
+        # This block is not necessary, you can just save it and the file path will be handled in your task
+        file = self.path
+        self.path = ""
+        super(DocumentsPath, self).save(*args, **kwargs)
+        if file:
+            file_path = self.generate_file_path(file.name)
+            save_file_to_media_directory.delay(self.pk, file.read(), file_path)
+
+    def delete(self, *args, **kwargs):
+        # You have to prepare the path before delete
+        storage, path = self.path.storage, self.path.path
+        # Delete the model before the file
+        super(DocumentsPath, self).delete(*args, **kwargs)
+        # Delete the file after the model
+        storage.delete(path)
+
+    def generate_file_path(self, filename):
+        return 'doc_{0}/{1}'.format(self.doc.pk, filename)
+
+@shared_task
+def save_file_to_media_directory(document_path_id, file_data, file_path):
+    document_path = DocumentsPath.objects.get(pk=document_path_id)
+    # This will not trigger save method again, avoiding recursion
+    document_path.path.name = file_path
+    default_storage.save(file_path, ContentFile(file_data))
+    # use update() to update the path field directly in the database without calling save method.
+    DocumentsPath.objects.filter(pk=document_path_id).update(path=file_path)
 
 class AquiferCodes(models.Model):
     aquifer_id = models.IntegerField(primary_key=True)
@@ -434,7 +467,7 @@ class WellsEfw(BaseModel):
     Модель опытно-фильтрационных работ (ОФР) в скважинах.
     Содержит информацию о типе опыта, водоподъемном оборудовании,
     глубине загрузки оборудования, продолжительности опыта и дебите.
-    Через внешний ключ с Documents осуществляется связь ОФР с 
+    Через внешний ключ с Documents осуществляется связь ОФР с
     актами ОФР и другой документацией, связанной с проведением ОФР
     """
     well = models.ForeignKey('Wells', models.CASCADE, verbose_name='Номер скважины')
