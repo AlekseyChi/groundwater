@@ -4,11 +4,11 @@ from django.contrib.contenttypes.admin import GenericTabularInline, GenericStack
 from .forms import (WellsForm, WellsRegimeForm, WellsDepressionForm,
                     WellsEfwForm, DocumentsForm, BalanceForm, FieldsForm,
                     IntakesForm, WellsWaterDepthForm)
-from .models import (Documents, Wells, Intakes, WellsRegime, WellsWaterDepth, 
+from .models import (Documents, Wells, Intakes, WellsRegime, WellsWaterDepth,
                      WellsRate, WellsAquifers, WellsDepression, WellsEfw,
                      WellsChem, WellsSample, DictEntities, Fields, Balance,
                      Attachments, DocumentsPath, DictPump, WellsAquiferUsage,
-                     WellsConstruction, Entities)
+                     WellsConstruction, Entities, DictDocOrganizations)
 from .filters import WellsTypeFilter, TypeEfwFilter, DocTypeFilter, DocSourceFilter
 from jet.admin import CompactInline
 from import_export.admin import ImportExportModelAdmin
@@ -101,7 +101,7 @@ class DocumentsInline(GenericStackedInline):
     model = Documents
     classes = ('collapse',)
     extra = 1
-            
+
 
 class AttachmentsInline(GenericTabularInline):
     model = Attachments
@@ -134,6 +134,11 @@ class DocumentsAdmin(admin.ModelAdmin):
     list_display = ("typo", "name", "creation_date", "source")
     list_filter = (DocTypeFilter, "creation_date", DocSourceFilter)
     search_fields = ("name", )
+
+    def has_delete_permission(self, request, obj=None):
+        if getattr(request, '_editing_document', False):  # query attribute
+            return False
+        return super(DocumentsAdmin, self).has_delete_permission(request, obj=obj)
 
 
 darcy_admin.register(Documents, DocumentsAdmin)
@@ -200,6 +205,19 @@ class FieldsAdmin(admin.ModelAdmin):
 
 darcy_admin.register(Fields, FieldsAdmin)
 darcy_admin.register(DictPump)
+
+# class DictEntitiesAdmin(admin.ModelAdmin):
+#     model = DictEntities
+#
+#     def add_view(self, request, form_url='', extra_context=None):
+#         if 'documents' in request.META.get('HTTP_REFERER'):
+#             data = request.GET.copy()
+#             data['entity'] = 7
+#             request.GET = data
+#         return super(DictEntitiesAdmin, self).add_view(request, form_url, extra_context)
+
+
+darcy_admin.register(DictDocOrganizations)
 # darcy_admin.register(AquiferCodes)
 # darcy_admin.register(ChemCodes)
 

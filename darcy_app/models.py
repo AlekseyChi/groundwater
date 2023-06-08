@@ -65,8 +65,8 @@ class Entities(BaseModel):
 
 
 class DictEntities(BaseModel):
-    name = models.CharField(max_length=250)
-    entity = models.ForeignKey('Entities', on_delete=models.CASCADE)
+    name = models.CharField(max_length=250, verbose_name="Значение")
+    entity = models.ForeignKey('Entities', on_delete=models.CASCADE, verbose_name="Справочник")
 
     class Meta:
         verbose_name = 'Словарь сущностей'
@@ -91,6 +91,18 @@ class DictPump(BaseModel):
         return self.name
 
 
+class DictDocOrganizations(BaseModel):
+    name = models.TextField(verbose_name='Название организации')
+
+    class Meta:
+        verbose_name = 'Организация'
+        verbose_name_plural = 'Организации'
+        db_table = 'dict_doc_organization'
+
+    def __str__(self):
+        return self.name
+
+
 class Documents(BaseModel):
     """
     Представляет собой документ с различными атрибутами,
@@ -102,21 +114,20 @@ class Documents(BaseModel):
     """
     name = models.CharField(max_length=1200, verbose_name='Название документа')
     typo = models.ForeignKey(
-        'DictEntities', models.DO_NOTHING, related_name='doc_type',
-        verbose_name='Тип документа'
+        'DictEntities', models.DO_NOTHING, verbose_name='Тип документа'
     )
     source = models.ForeignKey(
-        'DictEntities', models.DO_NOTHING, db_column='doc_source',
+        'DictDocOrganizations', models.DO_NOTHING, db_column='source',
         related_name='doc_source', verbose_name='Источник поступления',
         blank=True, null=True
     )
     org_executor = models.ForeignKey(
-        'DictEntities', models.DO_NOTHING, db_column='org_executor',
+        'DictDocOrganizations', models.DO_NOTHING, db_column='org_executor',
         related_name='org_executor', verbose_name='Организация-исполнитель',
         blank=True, null=True
     )
     org_customer = models.ForeignKey(
-        'DictEntities', models.DO_NOTHING, db_column='org_customer',
+        'DictDocOrganizations', models.DO_NOTHING, db_column='org_customer',
         related_name='org_customer', verbose_name='Организация-заказчик',
         blank=True, null=True
     )
@@ -128,6 +139,9 @@ class Documents(BaseModel):
         max_length=200, blank=True, null=True,
         verbose_name='Место создания документа'
     )
+    number_rgf = models.CharField(max_length=10, blank=True, null=True, verbose_name='Инвентарный номер Росгеолфонда')
+    number_tfgi = models.CharField(max_length=10, blank=True, null=True, verbose_name='Инвентарный номер ТФГИ')
+    authors = models.TextField(blank=True, null=True, verbose_name='Авторы', help_text='Перечислите авторов через запятую')
     links = models.ManyToManyField('self', symmetrical=False, blank=True, null=True, verbose_name='Связанные документы')
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, blank=True, null=True)
     object_id = models.PositiveIntegerField(blank=True, null=True)
