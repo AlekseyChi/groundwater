@@ -205,6 +205,8 @@ class FieldsAdmin(admin.ModelAdmin):
 
 darcy_admin.register(Fields, FieldsAdmin)
 darcy_admin.register(DictPump)
+darcy_admin.register(DictDocOrganizations)
+
 
 # class DictEntitiesAdmin(admin.ModelAdmin):
 #     model = DictEntities
@@ -216,8 +218,6 @@ darcy_admin.register(DictPump)
 #             request.GET = data
 #         return super(DictEntitiesAdmin, self).add_view(request, form_url, extra_context)
 
-
-darcy_admin.register(DictDocOrganizations)
 # darcy_admin.register(AquiferCodes)
 # darcy_admin.register(ChemCodes)
 
