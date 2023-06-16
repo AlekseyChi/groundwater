@@ -126,9 +126,6 @@ class DocumentsForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(DocumentsForm, self).__init__(*args, **kwargs)
         self.fields['typo'].queryset = DictEntities.objects.filter(entity=6)
-        self.fields['source'].queryset = DictEntities.objects.filter(entity=7)
-        self.fields['org_executor'].queryset = DictEntities.objects.filter(entity=7)
-        self.fields['org_customer'].queryset = DictEntities.objects.filter(entity=7)
 
 
 class WellsRegimeForm(forms.ModelForm):
