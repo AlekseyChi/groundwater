@@ -81,11 +81,6 @@ services:
     <<: *django
     image: darcydb_production_celeryworker
     command: /start-celeryworker
-    deploy:
-      resources:
-        limits:
-          cpus: '0.50'
-          memory: 500M
 
   celerybeat:
     <<: *django
