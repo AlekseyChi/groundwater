@@ -92,7 +92,7 @@ class DictPump(BaseModel):
 
 
 class DictDocOrganizations(BaseModel):
-    name = models.TextField(verbose_name='Название организации')
+    name = models.TextField(verbose_name='Название организации', unique=True)
 
     class Meta:
         verbose_name = 'Организация'
