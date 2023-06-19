@@ -38,6 +38,9 @@ class WellsForm(forms.ModelForm):
             ),
         }
 
+    class Media:
+        js = ['js/synch_widgets.js']
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['typo'].queryset = DictEntities.objects.filter(entity=1)
