@@ -1,0 +1,52 @@
+{% extends "gis/openlayers-osm.html" %}
+{% load l10n %}
+
+{% block base_layer %}
+var base_layer = new ol.layer.Tile({
+  source: new ol.source.OSM(),
+  title: 'OSM',
+  visible: true
+});
+var satelliteLayer = new ol.layer.Tile({
+  source: new ol.source.XYZ({
+    url: 'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}'
+  }),
+  title: 'Satellite',
+  visible: false
+});
+{% endblock %}
+
+{% block options %}
+{{ block.super }}
+class ExtendedMapWidget extends MapWidget {
+  constructor(options) {
+    super(options); // call the super class constructor
+    this.secondaryBaseLayer = null;
+  }
+  setSecondaryBaseLayer(layer) {
+    this.secondaryBaseLayer = layer;
+    this.secondaryBaseLayer.setVisible(false);
+    this.map.addLayer(this.secondaryBaseLayer);
+  }
+  switchBaseLayer() {
+    const isBaseLayerVisible = this.options.base_layer.getVisible();
+    this.options.base_layer.setVisible(!isBaseLayerVisible);
+    this.secondaryBaseLayer.setVisible(isBaseLayerVisible);
+  }
+}
+document.addEventListener('DOMContentLoaded', function() {
+  var {{ module }} = new ExtendedMapWidget(options);
+  div_map = document.getElementsByClassName('ol-overlaycontainer-stopevent')[0];
+
+  div_button = div_map.appendChild(document.createElement('div'));
+  div_button.className = 'ol-rotate ol-unselectable ol-control';
+  button = div_button.appendChild(document.createElement('button'));
+  button.type = 'button';
+  button.id = '{{ id }}_toggle';
+  button.textContent = 'M';
+  {{ module }}.setSecondaryBaseLayer(satelliteLayer);
+  document.getElementById('{{ id }}_toggle').addEventListener('click', function() {
+    {{ module }}.switchBaseLayer()
+  });
+});
+{% endblock %}

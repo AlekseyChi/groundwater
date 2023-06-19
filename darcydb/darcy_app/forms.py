@@ -8,6 +8,10 @@ from .models import (Wells, DictEntities, Intakes, Fields, Documents, Balance,
 from django.contrib.gis.geos import Point
 
 
+class GeoWidget(forms.OSMWidget):
+    template_name = 'gis/custom_layers.html'
+
+
 class WellsForm(forms.ModelForm):
     latitude_degrees = forms.IntegerField(min_value=-90, max_value=90, required=True, label='CШ (град.)')
     latitude_minutes = forms.IntegerField(min_value=0, max_value=60, required=True, label='CШ (мин.)')
@@ -26,7 +30,7 @@ class WellsForm(forms.ModelForm):
         model = Wells
         fields = '__all__'
         widgets = {
-            'geom': forms.OSMWidget(
+            'geom': GeoWidget(
                 attrs={
                     "default_lat": 54.5,
                     "default_lon": 36.28,
@@ -86,7 +90,7 @@ class IntakesForm(forms.ModelForm):
         model = Intakes
         fields = '__all__'
         widgets = {
-            'geom': forms.OSMWidget(
+            'geom': GeoWidget(
                 attrs={
                     "display_raw": True,
                     "default_lat": 54.5,
@@ -104,7 +108,7 @@ class FieldsForm(forms.ModelForm):
         model = Fields
         fields = '__all__'
         widgets = {
-            'geom': forms.OSMWidget(
+            'geom': GeoWidget(
                 attrs={
                     "display_raw": True,
                     "default_lat": 54.5,
