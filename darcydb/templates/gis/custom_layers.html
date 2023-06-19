@@ -58,59 +58,67 @@ var satelliteLayer = new ol.layer.Tile({
     document.getElementById('{{ id }}_toggle').addEventListener('click', function() {
       map.switchBaseLayer()
     });
-    let ids = [
-        "id_latitude_degrees",
-        "id_latitude_minutes",
-        "id_latitude_seconds",
-        "id_longitude_degrees",
-        "id_longitude_minutes",
-        "id_longitude_seconds"
-    ];
+    if (map.options.geom_name === 'Point'){
+      let ids = [
+          "id_latitude_degrees",
+          "id_latitude_minutes",
+          "id_latitude_seconds",
+          "id_longitude_degrees",
+          "id_longitude_minutes",
+          "id_longitude_seconds"
+      ];
 
-    ids.forEach(id => {
-        document.getElementById(id).addEventListener("change", function() {
-          let areAllFieldsFilled = ids.every(id => {
-              let field = document.getElementById(id);
-              return field && field.value.trim() !== "";
-          });
-          if (areAllFieldsFilled){
-            let lat = map.dmsToDecimal(document.getElementById("id_latitude_degrees").value, document.getElementById("id_latitude_minutes").value, document.getElementById("id_latitude_seconds").value);
-            let lon = map.dmsToDecimal(document.getElementById("id_longitude_degrees").value, document.getElementById("id_longitude_minutes").value, document.getElementById("id_longitude_seconds").value);
+      ids.forEach(id => {
+          document.getElementById(id).addEventListener("change", function() {
+            let areAllFieldsFilled = ids.every(id => {
+                let field = document.getElementById(id);
+                return field && field.value.trim() !== "";
+            });
+            if (areAllFieldsFilled){
+              let lat = map.dmsToDecimal(document.getElementById("id_latitude_degrees").value, document.getElementById("id_latitude_minutes").value, document.getElementById("id_latitude_seconds").value);
+              let lon = map.dmsToDecimal(document.getElementById("id_longitude_degrees").value, document.getElementById("id_longitude_minutes").value, document.getElementById("id_longitude_seconds").value);
 
-            let coords = ol.proj.transform([lon, lat], 'EPSG:4326', map.map.getView().getProjection());
+              let coords = ol.proj.transform([lon, lat], 'EPSG:4326', map.map.getView().getProjection());
 
-            let feature = new ol.Feature(new ol.geom.Point(coords));
-            map.map.getView().setCenter(coords);
-            map.featureCollection.clear();
-            map.featureCollection.push(feature);
-        }
-      });
-    });
-
-    map.featureCollection.on("add", function(event) {
-        const feature = event.element;
-        let lonLatCoords = feature.getGeometry().getCoordinates();
-        setDegreeWidget(lonLatCoords);
-
-        feature.on('change', function() {
-            lonLatCoords = feature.getGeometry().getCoordinates();
-            setDegreeWidget(lonLatCoords);
+              let feature = new ol.Feature(new ol.geom.Point(coords));
+              map.map.getView().setCenter(coords);
+              map.featureCollection.clear();
+              map.featureCollection.push(feature);
+          }
         });
-    });
-    const setDegreeWidget = (lonLatCoords) => {
-        let coords = ol.proj.transform(lonLatCoords, map.map.getView().getProjection(), 'EPSG:4326');
-        let lon = coords[0];
-        let lat = coords[1];
+      });
+      if (document.getElementById(map.options.id).value){
+        let feature = map.featureOverlay.getSource().getFeatures()[0];
+        feature.on('change', function() {
+          let lonLatCoords = feature.getGeometry().getCoordinates();
+          setDegreeWidget(lonLatCoords);
+        });
+      }
+      map.featureCollection.on("add", function(event) {
+          const feature_new = event.element;
+          let lonLatCoords = feature_new.getGeometry().getCoordinates();
+          setDegreeWidget(lonLatCoords);
 
-        let { degrees: latDegrees, minutes: latMinutes, seconds: latSeconds } = map.decimalToDms(lat);
-        let { degrees: lonDegrees, minutes: lonMinutes, seconds: lonSeconds } = map.decimalToDms(lon);
+          feature_new.on('change', function() {
+              lonLatCoords = feature_new.getGeometry().getCoordinates();
+              setDegreeWidget(lonLatCoords);
+          });
+      });
+      const setDegreeWidget = (lonLatCoords) => {
+          let coords = ol.proj.transform(lonLatCoords, map.map.getView().getProjection(), 'EPSG:4326');
+          let lon = coords[0];
+          let lat = coords[1];
 
-        document.getElementById("id_latitude_degrees").value = latDegrees;
-        document.getElementById("id_latitude_minutes").value = latMinutes;
-        document.getElementById("id_latitude_seconds").value = latSeconds.toFixed(6);
-        document.getElementById("id_longitude_degrees").value = lonDegrees;
-        document.getElementById("id_longitude_minutes").value = lonMinutes;
-        document.getElementById("id_longitude_seconds").value = lonSeconds.toFixed(6);
+          let { degrees: latDegrees, minutes: latMinutes, seconds: latSeconds } = map.decimalToDms(lat);
+          let { degrees: lonDegrees, minutes: lonMinutes, seconds: lonSeconds } = map.decimalToDms(lon);
+
+          document.getElementById("id_latitude_degrees").value = latDegrees;
+          document.getElementById("id_latitude_minutes").value = latMinutes;
+          document.getElementById("id_latitude_seconds").value = latSeconds.toFixed(6);
+          document.getElementById("id_longitude_degrees").value = lonDegrees;
+          document.getElementById("id_longitude_minutes").value = lonMinutes;
+          document.getElementById("id_longitude_seconds").value = lonSeconds.toFixed(6);
+      }
     }
   });
 {% endblock %}
