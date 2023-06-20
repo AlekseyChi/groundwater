@@ -35,7 +35,7 @@ services:
       - production_postgres_data_backups:/backups
     env_file:
       - ./.envs/.production/.postgres
-      
+
   pgadmin:
     container_name: pgadmin4_local
     image: dpage/pgadmin4
@@ -46,7 +46,7 @@ services:
       - production_pgadmin_data:/var/lib/pgadmin
     depends_on:
       - postgres
-  
+
   geoserver:
     image: docker.osgeo.org/geoserver:2.24.x
     container_name: geoserver_local
