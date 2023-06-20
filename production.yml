@@ -56,7 +56,7 @@ services:
       - ./geoserver/geo-web.xml:/opt/apache-tomcat-9.0.74/webapps/geoserver/WEB-INF/web.xml
       - ./geoserver/tomcat-web.xml:/apache-tomcat-9.0.74/conf/web.xml
     expose:
-      - "8080"
+      - '8080'
 
   traefik:
     build:
@@ -68,7 +68,7 @@ services:
     volumes:
       - production_traefik:/etc/traefik/acme
     expose:
-      - "10000"
+      - '10000'
     ports:
       - '0.0.0.0:80:80'
       - '0.0.0.0:443:443'
