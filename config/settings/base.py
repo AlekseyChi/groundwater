@@ -80,6 +80,7 @@ THIRD_PARTY_APPS = [
     "drf_spectacular",
     'import_export',
     'simple_history',
+    'nested_admin',
 ]
 
 LOCAL_APPS = [
@@ -336,6 +337,7 @@ SPECTACULAR_SETTINGS = {
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 JET_DEFAULT_THEME = 'default'
 JET_SIDE_MENU_COMPACT = True
+JET_CHANGE_FORM_SIBLING_LINKS = False
 JET_SIDE_MENU_ITEMS = {  # A list of application or custom item dicts
     'darcy_admin': [
         {'app_label': 'darcy_app', 'items': [

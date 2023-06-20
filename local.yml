@@ -34,7 +34,7 @@ services:
       - darcydb_local_postgres_data_backups:/backups
     env_file:
       - ./.envs/.local/.postgres
-   
+
   pgadmin:
     container_name: pgadmin4_local
     image: dpage/pgadmin4

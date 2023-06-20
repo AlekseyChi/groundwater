@@ -4,7 +4,7 @@ from django.contrib.admin.widgets import AdminTextInputWidget
 from django.contrib.postgres.forms import SimpleArrayField
 from .models import (Wells, DictEntities, Intakes, Fields, Documents, Balance,
                      WellsRegime, WellsDepression, WellsEfw, WellsConstruction,
-                     WellsWaterDepth)
+                     WellsWaterDepth, WellsAquifers, WellsAquiferUsage)
 from django.contrib.gis.geos import Point
 
 
@@ -12,6 +12,8 @@ class GeoWidget(forms.OSMWidget):
     template_name = 'gis/custom_layers.html'
 
 
+# Wells
+# -------------------------------------------------------------------------------
 class WellsForm(forms.ModelForm):
     latitude_degrees = forms.IntegerField(min_value=-90, max_value=90, required=True, label='CШ (град.)')
     latitude_minutes = forms.IntegerField(min_value=0, max_value=60, required=True, label='CШ (мин.)')
@@ -32,8 +34,8 @@ class WellsForm(forms.ModelForm):
         widgets = {
             'geom': GeoWidget(
                 attrs={
-                    "default_lat": 54.5,
-                    "default_lon": 36.28,
+                    "default_lat": 51.7,
+                    "default_lon": 36.04,
                 },
             ),
         }
@@ -85,60 +87,35 @@ class WellsForm(forms.ModelForm):
         return instance
 
 
-class IntakesForm(forms.ModelForm):
+class WellsAquifersForm(forms.ModelForm):
+    base_aquifer = forms.BooleanField(label='Целевой водоносный горизонт', required=False)
+
     class Meta:
-        model = Intakes
+        model = WellsAquifers
         fields = '__all__'
-        widgets = {
-            'geom': GeoWidget(
-                attrs={
-                    "display_raw": True,
-                    "default_lat": 54.5,
-                    "default_lon": 36.28,
-                },
-            )
-        }
 
     def __init__(self, *args, **kwargs):
-        super(IntakesForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
+        if self.instance.pk:
+            if WellsAquiferUsage.objects.filter(well=self.instance.well, aquifer=self.instance.aquifer).exists():
+                self.fields['base_aquifer'].initial = WellsAquiferUsage.objects.get(well=self.instance.well,
+                                                                                    aquifer=self.instance.aquifer)
 
-class FieldsForm(forms.ModelForm):
-    class Meta:
-        model = Fields
-        fields = '__all__'
-        widgets = {
-            'geom': GeoWidget(
-                attrs={
-                    "display_raw": True,
-                    "default_lat": 54.5,
-                    "default_lon": 36.28,
-                },
-            )
-        }
-
-    def __init__(self, *args, **kwargs):
-        super(FieldsForm, self).__init__(*args, **kwargs)
-
-
-class DocumentsForm(forms.ModelForm):
-    class Meta:
-        model = Documents
-        # fields = '__all__'
-        exclude = ('content_type', 'object_id', 'content_object')
-
-    def __init__(self, *args, **kwargs):
-        super(DocumentsForm, self).__init__(*args, **kwargs)
-        self.fields['typo'].queryset = DictEntities.objects.filter(entity=6)
-
-
-class WellsRegimeForm(forms.ModelForm):
-    class Meta:
-        model = WellsRegime
-        exclude = ('doc',)
-
-    def __init__(self, *args, **kwargs):
-        super(WellsRegimeForm, self).__init__(*args, **kwargs)
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        well = instance.well
+        aquifer = instance.aquifer
+        base_aqua = self.cleaned_data.pop('base_aquifer')
+        if base_aqua:
+            if not WellsAquiferUsage.objects.filter(well=well, aquifer=aquifer).exists():
+                WellsAquiferUsage.objects.create(well=well, aquifer=aquifer)
+        else:
+            if WellsAquiferUsage.objects.filter(well=well, aquifer=aquifer).exists():
+                WellsAquiferUsage.objects.get(well=well, aquifer=aquifer).delete()
+        if commit:
+            instance.save()
+        return instance
 
 
 class WellsConstructionForm(forms.ModelForm):
@@ -151,66 +128,8 @@ class WellsConstructionForm(forms.ModelForm):
         self.fields['construction_type'].queryset = DictEntities.objects.filter(entity=8)
 
 
-class WellsEfwForm(forms.ModelForm):
-    class Meta:
-        model = WellsEfw
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super(WellsEfwForm, self).__init__(*args, **kwargs)
-        self.fields['type_efw'].queryset = DictEntities.objects.filter(entity=2)
-        self.fields['method_measure'].queryset = DictEntities.objects.filter(entity=4)
-        self.fields['date'].initial = timezone.now()
-
-
-class WellsDepressionForm(forms.ModelForm):
-    water_depth = forms.FloatField(label='Глубина воды, м', required=True)
-    rate = forms.FloatField(label='Дебит, л/с', required=True)
-
-    class Meta:
-        model = WellsDepression
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super(WellsDepressionForm, self).__init__(*args, **kwargs)
-        if kwargs.get('instance'):
-            self.fields['water_depth'].initial = kwargs['instance'].waterdepths.first().water_depth
-            self.fields['rate'].initial = kwargs['instance'].rates.first().rate
-
-    def save(self, *args, **kwargs):
-        water_depth = self.cleaned_data.pop('water_depth')
-        rate = self.cleaned_data.pop('rate')
-        instance = super(WellsDepressionForm, self).save(*args, **kwargs)
-        if water_depth:
-            if self.instance.waterdepths.first():
-                watinstance = self.instance.waterdepths.first()
-                watinstance.water_depth = water_depth
-                watinstance.save()
-            else:
-                self.instance.waterdepths.create(object_id=self.instance.pk, water_depth=water_depth)
-        if rate:
-            if self.instance.rates.first():
-                rateinstance = self.instance.rates.first()
-                rateinstance.rate = rate
-                rateinstance.save()
-            else:
-                self.instance.rates.create(object_id=self.instance.pk, rate=rate)
-
-        return instance
-
-
-class BalanceForm(forms.ModelForm):
-    class Meta:
-        model = Balance
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super(BalanceForm, self).__init__(*args, **kwargs)
-        self.fields['typo'].queryset = DictEntities.objects.filter(entity=5)
-
-
 class WellsWaterDepthForm(forms.ModelForm):
-    comments = forms.IntegerField(label='Примечания', required=False, widget=AdminTextInputWidget)
+    comments = forms.CharField(label='Примечания', max_length=300, required=False, widget=AdminTextInputWidget)
 
     class Meta:
         model = WellsWaterDepth
@@ -231,3 +150,133 @@ class WellsWaterDepthForm(forms.ModelForm):
             instance.save()
         return instance
 
+
+class WellsWaterDepthPumpForm(forms.ModelForm):
+    class Meta:
+        model = WellsWaterDepth
+        exclude = ('content_type', 'object_id', 'content_object', 'type_level')
+
+
+class WellsDepressionForm(forms.ModelForm):
+    time_measure = forms.TimeField(label='Время замера', required=True)
+    water_depth = forms.FloatField(label='Глубина воды, м', required=True)
+    rate = forms.FloatField(label='Дебит, л/с', required=True)
+
+    class Meta:
+        model = WellsDepression
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(WellsDepressionForm, self).__init__(*args, **kwargs)
+        if kwargs.get('instance'):
+            self.fields['time_measure'].initial = kwargs['instance'].waterdepths.first().time_measure
+            self.fields['water_depth'].initial = kwargs['instance'].waterdepths.first().water_depth
+            self.fields['rate'].initial = kwargs['instance'].rates.first().rate
+
+    def save(self, *args, **kwargs):
+        time_measure = self.cleaned_data.pop('time_measure')
+        water_depth = self.cleaned_data.pop('water_depth')
+        rate = self.cleaned_data.pop('rate')
+        instance = super(WellsDepressionForm, self).save(*args, **kwargs)
+        if water_depth:
+            if self.instance.waterdepths.first():
+                watinstance = self.instance.waterdepths.first()
+                watinstance.time_measure = time_measure
+                watinstance.water_depth = water_depth
+                watinstance.save()
+            else:
+                self.instance.waterdepths.create(object_id=self.instance.pk, time_measure=time_measure,
+                                                 water_depth=water_depth)
+        if rate:
+            if self.instance.rates.first():
+                rateinstance = self.instance.rates.first()
+                rateinstance.time_measure = time_measure
+                rateinstance.rate = rate
+                rateinstance.save()
+            else:
+                self.instance.rates.create(object_id=self.instance.pk, time_measure=time_measure, rate=rate)
+
+        return instance
+
+
+class WellsEfwForm(forms.ModelForm):
+    class Meta:
+        model = WellsEfw
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(WellsEfwForm, self).__init__(*args, **kwargs)
+        self.fields['type_efw'].queryset = DictEntities.objects.filter(entity=2)
+        self.fields['method_measure'].queryset = DictEntities.objects.filter(entity=4)
+        # self.fields['date'].initial = timezone.now()
+
+
+# Documents
+# -------------------------------------------------------------------------------
+class DocumentsForm(forms.ModelForm):
+    class Meta:
+        model = Documents
+        # fields = '__all__'
+        exclude = ('content_type', 'object_id', 'content_object')
+
+    def __init__(self, *args, **kwargs):
+        super(DocumentsForm, self).__init__(*args, **kwargs)
+        self.fields['typo'].queryset = DictEntities.objects.filter(entity=6)
+
+
+class IntakesForm(forms.ModelForm):
+    class Meta:
+        model = Intakes
+        fields = '__all__'
+        widgets = {
+            'geom': GeoWidget(
+                attrs={
+                    "display_raw": True,
+                    "default_lat": 51.7,
+                    "default_lon": 36.04,
+                },
+            )
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(IntakesForm, self).__init__(*args, **kwargs)
+
+
+class FieldsForm(forms.ModelForm):
+    class Meta:
+        model = Fields
+        fields = '__all__'
+        widgets = {
+            'geom': GeoWidget(
+                attrs={
+                    "display_raw": True,
+                    "default_lat": 51.7,
+                    "default_lon": 36.04,
+                },
+            )
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(FieldsForm, self).__init__(*args, **kwargs)
+
+
+class WellsRegimeForm(forms.ModelForm):
+    class Meta:
+        model = WellsRegime
+        exclude = ('doc',)
+        # widgets = {
+        #     'well': forms.TextInput()
+        # }
+
+    def __init__(self, *args, **kwargs):
+        super(WellsRegimeForm, self).__init__(*args, **kwargs)
+
+
+class BalanceForm(forms.ModelForm):
+    class Meta:
+        model = Balance
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(BalanceForm, self).__init__(*args, **kwargs)
+        self.fields['typo'].queryset = DictEntities.objects.filter(entity=5)

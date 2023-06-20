@@ -3,7 +3,10 @@ from rest_framework.response import Response
 from .models import WellsRegime, WellsEfw
 from .serializers import WellsRegimeSerializer, WellsEfwSerializer, WellsWaterDepthSerializer
 from django.contrib.contenttypes.models import ContentType
-
+from django.http import FileResponse, HttpResponse
+from django.views import View
+from django.conf import settings
+import os
 
 class WellsRegimeView(mixins.ListModelMixin,
                                     mixins.CreateModelMixin,
@@ -31,5 +34,6 @@ class WellsEfwView(mixins.ListModelMixin,
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
 
 
