@@ -34,17 +34,17 @@ services:
       - darcydb_local_postgres_data_backups:/backups
     env_file:
       - ./.envs/.local/.postgres
-   
+
   pgadmin:
     container_name: pgadmin4_local
     image: dpage/pgadmin4
     restart: always
     expose:
-      - "80"
+      - '80'
     env_file:
       - ./.envs/.local/.pgadmin
     ports:
-      - "5050:80"
+      - '5050:80'
     depends_on:
       - postgres
 

@@ -142,7 +142,7 @@ class Documents(BaseModel):
     number_rgf = models.CharField(max_length=10, blank=True, null=True, verbose_name='Инвентарный номер Росгеолфонда')
     number_tfgi = models.CharField(max_length=10, blank=True, null=True, verbose_name='Инвентарный номер ТФГИ')
     authors = models.TextField(blank=True, null=True, verbose_name='Авторы', help_text='Перечислите авторов через запятую')
-    links = models.ManyToManyField('self', symmetrical=False, blank=True, null=True, verbose_name='Связанные документы')
+    links = models.ManyToManyField('self', symmetrical=False, blank=True, verbose_name='Связанные документы')
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, blank=True, null=True)
     object_id = models.PositiveIntegerField(blank=True, null=True)
     content_object = GenericForeignKey()
