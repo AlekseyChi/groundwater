@@ -11,11 +11,7 @@ from django.urls import reverse
 from darcydb.users.forms import UserAdminChangeForm
 from darcydb.users.models import User
 from darcydb.users.tests.factories import UserFactory
-from darcydb.users.views import (
-    UserRedirectView,
-    UserUpdateView,
-    user_detail_view,
-)
+from darcydb.users.views import UserRedirectView, UserUpdateView, user_detail_view
 
 pytestmark = pytest.mark.django_db
 
