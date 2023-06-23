@@ -1,14 +1,19 @@
-from rest_framework import generics, mixins, status
-from rest_framework.response import Response
-from .models import WellsRegime, WellsEfw
-from .serializers import WellsRegimeSerializer, WellsEfwSerializer, WellsWaterDepthSerializer
-from django.contrib.contenttypes.models import ContentType
+# from django.contrib.contenttypes.models import ContentType
+from rest_framework import generics, mixins
+
+from .models import WellsEfw, WellsRegime
+from .serializers import WellsEfwSerializer, WellsRegimeSerializer
+
+# , status
+# from rest_framework.response import Response
 
 
-class WellsRegimeView(mixins.ListModelMixin,
-                                    mixins.CreateModelMixin,
-                                    mixins.UpdateModelMixin,
-                                    generics.GenericAPIView):
+# , WellsWaterDepthSerializer
+
+
+class WellsRegimeView(
+    mixins.ListModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin, generics.GenericAPIView
+):
     queryset = WellsRegime.objects.all()
     serializer_class = WellsRegimeSerializer
 
@@ -19,10 +24,7 @@ class WellsRegimeView(mixins.ListModelMixin,
         return self.create(request, *args, **kwargs)
 
 
-class WellsEfwView(mixins.ListModelMixin,
-                   mixins.CreateModelMixin,
-                   mixins.UpdateModelMixin,
-                   generics.GenericAPIView):
+class WellsEfwView(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin, generics.GenericAPIView):
     queryset = WellsEfw.objects.all()
     serializer_class = WellsEfwSerializer
 
@@ -31,5 +33,3 @@ class WellsEfwView(mixins.ListModelMixin,
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
-
-

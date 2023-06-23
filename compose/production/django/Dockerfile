@@ -35,7 +35,7 @@ ENV BUILD_ENV ${BUILD_ENVIRONMENT}
 WORKDIR ${APP_HOME}
 RUN addgroup --system django \
     && adduser --system --ingroup django django
-    
+
 RUN mkdir -p ./darcydb/media && chown -R django:django ./darcydb/media
 #GDAL
 RUN apt-get update && apt-get install -y  binutils libproj-dev gdal-bin

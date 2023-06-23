@@ -23,10 +23,10 @@ DEBUG = env.bool("DJANGO_DEBUG", False)
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # though not all of them may be available with every OS.
 # In Windows, this must be set to your system time zone.
-TIME_ZONE = "Europe/Moscow" #
+TIME_ZONE = "Europe/Moscow"
 # https://docs.djangoproject.com/en/dev/ref/settings/#language-code
 # LANGUAGE_CODE = "en-us"
-LANGUAGE_CODE = 'ru'
+LANGUAGE_CODE = "ru"
 # https://docs.djangoproject.com/en/dev/ref/settings/#site-id
 SITE_ID = 1
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
@@ -41,7 +41,7 @@ LOCALE_PATHS = [str(BASE_DIR / "locale")]
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {"default": env.db("DATABASE_URL")}
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
-DATABASES["default"]["ENGINE"] = 'django.contrib.gis.db.backends.postgis'
+DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
 # https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-DEFAULT_AUTO_FIELD
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -55,7 +55,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 # APPS
 # ------------------------------------------------------------------------------
 DJANGO_APPS = [
-    'jet',
+    "jet",
     "django.contrib.auth",
     "django.contrib.gis",
     "django.contrib.contenttypes",
@@ -78,8 +78,8 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     "drf_spectacular",
-    'import_export',
-    'simple_history',
+    "import_export",
+    "simple_history",
 ]
 
 LOCAL_APPS = [
@@ -333,21 +333,22 @@ SPECTACULAR_SETTINGS = {
     "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
 }
 # Your stuff...
-X_FRAME_OPTIONS = 'SAMEORIGIN'
-JET_DEFAULT_THEME = 'default'
+X_FRAME_OPTIONS = "SAMEORIGIN"
+JET_DEFAULT_THEME = "default"
 JET_SIDE_MENU_COMPACT = True
 JET_SIDE_MENU_ITEMS = {  # A list of application or custom item dicts
-    'darcy_admin': [
-        {'app_label': 'darcy_app', 'items': [
-            {'name': 'wells'},
-            {'name': 'intakes'},
-            {'name': 'wellsregime'},
-            {'name': 'wellsefw'},
-            {'name': 'wellssample'},
-            {'name': 'fields'},
-            {'name': 'documents'},
-        ]},
+    "darcy_admin": [
+        {
+            "app_label": "darcy_app",
+            "items": [
+                {"name": "wells"},
+                {"name": "intakes"},
+                {"name": "wellsregime"},
+                {"name": "wellsefw"},
+                {"name": "wellssample"},
+                {"name": "fields"},
+                {"name": "documents"},
+            ],
+        },
     ]
 }
-
-

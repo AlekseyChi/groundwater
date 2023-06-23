@@ -77,7 +77,7 @@ EMAIL_SUBJECT_PREFIX = env(
     "DJANGO_EMAIL_SUBJECT_PREFIX",
     default="[darcy]",
 )
-EMAIL_HOST = 'smtp.mail.ru'
+EMAIL_HOST = "smtp.mail.ru"
 EMAIL_PORT = 2525
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False

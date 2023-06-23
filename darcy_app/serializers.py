@@ -1,24 +1,27 @@
+# from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
-from .models import WellsRegime, WellsWaterDepth, WellsEfw, WellsDepression, WellsRate, DictEntities
-from django.contrib.contenttypes.models import ContentType
+
+from .models import DictEntities, WellsDepression, WellsEfw, WellsRegime, WellsWaterDepth
+
+# , WellsRate
 
 
 class WellsWaterDepthSerializer(serializers.ModelSerializer):
     class Meta:
         model = WellsWaterDepth
-        fields = ['water_depth']
+        fields = ["water_depth"]
 
 
 class TypeEfwSerializer(serializers.ModelSerializer):
     class Meta:
         model = DictEntities
-        fields = ['id', 'name']
+        fields = ["id", "name"]
 
 
 class PumpTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = DictEntities
-        fields = ['id', 'name']
+        fields = ["id", "name"]
 
 
 class WellsRegimeSerializer(serializers.ModelSerializer):
@@ -26,10 +29,10 @@ class WellsRegimeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WellsRegime
-        fields = ['well', 'date', 'water_depth']
+        fields = ["well", "date", "water_depth"]
 
     def create(self, validated_data):
-        water_depth_data = validated_data.pop('water_depth', None)
+        water_depth_data = validated_data.pop("water_depth", None)
         wells_regime = WellsRegime.objects.create(**validated_data)
         if water_depth_data:
             wells_regime.waterdepths.create(**water_depth_data)
@@ -41,7 +44,7 @@ class WellsDepressionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WellsDepression
-        fields = ['time_measure', 'water_depth']
+        fields = ["time_measure", "water_depth"]
 
 
 class WellsEfwSerializer(serializers.ModelSerializer):
@@ -52,20 +55,16 @@ class WellsEfwSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WellsEfw
-        fields = [
-            'well', 'date', 'type_efw', 'pump_type', 'pump_depth',
-            'pump_time', 'doc', 'depressions'
-        ]
+        fields = ["well", "date", "type_efw", "pump_type", "pump_depth", "pump_time", "doc", "depressions"]
 
     def create(self, validated_data):
-        depressions = validated_data.pop('depressions', None)
+        depressions = validated_data.pop("depressions", None)
         efw = WellsEfw.objects.create(**validated_data)
         if depressions:
             for depression in depressions:
-                water_depth = depression.pop('water_depth', None)
+                water_depth = depression.pop("water_depth", None)
                 if water_depth:
                     depression_instance = WellsDepression.objects.create(efw_id=efw, **depression)
                     depression_instance.waterdepths.create(**water_depth)
 
         return efw
-

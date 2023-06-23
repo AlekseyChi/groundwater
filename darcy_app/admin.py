@@ -1,32 +1,62 @@
-from django.contrib.gis import admin
 from django.contrib.admin import DateFieldListFilter
-from django.contrib.contenttypes.admin import GenericTabularInline, GenericStackedInline
-from .forms import (WellsForm, WellsRegimeForm, WellsDepressionForm,
-                    WellsEfwForm, DocumentsForm, BalanceForm, FieldsForm,
-                    IntakesForm, WellsWaterDepthForm)
-from .models import (Documents, Wells, Intakes, WellsRegime, WellsWaterDepth,
-                     WellsRate, WellsAquifers, WellsDepression, WellsEfw,
-                     WellsChem, WellsSample, DictEntities, Fields, Balance,
-                     Attachments, DocumentsPath, DictPump, WellsAquiferUsage,
-                     WellsConstruction, Entities, DictDocOrganizations)
-from .filters import WellsTypeFilter, TypeEfwFilter, DocTypeFilter, DocSourceFilter
-from jet.admin import CompactInline
+from django.contrib.contenttypes.admin import GenericStackedInline, GenericTabularInline
+from django.contrib.gis import admin
 from import_export.admin import ImportExportModelAdmin
+from jet.admin import CompactInline
+
+from .filters import DocSourceFilter, DocTypeFilter, TypeEfwFilter, WellsTypeFilter
+from .forms import (
+    BalanceForm,
+    DocumentsForm,
+    FieldsForm,
+    IntakesForm,
+    WellsDepressionForm,
+    WellsEfwForm,
+    WellsForm,
+    WellsRegimeForm,
+    WellsWaterDepthForm,
+)
+from .models import (
+    Attachments,
+    Balance,
+    DictDocOrganizations,
+    DictEntities,
+    DictPump,
+    Documents,
+    DocumentsPath,
+    Entities,
+    Fields,
+    Intakes,
+    Wells,
+    WellsAquifers,
+    WellsAquiferUsage,
+    WellsChem,
+    WellsConstruction,
+    WellsDepression,
+    WellsEfw,
+    WellsRate,
+    WellsRegime,
+    WellsSample,
+    WellsWaterDepth,
+)
 from .resources import WellsRegimeResource
 
 ADMIN_ORDERING = [
-    ('darcy_app', [
-        'Wells',
-        'WellsEfw',
-        'WellsRegime',
-        'WellsSample',
-        'Intakes',
-        'Fields',
-        'Documents',
-        'DictPump',
-        # 'ChemCodes',
-        # 'AquiferCodes',
-    ]),
+    (
+        "darcy_app",
+        [
+            "Wells",
+            "WellsEfw",
+            "WellsRegime",
+            "WellsSample",
+            "Intakes",
+            "Fields",
+            "Documents",
+            "DictPump",
+            # "ChemCodes",
+            # "AquiferCodes",
+        ],
+    ),
 ]
 
 
@@ -35,18 +65,18 @@ admin.site.register(Entities)
 
 
 class DarcyAdminArea(admin.AdminSite):
-    site_header =  'Админпанель Дарси'
-    site_title = 'Dарси'
-    index_title = 'Админпанель Дарси'
+    site_header = "Админпанель Дарси"
+    site_title = "Dарси"
+    index_title = "Админпанель Дарси"
 
 
-darcy_admin = DarcyAdminArea(name='darcy_admin')
+darcy_admin = DarcyAdminArea(name="darcy_admin")
 
 
 class BalanceInline(GenericTabularInline):
     model = Balance
     form = BalanceForm
-    # classes = ('collapse',)
+    # classes = ("collapse",)
     extra = 1
 
 
@@ -86,27 +116,30 @@ class WellsChemInline(GenericTabularInline):
 
 class WellsAquifersInline(admin.TabularInline):
     model = WellsAquifers
-    # classes = ('collapse',)
+    # classes = ("collapse",)
     extra = 1
 
 
 class WellsConstructionInline(admin.TabularInline):
     model = WellsConstruction
-    # classes = ('collapse',)
+    # classes = ("collapse",)
     extra = 1
 
 
 class DocumentsInline(GenericStackedInline):
     form = DocumentsForm
     model = Documents
-    classes = ('collapse',)
+    classes = ("collapse",)
     extra = 1
 
 
 class AttachmentsInline(GenericTabularInline):
     model = Attachments
-    fields = ( 'img', 'image_tag', )
-    readonly_fields = ('image_tag',)
+    fields = (
+        "img",
+        "image_tag",
+    )
+    readonly_fields = ("image_tag",)
     extra = 1
 
 
@@ -120,7 +153,10 @@ class WellsRegimeAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     model = WellsRegime
     inlines = [WellsWaterDepthInline, WellsRateInline]
     list_display = ("well", "date")
-    list_filter = ('well', ('date', DateFieldListFilter),)
+    list_filter = (
+        "well",
+        ("date", DateFieldListFilter),
+    )
     resource_class = WellsRegimeResource
 
 
@@ -133,12 +169,12 @@ class DocumentsAdmin(admin.ModelAdmin):
     inlines = [DocumentsPathInline]
     list_display = ("typo", "name", "creation_date", "source")
     list_filter = (DocTypeFilter, "creation_date", DocSourceFilter)
-    search_fields = ("name", )
+    search_fields = ("name",)
 
     def has_delete_permission(self, request, obj=None):
-        if getattr(request, '_editing_document', False):  # query attribute
+        if getattr(request, "_editing_document", False):  # query attribute
             return False
-        return super(DocumentsAdmin, self).has_delete_permission(request, obj=obj)
+        return super().has_delete_permission(request, obj=obj)
 
 
 darcy_admin.register(Documents, DocumentsAdmin)
@@ -149,7 +185,7 @@ class IntakesAdmin(admin.ModelAdmin):
     model = Intakes
     inlines = [WellsInline]
     list_display = ("intake_name",)
-    search_fields = ("intake_name", )
+    search_fields = ("intake_name",)
 
 
 darcy_admin.register(Intakes, IntakesAdmin)
@@ -158,16 +194,36 @@ darcy_admin.register(Intakes, IntakesAdmin)
 class WellsAdmin(admin.ModelAdmin):
     form = WellsForm
     model = Wells
-    inlines = [WellsAquifersUsageInline, DocumentsInline, WellsAquifersInline, WellsConstructionInline, AttachmentsInline]
+    inlines = [
+        WellsAquifersUsageInline,
+        DocumentsInline,
+        WellsAquifersInline,
+        WellsConstructionInline,
+        AttachmentsInline,
+    ]
     fields = (
-            'name', 'typo', 'head', 'moved', 'intake', 'field',
-            ('latitude_degrees', 'latitude_minutes', 'latitude_seconds'),
-            ('longitude_degrees', 'longitude_minutes', 'longitude_seconds'),
-            'geom', 'name_gwk', 'name_drill', 'name_subject',
-            )
-    list_display = ("__str__", "typo",)
+        "name",
+        "typo",
+        "head",
+        "moved",
+        "intake",
+        "field",
+        ("latitude_degrees", "latitude_minutes", "latitude_seconds"),
+        ("longitude_degrees", "longitude_minutes", "longitude_seconds"),
+        "geom",
+        "name_gwk",
+        "name_drill",
+        "name_subject",
+    )
+    list_display = (
+        "__str__",
+        "typo",
+    )
     list_filter = (WellsTypeFilter,)
-    search_fields = ("extra", "uuid", )
+    search_fields = (
+        "extra",
+        "uuid",
+    )
 
 
 darcy_admin.register(Wells, WellsAdmin)
@@ -178,7 +234,7 @@ class WellsEfwAdmin(admin.ModelAdmin):
     model = WellsEfw
     inlines = [WellsDepressionInline]
     list_display = ("well", "date", "type_efw")
-    list_filter = ('date', 'well', TypeEfwFilter)
+    list_filter = ("date", "well", TypeEfwFilter)
 
 
 darcy_admin.register(WellsEfw, WellsEfwAdmin)
@@ -188,8 +244,8 @@ class WellsSampleAdmin(admin.ModelAdmin):
     model = WellsSample
     inlines = [WellsChemInline]
     list_display = ("well", "date", "name")
-    search_fields = ("name", )
-    list_filter = ('date', 'well')
+    search_fields = ("name",)
+    list_filter = ("date", "well")
 
 
 darcy_admin.register(WellsSample, WellsSampleAdmin)
@@ -211,14 +267,12 @@ darcy_admin.register(DictDocOrganizations)
 # class DictEntitiesAdmin(admin.ModelAdmin):
 #     model = DictEntities
 #
-#     def add_view(self, request, form_url='', extra_context=None):
-#         if 'documents' in request.META.get('HTTP_REFERER'):
+#     def add_view(self, request, form_url="", extra_context=None):
+#         if "documents" in request.META.get("HTTP_REFERER"):
 #             data = request.GET.copy()
-#             data['entity'] = 7
+#             data["entity"] = 7
 #             request.GET = data
 #         return super(DictEntitiesAdmin, self).add_view(request, form_url, extra_context)
 
 # darcy_admin.register(AquiferCodes)
 # darcy_admin.register(ChemCodes)
-
-

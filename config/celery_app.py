@@ -1,4 +1,5 @@
 import os
+
 from celery import Celery
 
 # set the default Django settings module for the 'celery' program.
@@ -11,7 +12,7 @@ app = Celery("darcydb")
 # - namespace='CELERY' means all celery-related configuration keys
 #   should have a `CELERY_` prefix.
 app.config_from_object("django.conf:settings", namespace="CELERY")
-app.conf.broker_transport_options = {'visibility_timeout': 3600}
+app.conf.broker_transport_options = {"visibility_timeout": 3600}
 
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
