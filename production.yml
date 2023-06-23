@@ -24,6 +24,8 @@ services:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
     command: /start
+    networks:
+      - darcy_network
 
   postgres:
     build:
@@ -35,6 +37,8 @@ services:
       - production_postgres_data_backups:/backups
     env_file:
       - ./.envs/.production/.postgres
+    networks:
+      - darcy_network
 
   pgadmin:
     container_name: pgadmin4_local
@@ -46,6 +50,8 @@ services:
       - production_pgadmin_data:/var/lib/pgadmin
     depends_on:
       - postgres
+    networks:
+      - darcy_network
 
   geoserver:
     image: docker.osgeo.org/geoserver:2.24.x
@@ -57,6 +63,8 @@ services:
       - ./geoserver/tomcat-web.xml:/apache-tomcat-9.0.74/conf/web.xml
     expose:
       - '8080'
+    networks:
+      - darcy_network
 
   traefik:
     build:
@@ -73,24 +81,34 @@ services:
       - '0.0.0.0:80:80'
       - '0.0.0.0:443:443'
       - '0.0.0.0:5555:5555'
+    networks:
+      - darcy_network
 
   redis:
     image: redis:6
+    networks:
+      - darcy_network
 
   celeryworker:
     <<: *django
     image: darcydb_production_celeryworker
     command: /start-celeryworker
+    networks:
+      - darcy_network
 
   celerybeat:
     <<: *django
     image: darcydb_production_celerybeat
     command: /start-celerybeat
+    networks:
+      - darcy_network
 
   flower:
     <<: *django
     image: darcydb_production_flower
     command: /start-flower
+    networks:
+      - darcy_network
 
   nginx:
     build:
@@ -101,3 +119,13 @@ services:
       - django
     volumes:
       - production_django_media:/usr/share/nginx/media
+    networks:
+      - darcy_network
+
+networks:
+  darcy_network:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 172.18.0.0/16
+         gateway: 172.18.0.1
