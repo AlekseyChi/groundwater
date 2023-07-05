@@ -1,14 +1,11 @@
 import uuid
 
 import boto3
-from celery import shared_task
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
-from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
 from django.utils import timezone
 from django.utils.safestring import mark_safe
 from simple_history.models import HistoricalRecords
@@ -221,14 +218,6 @@ class DocumentsPath(BaseModel):
         return presigned_url
 
     presigned_url = property(generate_presigned_url)
-
-
-@shared_task
-def save_file_to_media_directory(document_path_id, file_data, file_path):
-    document_path = DocumentsPath.objects.get(pk=document_path_id)
-    document_path.path.name = file_path
-    default_storage.save(file_path, ContentFile(file_data))
-    DocumentsPath.objects.filter(pk=document_path_id).update(path=file_path)
 
 
 class AquiferCodes(models.Model):
