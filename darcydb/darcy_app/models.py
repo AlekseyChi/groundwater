@@ -14,8 +14,8 @@ from .storage_backends import YandexObjectStorage
 
 
 def user_directory_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT / user_<id>/<filename>
-    return f"doc_{instance.pk}/{filename}"
+    if instance.__dict__.get("doc_id"):
+        return f"doc_{instance.doc_id}/{filename}"
 
 
 class BaseModel(models.Model):
@@ -175,7 +175,9 @@ class Documents(BaseModel):
 
 class DocumentsPath(BaseModel):
     doc = models.ForeignKey("Documents", on_delete=models.CASCADE)
-    path = models.FileField(storage=YandexObjectStorage(), verbose_name="Файл документа")
+    path = models.FileField(
+        upload_to=user_directory_path, storage=YandexObjectStorage(), verbose_name="Файл документа"
+    )
     history = HistoricalRecords(table_name="documents_path_history")
 
     class Meta:
