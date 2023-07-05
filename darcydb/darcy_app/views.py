@@ -1,6 +1,7 @@
-from rest_framework import generics, mixins, status
-from .models import WellsRegime, WellsEfw
-from .serializers import WellsRegimeSerializer, WellsEfwSerializer
+from rest_framework import generics, mixins
+
+from .models import WellsEfw, WellsRegime
+from .serializers import WellsEfwSerializer, WellsRegimeSerializer
 
 
 class WellsRegimeView(

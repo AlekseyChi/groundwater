@@ -1,16 +1,18 @@
 import uuid
+
 import boto3
+from celery import shared_task
 from django.conf import settings
-from django.utils import timezone
-from django.utils.safestring import mark_safe
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.utils import timezone
+from django.utils.safestring import mark_safe
 from simple_history.models import HistoricalRecords
-from celery import shared_task
+
 from .storage_backends import YandexObjectStorage
 
 
@@ -155,15 +157,9 @@ class Documents(BaseModel):
     authors = models.TextField(
         blank=True, null=True, verbose_name="Авторы", help_text="Перечислите авторов через запятую"
     )
-    creation_place = models.CharField(
-        max_length=200, blank=True, null=True,
-        verbose_name="Место создания документа"
+    links = models.ManyToManyField(
+        "self", symmetrical=False, blank=True, null=True, verbose_name="Связанные документы"
     )
-    number_rgf = models.CharField(max_length=10, blank=True, null=True, verbose_name="Инвентарный номер Росгеолфонда")
-    number_tfgi = models.CharField(max_length=10, blank=True, null=True, verbose_name="Инвентарный номер ТФГИ")
-    authors = models.TextField(blank=True, null=True, verbose_name="Авторы",
-                               help_text="Перечислите авторов через запятую")
-    links = models.ManyToManyField("self", symmetrical=False, blank=True, null=True, verbose_name="Связанные документы")
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, blank=True, null=True)
     object_id = models.PositiveIntegerField(blank=True, null=True)
     content_object = GenericForeignKey()
@@ -210,17 +206,18 @@ class DocumentsPath(BaseModel):
     #     return 'doc_{0}/{1}'.format(self.doc.pk, filename)
 
     def generate_presigned_url(self):
-        s3_client = boto3.client("s3",
-                                 region_name=settings.AWS_S3_REGION_NAME,
-                                 aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-                                 aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-                                 endpoint_url=YandexObjectStorage.endpoint_url,
-                                 config=boto3.session.Config(signature_version=settings.AWS_S3_SIGNATURE_VERSION))
+        s3_client = boto3.client(
+            "s3",
+            region_name=settings.AWS_S3_REGION_NAME,
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            endpoint_url=YandexObjectStorage.endpoint_url,
+            config=boto3.session.Config(signature_version=settings.AWS_S3_SIGNATURE_VERSION),
+        )
 
-        presigned_url = s3_client.generate_presigned_url("get_object",
-                                                         Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME,
-                                                                 "Key": self.path.name},
-                                                         ExpiresIn=3600)  # URL expires in 1 hour
+        presigned_url = s3_client.generate_presigned_url(
+            "get_object", Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": self.path.name}, ExpiresIn=3600
+        )
         return presigned_url
 
     presigned_url = property(generate_presigned_url)
@@ -333,13 +330,13 @@ class WellsRegime(BaseModel):
     ключ для скважины, дату замера, связь с документацией и обобщенные связи
     с глубиной УГВ и дебитом (или другими возможными режимными измерениями).
     """
+
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
     date = models.DateField(verbose_name="Дата замера")
     doc = models.ForeignKey("Documents", models.CASCADE, blank=True, null=True, verbose_name="Документ")
     waterdepths = GenericRelation("WellsWaterDepth")
     rates = GenericRelation("WellsRate")
     history = HistoricalRecords(table_name="wells_regime_history")
-
 
     class Meta:
         verbose_name = "Режимное наблюдение"
@@ -361,6 +358,7 @@ class WellsDrilledData(BaseModel):
     ключ для скважины, дату замера, связь с документацией и обобщенные связи
     с глубиной УГВ и дебитом (или другими возможными режимными измерениями).
     """
+
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
     date = models.DateField(verbose_name="Дата бурения")
     doc = models.ForeignKey("Documents", models.CASCADE, blank=True, null=True, verbose_name="Документ")
@@ -374,10 +372,13 @@ class WellsDrilledData(BaseModel):
         verbose_name_plural = "Данные бурения"
         db_table = "wells_drilled_data"
         unique_together = (("well", "date"),)
-        ordering = ("-date", "well",)
+        ordering = (
+            "-date",
+            "well",
+        )
 
     def __str__(self):
-        return (f"{self.well} {self.date}")
+        return f"{self.well} {self.date}"
 
 
 class WellsWaterDepth(BaseModel):
@@ -385,8 +386,9 @@ class WellsWaterDepth(BaseModel):
     Модель для представления замеров глубины УГВ. Содержит значения
     глубины УГВ и обобщенные связи с другими возможными моделями.
     """
+
     type_level = models.BooleanField(verbose_name="Статический", blank=True, null=True, default=False)
-    time_measure = models.TimeField(verbose_name="Время замера", )
+    time_measure = models.TimeField(verbose_name="Время замера")
     water_depth = models.DecimalField(
         max_digits=6,
         decimal_places=2,
@@ -404,7 +406,6 @@ class WellsWaterDepth(BaseModel):
         db_table = "wells_water_depth"
         unique_together = (("object_id", "content_type", "time_measure"),)
 
-
     def __str__(self):
         return ""
 
@@ -414,7 +415,8 @@ class WellsRate(BaseModel):
     Модель для представления замеров дебита скважин. Содержит значения дебита
     и обобщенные связи с другими возможными моделями.
     """
-    time_measure = models.TimeField(verbose_name="Время замера", )
+
+    time_measure = models.TimeField(verbose_name="Время замера")
     rate = models.DecimalField(
         max_digits=7, decimal_places=3, verbose_name="Дебит л/с", help_text="до трех знаков после запятой"
     )
@@ -430,7 +432,7 @@ class WellsRate(BaseModel):
         unique_together = (("object_id", "content_type", "time_measure"),)
 
     def __str__(self):
-        return ''
+        return ""
 
 
 class WellsTemperature(BaseModel):
@@ -438,10 +440,10 @@ class WellsTemperature(BaseModel):
     Модель для представления замеров температур подземных вод. Содержит значения температур
     и обобщенные связи с другими возможными моделями.
     """
-    time_measure = models.TimeField(verbose_name="Время замера", )
+
+    time_measure = models.TimeField(verbose_name="Время замера")
     temperature = models.DecimalField(
-        max_digits=6, decimal_places=2, verbose_name="Температура, ℃",
-        help_text="до двух знаков после запятой"
+        max_digits=6, decimal_places=2, verbose_name="Температура, ℃", help_text="до двух знаков после запятой"
     )
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
@@ -539,8 +541,9 @@ class WellsAquifers(BaseModel):
 class WellsConstruction(BaseModel):
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
     date = models.DateField(verbose_name="Дата установки")
-    construction_type = models.ForeignKey("DictEntities", models.DO_NOTHING, db_column="construction_type",
-                                          verbose_name="Тип конструкции")
+    construction_type = models.ForeignKey(
+        "DictEntities", models.DO_NOTHING, db_column="construction_type", verbose_name="Тип конструкции"
+    )
     diameter = models.IntegerField(verbose_name="Диаметр")
     depth_from = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Глубина от, м")
     depth_till = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Глубина до, м")
@@ -618,6 +621,7 @@ class WellsDepression(BaseModel):
     Содержит информацию о времени замера динамического уровня и
     значениях динамического уровня.
     """
+
     efw_id = models.ForeignKey("WellsEfw", models.CASCADE)
     waterdepths = GenericRelation("WellsWaterDepth")
     rates = GenericRelation("WellsRate")
