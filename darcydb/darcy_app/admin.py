@@ -1,19 +1,48 @@
+import nested_admin
 from django.contrib.admin import DateFieldListFilter
 from django.contrib.gis import admin
 from import_export.admin import ImportExportModelAdmin
-import nested_admin
 from jet.admin import CompactInline
-from .filters import DocSourceFilter, DocTypeFilter, TypeEfwFilter, WellsTypeFilter
-from .forms import (WellsForm, WellsRegimeForm, WellsWaterDepthPumpForm,
-                    WellsEfwForm, DocumentsForm, BalanceForm, FieldsForm,
-                    IntakesForm, WellsWaterDepthForm, WellsAquifersForm)
-from .models import (Documents, Wells, Intakes, WellsRegime, WellsWaterDepth,
-                     WellsRate, WellsAquifers, WellsDepression, WellsEfw,
-                     WellsChem, WellsSample, DictEntities, Fields, Balance,
-                     Attachments, DocumentsPath, DictPump, WellsDepth, WellsTemperature,
-                     WellsConstruction, Entities, DictDocOrganizations, WellsDrilledData)
-from .resources import WellsRegimeResource
 
+from .filters import DocSourceFilter, DocTypeFilter, TypeEfwFilter, WellsTypeFilter
+from .forms import (
+    BalanceForm,
+    DocumentsForm,
+    FieldsForm,
+    IntakesForm,
+    WellsAquifersForm,
+    WellsEfwForm,
+    WellsForm,
+    WellsRegimeForm,
+    WellsWaterDepthForm,
+    WellsWaterDepthPumpForm,
+)
+from .models import (
+    Attachments,
+    Balance,
+    DictDocOrganizations,
+    DictEntities,
+    DictPump,
+    Documents,
+    DocumentsPath,
+    Entities,
+    Fields,
+    Intakes,
+    Wells,
+    WellsAquifers,
+    WellsChem,
+    WellsConstruction,
+    WellsDepression,
+    WellsDepth,
+    WellsDrilledData,
+    WellsEfw,
+    WellsRate,
+    WellsRegime,
+    WellsSample,
+    WellsTemperature,
+    WellsWaterDepth,
+)
+from .resources import WellsRegimeResource
 
 ADMIN_ORDERING = [
     (
@@ -43,7 +72,6 @@ class DarcyAdminArea(admin.AdminSite):
     index_title = "Админпанель Дарси"
 
 
-
 darcy_admin = DarcyAdminArea(name="darcy_admin")
 
 
@@ -51,8 +79,11 @@ darcy_admin = DarcyAdminArea(name="darcy_admin")
 # -------------------------------------------------------------------------------
 class AttachmentsInline(nested_admin.NestedGenericTabularInline):
     model = Attachments
-    fields = ('img', 'image_tag',)
-    readonly_fields = ('image_tag',)
+    fields = (
+        "img",
+        "image_tag",
+    )
+    readonly_fields = ("image_tag",)
     extra = 1
 
 
@@ -142,17 +173,38 @@ class WellsSampleInline(nested_admin.NestedStackedInline):
 class WellsAdmin(nested_admin.NestedModelAdmin):
     form = WellsForm
     model = Wells
-    inlines = [DocumentsInline, WellsAquifersInline, WellsConstructionInline,
-               WellsDrilledDataInline, WellsEfwInlines, WellsSampleInline, AttachmentsInline]
+    inlines = [
+        DocumentsInline,
+        WellsAquifersInline,
+        WellsConstructionInline,
+        WellsDrilledDataInline,
+        WellsEfwInlines,
+        WellsSampleInline,
+        AttachmentsInline,
+    ]
     fields = (
-        'name', 'typo', 'head', 'moved', 'intake', 'field',
-        ('latitude_degrees', 'latitude_minutes', 'latitude_seconds'),
-        ('longitude_degrees', 'longitude_minutes', 'longitude_seconds'),
-        'geom', 'name_gwk', 'name_drill', 'name_subject',
+        "name",
+        "typo",
+        "head",
+        "moved",
+        "intake",
+        "field",
+        ("latitude_degrees", "latitude_minutes", "latitude_seconds"),
+        ("longitude_degrees", "longitude_minutes", "longitude_seconds"),
+        "geom",
+        "name_gwk",
+        "name_drill",
+        "name_subject",
     )
-    list_display = ("__str__", "typo",)
+    list_display = (
+        "__str__",
+        "typo",
+    )
     list_filter = (WellsTypeFilter,)
-    search_fields = ("extra", "uuid",)
+    search_fields = (
+        "extra",
+        "uuid",
+    )
 
 
 darcy_admin.register(Wells, WellsAdmin)
@@ -245,7 +297,10 @@ class WellsRegimeAdmin(ImportExportModelAdmin, nested_admin.NestedModelAdmin):
     model = WellsRegime
     inlines = [WellsWaterDepthInline, WellsTemperatureInline, WellsRateInline]
     list_display = ("well", "date")
-    list_filter = ('well', ('date', DateFieldListFilter),)
+    list_filter = (
+        "well",
+        ("date", DateFieldListFilter),
+    )
     resource_class = WellsRegimeResource
 
 
@@ -262,12 +317,9 @@ class WellsSampleAdmin(nested_admin.NestedModelAdmin):
     list_filter = ("date", "well")
 
 
-
 darcy_admin.register(WellsSample, WellsSampleAdmin)
-
 
 # Others
 # -------------------------------------------------------------------------------
 darcy_admin.register(DictPump)
 darcy_admin.register(DictDocOrganizations)
-
