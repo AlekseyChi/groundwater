@@ -236,6 +236,9 @@ class AquiferCodes(models.Model):
         verbose_name_plural = "Словарь гидрогеологических подразделений"
         db_table = "aquifer_codes"
 
+    def __str__(self):
+        return self.aquifer_name
+
 
 class Wells(BaseModel):
     """
