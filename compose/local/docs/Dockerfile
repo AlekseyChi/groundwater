@@ -32,6 +32,8 @@ ARG BUILD_ENVIRONMENT
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 
+RUN apt-get update && apt-get install -y  binutils libproj-dev gdal-bin 
+
 RUN apt-get update && apt-get install --no-install-recommends -y \
   # To run the Makefile
   make \

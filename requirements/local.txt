@@ -34,6 +34,14 @@ billiard==4.1.0
     # via celery
 black==23.3.0
     # via -r local.in
+boto3==1.27.0
+    # via
+    #   -r base.in
+    #   django-storages
+botocore==1.30.0
+    # via
+    #   boto3
+    #   s3transfer
 celery==5.3.1
     # via
     #   -r base.in
@@ -104,6 +112,7 @@ django==4.1.9
     #   django-jet-reboot
     #   django-model-utils
     #   django-redis
+    #   django-storages
     #   django-stubs
     #   django-stubs-ext
     #   django-timezone-field
@@ -137,9 +146,13 @@ django-jet-reboot==1.3.3
     # via -r base.in
 django-model-utils==4.3.1
     # via -r base.in
+django-nested-admin==4.0.2
+    # via -r base.in
 django-redis==5.3.0
     # via -r base.in
 django-simple-history==3.3.0
+    # via -r base.in
+django-storages[boto3]==1.13.2
     # via -r base.in
 django-stubs==4.2.1
     # via
@@ -209,6 +222,10 @@ jedi==0.18.2
     # via ipython
 jinja2==3.1.2
     # via sphinx
+jmespath==1.0.1
+    # via
+    #   boto3
+    #   botocore
 jsonschema==4.17.3
     # via drf-spectacular
 kombu==5.3.1
@@ -323,9 +340,12 @@ python-crontab==2.7.1
     # via django-celery-beat
 python-dateutil==2.8.2
     # via
+    #   botocore
     #   celery
     #   faker
     #   python-crontab
+python-monkey-business==1.0.0
+    # via django-nested-admin
 python-slugify==8.0.1
     # via -r base.in
 python3-openid==3.2.0
@@ -352,10 +372,13 @@ requests==2.31.0
     #   sphinx
 requests-oauthlib==1.3.1
     # via django-allauth
+s3transfer==0.6.1
+    # via boto3
 six==1.16.0
     # via
     #   livereload
     #   python-dateutil
+    #   python-monkey-business
 sniffio==1.3.0
     # via anyio
 snowballstemmer==2.2.0
@@ -432,8 +455,10 @@ tzdata==2023.3
     #   django-celery-beat
 uritemplate==4.1.1
     # via drf-spectacular
-urllib3==2.0.3
-    # via requests
+urllib3==1.26.16
+    # via
+    #   botocore
+    #   requests
 vine==5.0.0
     # via
     #   amqp

@@ -2,7 +2,6 @@
 Base settings to build other settings files upon.
 """
 from pathlib import Path
-
 import environ
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
@@ -78,15 +77,16 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     "drf_spectacular",
-    "import_export",
-    "simple_history",
+    'import_export',
+    'simple_history',
+    'nested_admin',
 ]
 
 LOCAL_APPS = [
     "darcydb.users",
-    "darcy_app",
-    "legacy",
-    "fts",
+    "darcydb.darcy_app",
+    "darcydb.legacy",
+    "darcydb.fts",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -336,6 +336,7 @@ SPECTACULAR_SETTINGS = {
 X_FRAME_OPTIONS = "SAMEORIGIN"
 JET_DEFAULT_THEME = "default"
 JET_SIDE_MENU_COMPACT = True
+JET_CHANGE_FORM_SIBLING_LINKS = False
 JET_SIDE_MENU_ITEMS = {  # A list of application or custom item dicts
     "darcy_admin": [
         {
@@ -352,3 +353,10 @@ JET_SIDE_MENU_ITEMS = {  # A list of application or custom item dicts
         },
     ]
 }
+
+AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = env('AWS_S3_REGION_NAME')
+AWS_S3_SIGNATURE_VERSION = env('AWS_S3_SIGNATURE_VERSION')
+DEFAULT_FILE_STORAGE = 'myapp.storage_backends.YandexObjectStorage'
