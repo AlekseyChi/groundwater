@@ -38,7 +38,8 @@ RUN addgroup --system django \
 
 RUN mkdir -p ./darcydb/media && chown -R django:django ./darcydb/media
 #GDAL
-RUN apt-get update && apt-get install -y  binutils libproj-dev gdal-bin 
+
+RUN apt-get update && apt-get install -y  binutils libproj-dev gdal-bin
 
 # Install required system dependencies
 RUN apt-get update && apt-get install --no-install-recommends -y \
