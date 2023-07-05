@@ -28,3 +28,5 @@ django-simple-history==3.3.0
 django-filter==23.1
 django-crum==0.7.9
 django-nested-admin==4.0.2 
+boto3
+django-storages[boto3]

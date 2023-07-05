@@ -56,6 +56,9 @@ class DocumentsPathInline(nested_admin.NestedTabularInline):
     model = DocumentsPath
     extra = 1
 
+    def presigned_url(self, instance):
+        return instance.presigned_url
+
 
 class DocumentsInline(nested_admin.NestedGenericStackedInline):
     form = DocumentsForm

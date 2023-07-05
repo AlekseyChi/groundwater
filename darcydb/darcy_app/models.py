@@ -1,4 +1,6 @@
 import uuid
+import boto3
+from django.conf import settings
 from django.utils import timezone
 from django.contrib.gis.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -10,6 +12,7 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from simple_history.models import HistoricalRecords
 from celery import shared_task
+from .storage_backends import YandexObjectStorage
 
 
 def user_directory_path(instance, filename):
@@ -161,7 +164,7 @@ class Documents(BaseModel):
 
 class DocumentsPath(BaseModel):
     doc = models.ForeignKey('Documents', on_delete=models.CASCADE)
-    path = models.FileField(verbose_name='Файл документа')
+    path = models.FileField(storage=YandexObjectStorage(), verbose_name='Файл документа')
     history = HistoricalRecords(table_name='documents_path_history')
 
     class Meta:
@@ -172,21 +175,37 @@ class DocumentsPath(BaseModel):
     def __str__(self):
         return self.path.name
 
-    def save(self, *args, **kwargs):
-        file = self.path
-        self.path = ""
-        super(DocumentsPath, self).save(*args, **kwargs)
-        if file:
-            file_path = self.generate_file_path(file.name)
-            save_file_to_media_directory.delay(self.pk, file.read(), file_path)
+    # def save(self, *args, **kwargs):
+    #     file = self.path
+    #     self.path = ""
+    #     super(DocumentsPath, self).save(*args, **kwargs)
+    #     if file:
+    #         file_path = self.generate_file_path(file.name)
+    #         save_file_to_media_directory.delay(self.pk, file.read(), file_path)
 
-    def delete(self, *args, **kwargs):
-        storage, path = self.path.storage, self.path.path
-        super(DocumentsPath, self).delete(*args, **kwargs)
-        storage.delete(path)
+    # def delete(self, *args, **kwargs):
+    #     storage, path = self.path.storage, self.path.path
+    #     super(DocumentsPath, self).delete(*args, **kwargs)
+    #     storage.delete(path)
+    #
+    # def generate_file_path(self, filename):
+    #     return 'doc_{0}/{1}'.format(self.doc.pk, filename)
 
-    def generate_file_path(self, filename):
-        return 'doc_{0}/{1}'.format(self.doc.pk, filename)
+    def generate_presigned_url(self):
+        s3_client = boto3.client('s3',
+                                 region_name=settings.AWS_S3_REGION_NAME,
+                                 aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                                 aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+                                 endpoint_url=YandexObjectStorage.endpoint_url,
+                                 config=boto3.session.Config(signature_version=settings.AWS_S3_SIGNATURE_VERSION))
+
+        presigned_url = s3_client.generate_presigned_url('get_object',
+                                                         Params={'Bucket': settings.AWS_STORAGE_BUCKET_NAME,
+                                                                 'Key': self.path.name},
+                                                         ExpiresIn=3600)  # URL expires in 1 hour
+        return presigned_url
+
+    presigned_url = property(generate_presigned_url)
 
 
 @shared_task
