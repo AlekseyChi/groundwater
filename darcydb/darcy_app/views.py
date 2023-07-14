@@ -1,14 +1,7 @@
-# from django.contrib.contenttypes.models import ContentType
 from rest_framework import generics, mixins
 
 from .models import WellsEfw, WellsRegime
 from .serializers import WellsEfwSerializer, WellsRegimeSerializer
-
-# , status
-# from rest_framework.response import Response
-
-
-# , WellsWaterDepthSerializer
 
 
 class WellsRegimeView(

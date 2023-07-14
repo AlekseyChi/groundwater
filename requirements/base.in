@@ -27,3 +27,6 @@ django-jet-reboot # https://github.com/assem-ch/django-jet-reboot
 django-simple-history # https://github.com/jazzband/django-simple-history
 django-filter # https://github.com/carltongibson/django-filter
 django-crum # https://github.com/ninemoreminutes/django-crum
+django-nested-admin # https://github.com/theatlantic/django-nested-admin
+boto3
+django-storages[boto3]
