@@ -76,14 +76,6 @@ http:
       tls:
         certResolver: letsencrypt
 
-    geoserver-router:
-      rule: 'Host(`geoserver.darcydb.ru`)'
-      entryPoints:
-        - web-secure
-      service: geoserver
-      tls:
-        certResolver: letsencrypt
-
   middlewares:
     csrf:
       # https://docs.traefik.io/master/middlewares/headers/#hostsproxyheaders
@@ -116,11 +108,6 @@ http:
       loadBalancer:
         servers:
           - url: http://172.18.0.1:10000
-
-    geoserver:
-      loadBalancer:
-        servers:
-          - url: http://geoserver:8080
 
 providers:
   # https://docs.traefik.io/master/providers/file/
