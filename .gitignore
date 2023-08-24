@@ -281,3 +281,4 @@ geoserver/data*
 .env
 .envs/*
 !.envs/.local/
+scripts/sources/

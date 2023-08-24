@@ -22,7 +22,7 @@ from .models import (
     Balance,
     DictDocOrganizations,
     DictEntities,
-    DictPump,
+    DictEquipment,
     Documents,
     DocumentsPath,
     Entities,
@@ -195,6 +195,7 @@ class WellsAdmin(nested_admin.NestedModelAdmin):
         "name_gwk",
         "name_drill",
         "name_subject",
+        "comments",
     )
     list_display = (
         "__str__",
@@ -321,5 +322,5 @@ darcy_admin.register(WellsSample, WellsSampleAdmin)
 
 # Others
 # -------------------------------------------------------------------------------
-darcy_admin.register(DictPump)
+darcy_admin.register(DictEquipment)
 darcy_admin.register(DictDocOrganizations)

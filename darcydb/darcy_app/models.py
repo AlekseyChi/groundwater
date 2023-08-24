@@ -83,14 +83,15 @@ class DictEntities(BaseModel):
         return self.name
 
 
-class DictPump(BaseModel):
-    name = models.CharField(max_length=250, verbose_name="Название насоса")
-    brand = models.CharField(max_length=250, verbose_name="Марка")
+class DictEquipment(BaseModel):
+    typo = models.ForeignKey("DictEntities", models.CASCADE, verbose_name="Тип оборудования")
+    name = models.CharField(max_length=50, verbose_name="Название", blank=True, null=True)
+    brand = models.CharField(max_length=50, verbose_name="Марка")
 
     class Meta:
-        verbose_name = "Словарь насосов"
-        verbose_name_plural = "Словарь насосов"
-        db_table = "dict_pump"
+        verbose_name = "Словарь оборудования"
+        verbose_name_plural = "Словарь обородувания"
+        db_table = "dict_equipment"
 
     def __str__(self):
         return self.name
@@ -202,7 +203,7 @@ class DocumentsPath(BaseModel):
     #     storage.delete(path)
     #
     # def generate_file_path(self, filename):
-    #     return 'doc_{0}/{1}'.format(self.doc.pk, filename)
+    #     return "doc_{0}/{1}".format(self.doc.pk, filename)
 
     def generate_presigned_url(self):
         s3_client = boto3.client(
@@ -354,17 +355,43 @@ class WellsDrilledData(BaseModel):
     """
 
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
-    date = models.DateField(verbose_name="Дата бурения")
+    date_start = models.DateField(verbose_name="Дата начала бурения")
+    date_end = models.DateField(verbose_name="Дата окончания бурения")
+    organization = models.CharField(max_length=100, blank=True, null=True, verbose_name="Буровая организация")
     doc = models.ForeignKey("Documents", models.CASCADE, blank=True, null=True, verbose_name="Документ")
     waterdepths = GenericRelation("WellsWaterDepth")
     rates = GenericRelation("WellsRate")
-    depts = GenericRelation("WellsDepth")
+    depths = GenericRelation("WellsDepth")
+    conditions = GenericRelation("WellsCondition")
     history = HistoricalRecords(table_name="wells_drilled_data_history")
 
     class Meta:
         verbose_name = "Данные бурения"
         verbose_name_plural = "Данные бурения"
         db_table = "wells_drilled_data"
+        unique_together = (("well", "date_end"),)
+        ordering = (
+            "-date_end",
+            "well",
+        )
+
+    def __str__(self):
+        return f"{self.well} {self.date_end}"
+
+
+class WellsGeophysics(BaseModel):
+    well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
+    date = models.DateField(verbose_name="Дата производства работ")
+    organization = models.CharField(max_length=100, blank=True, null=True, verbose_name="Наименование организации")
+    researches = models.TextField(verbose_name="Геофизические исследования")
+    conclusion = models.TextField(verbose_name="Результаты исследований")
+    doc = models.ForeignKey("Documents", models.CASCADE, blank=True, null=True, verbose_name="Документ")
+    history = HistoricalRecords(table_name="wells_geophysics_history")
+
+    class Meta:
+        verbose_name = "Геофизические исследования"
+        verbose_name_plural = "Геофизические исследования"
+        db_table = "wells_geophysics"
         unique_together = (("well", "date"),)
         ordering = (
             "-date",
@@ -532,6 +559,84 @@ class WellsAquifers(BaseModel):
         return ""
 
 
+class WellsLithology(BaseModel):
+    well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
+    rock = models.ForeignKey("DictEntities", models.DO_NOTHING, verbose_name="Порода", related_name="rock")
+    color = models.ForeignKey(
+        "DictEntities", models.DO_NOTHING, verbose_name="Цвет", related_name="color", blank=True, null=True
+    )
+    composition = models.ForeignKey(
+        "DictEntities",
+        models.DO_NOTHING,
+        verbose_name="Гранулометрический состав",
+        related_name="composition",
+        blank=True,
+        null=True,
+    )
+    structure = models.ForeignKey(
+        "DictEntities", models.DO_NOTHING, verbose_name="Структура", related_name="structure", blank=True, null=True
+    )
+    mineral = models.ForeignKey(
+        "DictEntities",
+        models.DO_NOTHING,
+        verbose_name="Минеральный состав",
+        related_name="mineral_cmspt",
+        blank=True,
+        null=True,
+    )
+    secondary_change = models.ForeignKey(
+        "DictEntities",
+        models.DO_NOTHING,
+        verbose_name="Вторичные изменения",
+        related_name="secondary_change",
+        blank=True,
+        null=True,
+    )
+    cement = models.ForeignKey(
+        "DictEntities", models.DO_NOTHING, verbose_name="Состав цемента", related_name="cement", blank=True, null=True
+    )
+    fracture = models.ForeignKey(
+        "DictEntities",
+        models.DO_NOTHING,
+        verbose_name="Трещиноватость",
+        related_name="fracture",
+        blank=True,
+        null=True,
+    )
+    weathering = models.ForeignKey(
+        "DictEntities",
+        models.DO_NOTHING,
+        verbose_name="Степень выветрелости",
+        related_name="weathering",
+        blank=True,
+        null=True,
+    )
+    caverns = models.ForeignKey(
+        "DictEntities", models.DO_NOTHING, verbose_name="Кавернозность", related_name="caverns", blank=True, null=True
+    )
+    inclusions = models.ForeignKey(
+        "DictEntities", models.DO_NOTHING, verbose_name="Включения", related_name="inclusions", blank=True, null=True
+    )
+    bot_elev = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        verbose_name="Глубина до, м",
+        help_text="до двух знаков после запятой",
+    )
+    doc = models.ForeignKey("Documents", models.CASCADE, blank=True, null=True, verbose_name="Документ")
+    history = HistoricalRecords(table_name="wells_lithology_history")
+
+    class Meta:
+        verbose_name = "Литологическая колонка"
+        verbose_name_plural = "Литологические колонки"
+        db_table = "wells_lithology"
+        unique_together = (("well", "rock", "bot_elev"),)
+        ordering = ("bot_elev",)
+
+    def __str__(self):
+        return ""
+
+
 class WellsConstruction(BaseModel):
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
     date = models.DateField(verbose_name="Дата установки")
@@ -567,11 +672,22 @@ class WellsEfw(BaseModel):
         "DictEntities", models.DO_NOTHING, db_column="type_efw", related_name="type_efw", verbose_name="Тип опыта"
     )
     pump_type = models.ForeignKey(
-        "DictPump",
+        "DictEquipment",
         models.DO_NOTHING,
         db_column="pump_type",
         related_name="pump_type",
         verbose_name="Тип водоподъемного оборудования",
+        blank=True,
+        null=True,
+    )
+    level_meter = models.ForeignKey(
+        "DictEquipment",
+        models.DO_NOTHING,
+        db_column="level_meter",
+        related_name="level_meter",
+        verbose_name="Уровнемер",
+        blank=True,
+        null=True,
     )
     pump_depth = models.DecimalField(
         max_digits=6,
@@ -590,7 +706,8 @@ class WellsEfw(BaseModel):
         null=True,
     )
     pump_time = models.TimeField(verbose_name="Продолжительность опыта")
-    rates = GenericRelation("WellsRate")
+    vessel_capacity = models.IntegerField(blank=True, null=True, verbose_name="Ёмкость мерного сосуда, м3")
+    vessel_time = models.TimeField(blank=True, null=True, verbose_name="Время наполнения ёмкости, сек")
     doc = models.ForeignKey("Documents", models.CASCADE, blank=True, null=True, verbose_name="Документ")
     waterdepths = GenericRelation("WellsWaterDepth")
     history = HistoricalRecords(table_name="wells_efw_history")
@@ -650,7 +767,7 @@ class WellsSample(BaseModel):
         verbose_name = "Хим. опробование"
         verbose_name_plural = "Хим. опробования"
         db_table = "wells_sample"
-        unique_together = (("well", "date"),)
+        unique_together = (("well", "date", "name"),)
         ordering = (
             "-date",
             "well",
@@ -788,3 +905,60 @@ class Attachments(BaseModel):
 
     image_tag.short_description = "Image"
     image_tag.allow_tags = True
+
+
+class License(BaseModel):
+    name = models.CharField(unique=True, max_length=11, verbose_name="Номер лицензии")
+    department = models.ForeignKey(
+        "DictDocOrganizations", models.DO_NOTHING, db_column="department", verbose_name="Орган, выдавший лицензию"
+    )
+    date_start = models.DateField(blank=True, null=True, verbose_name="Дата выдачи лицензии")
+    date_end = models.DateField(verbose_name="Дата окончания лицензии")
+    comments = models.TextField(blank=True, null=True, verbose_name="Примечание")
+    gw_purpose = models.TextField(verbose_name="Целевое назначение ПВ")
+    docs = GenericRelation("Documents")
+    history = HistoricalRecords(table_name="license_history")
+
+    class Meta:
+        verbose_name = "Лицензия"
+        verbose_name_plural = "Лицензии"
+        db_table = "license"
+
+    def __str__(self):
+        return self.name
+
+
+class LicenseToWells(BaseModel):
+    well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
+    license = models.ForeignKey("License", models.CASCADE, verbose_name="Лицензия")
+    history = HistoricalRecords(table_name="license_to_wells_history")
+
+    class Meta:
+        verbose_name = "Связь скважины с лицензией"
+        verbose_name_plural = "Связи скважин с лицензиями"
+        db_table = "license_to_wells"
+        unique_together = (("well", "license"),)
+
+
+class WaterUsers(BaseModel):
+    name = models.CharField(max_length=150, unique=True, verbose_name="Водопользователь")
+    position = models.TextField(blank=True, null=True, verbose_name="Адрес")
+    history = HistoricalRecords(table_name="water_users_history")
+
+    class Meta:
+        verbose_name = "Водопользователь"
+        verbose_name_plural = "Водопользователи"
+        db_table = "water_users"
+
+
+class WaterUsersChange(BaseModel):
+    water_user = models.ForeignKey("WaterUsers", models.CASCADE, verbose_name="Водопользователь")
+    date = models.DateField(verbose_name="Дата присвоения")
+    license = models.ForeignKey("License", models.CASCADE, verbose_name="Номер лицензии")
+    history = HistoricalRecords(table_name="water_users_change_history")
+
+    class Meta:
+        verbose_name = "История водопользователя"
+        verbose_name_plural = "История водопользователя"
+        db_table = "water_users_change"
+        unique_together = (("water_user", "date"),)

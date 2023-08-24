@@ -42,6 +42,7 @@ class WellsForm(forms.ModelForm):
         help_text="Можно указать несколько номеров через запятую",
         delimiter=",",
     )
+    comments = forms.CharField(required=False, label="Дополнительные данные по скважине")
 
     class Meta:
         model = Wells
@@ -64,6 +65,7 @@ class WellsForm(forms.ModelForm):
             self.fields["name_gwk"].initial = self.instance.extra.get("name_gwk", "")
             self.fields["name_drill"].initial = self.instance.extra.get("name_drill", "")
             self.fields["name_subject"].initial = self.instance.extra.get("name_subject", "")
+            self.fields["comments"].initial = self.instance.extra.get("comments", "")
 
         if self.instance.pk and self.instance.geom:
             point = self.instance.geom
@@ -96,6 +98,7 @@ class WellsForm(forms.ModelForm):
             "name_gwk": self.cleaned_data["name_gwk"],
             "name_drill": self.cleaned_data["name_drill"],
             "name_subject": self.cleaned_data["name_subject"],
+            "comments": self.cleaned_data["comments"],
         }
         lat = self._dms_to_decimal(
             self.cleaned_data["latitude_degrees"],
