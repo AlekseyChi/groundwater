@@ -197,6 +197,7 @@ class WellsWaterDepthPumpForm(forms.ModelForm):
 class WellsLithologyForm(forms.ModelForm):
     class Meta:
         model = WellsLithology
+        fields = "__all__"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
