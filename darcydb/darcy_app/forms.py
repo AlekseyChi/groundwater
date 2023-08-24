@@ -16,6 +16,7 @@ from .models import (
     WellsConstruction,
     WellsDepression,
     WellsEfw,
+    WellsLithology,
     WellsRegime,
     WellsWaterDepth,
 )
@@ -191,6 +192,27 @@ class WellsWaterDepthPumpForm(forms.ModelForm):
     class Meta:
         model = WellsWaterDepth
         exclude = ("content_type", "object_id", "content_object", "type_level")
+
+
+class WellsLithologyForm(forms.ModelForm):
+    class Meta:
+        model = WellsLithology
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["rock"].queryset = DictEntities.objects.filter(entity__name="тип пород")
+        self.fields["color"].queryset = DictEntities.objects.filter(entity__name="цвет пород")
+        self.fields["composition"].queryset = DictEntities.objects.filter(entity__name="гран.состав")
+        self.fields["structure"].queryset = DictEntities.objects.filter(entity__name="структура породы")
+        self.fields["mineral"].queryset = DictEntities.objects.filter(entity__name="минеральный состав")
+        self.fields["secondary_change"].queryset = DictEntities.objects.filter(
+            entity__name="тип вторичного изменения пород"
+        )
+        self.fields["cement"].queryset = DictEntities.objects.filter(entity__name="тип цемента")
+        self.fields["fracture"].queryset = DictEntities.objects.filter(entity__name="хар. трещиноватости пород")
+        self.fields["weathering"].queryset = DictEntities.objects.filter(entity__name="степень выветрелости пород")
+        self.fields["caverns"].queryset = DictEntities.objects.filter(entity__name="тип каверн")
+        self.fields["inclusions"].queryset = DictEntities.objects.filter(entity__name="тип включения")
 
 
 class WellsDepressionForm(forms.ModelForm):

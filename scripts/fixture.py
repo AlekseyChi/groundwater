@@ -46,10 +46,10 @@ from darcydb.users.models import User
 data_source = {"data_source": 0}
 
 
-def check_null(row):
+def check_null(row, entity):
     value = None
     if row:
-        value = DictEntities.objects.filter(extra__old_code=row).first()
+        value = DictEntities.objects.filter(extra__old_code=row, entity__name=entity).first()
     return value
 
 
@@ -310,23 +310,23 @@ def run():
     wl_instances = []
     for index, row in wells_lithology.iterrows():
         well = wells_dict.get(row["ScvID"])
-        rock = DictEntities.objects.filter(extra__old_code=row["Poroda"]).first()
+        rock = DictEntities.objects.filter(extra__old_code=row["Poroda"], entity__name="тип пород").first()
         user = User.objects.get(id=1)
         if well and rock:
             wl_instances.append(
                 WellsLithology(
                     well=well,
                     rock=rock,
-                    color=check_null(row["Color"]),
-                    composition=check_null(row["GranSost"]),
-                    structure=check_null(row["Structure"]),
-                    mineral=check_null(row["Mineral"]),
-                    secondary_change=check_null(row["SecChange"]),
-                    cement=check_null(row["SostCem"]),
-                    fracture=check_null(row["CharTresch"]),
-                    weathering=check_null(row["StepVivetr"]),
-                    caverns=check_null(row["Kavernosn"]),
-                    inclusions=check_null(row["Vkluchenia"]),
+                    color=check_null(row["Color"], entity="цвет пород"),
+                    composition=check_null(row["GranSost"], entity="гран.состав"),
+                    structure=check_null(row["Structure"], entity="структура породы"),
+                    mineral=check_null(row["Mineral"], entity="минеральный состав"),
+                    secondary_change=check_null(row["SecChange"], entity="тип вторичного изменения пород"),
+                    cement=check_null(row["SostCem"], entity="тип цемента"),
+                    fracture=check_null(row["CharTresch"], entity="хар. трещиноватости пород"),
+                    weathering=check_null(row["StepVivetr"], entity="степень выветрелости пород"),
+                    caverns=check_null(row["Kavernosn"], entity="тип каверн"),
+                    inclusions=check_null(row["Vkluchenia"], entity="тип включения"),
                     bot_elev=row["PodoshvaDeep"],
                     extra=data_source,
                     last_user=user,

@@ -13,6 +13,7 @@ from .forms import (
     WellsAquifersForm,
     WellsEfwForm,
     WellsForm,
+    WellsLithologyForm,
     WellsRegimeForm,
     WellsWaterDepthForm,
     WellsWaterDepthPumpForm,
@@ -36,6 +37,8 @@ from .models import (
     WellsDepth,
     WellsDrilledData,
     WellsEfw,
+    WellsGeophysics,
+    WellsLithology,
     WellsRate,
     WellsRegime,
     WellsSample,
@@ -170,15 +173,29 @@ class WellsSampleInline(nested_admin.NestedStackedInline):
     max_num = 1
 
 
+class WellsGeophysicsInline(nested_admin.NestedStackedInline):
+    model = WellsGeophysics
+    extra = 1
+    max_num = 1
+
+
+class WellsLithologyInline(nested_admin.NestedTabularInline):
+    model = WellsLithology
+    form = WellsLithologyForm
+    extra = 1
+
+
 class WellsAdmin(nested_admin.NestedModelAdmin):
     form = WellsForm
     model = Wells
     inlines = [
         DocumentsInline,
         WellsAquifersInline,
+        WellsLithologyInline,
         WellsConstructionInline,
         WellsDrilledDataInline,
         WellsEfwInlines,
+        WellsGeophysicsInline,
         WellsSampleInline,
         AttachmentsInline,
     ]
