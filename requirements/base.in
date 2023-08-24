@@ -9,7 +9,10 @@ django-celery-beat  # https://github.com/celery/django-celery-beat
 flower  # https://github.com/mher/flower
 geopandas
 pandas
-django-postgres-copy
+matplotlib
+tilemapbase
+weasyprint
+Jinja2
 
 # Django
 # ------------------------------------------------------------------------------

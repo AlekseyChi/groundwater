@@ -20,6 +20,7 @@ from .models import (
     WellsRegime,
     WellsWaterDepth,
 )
+from .utils.passport_gen import generate_passport
 
 
 class GeoWidget(forms.OSMWidget):
@@ -118,6 +119,7 @@ class WellsForm(forms.ModelForm):
 
         if commit:
             instance.save()
+        generate_passport(instance)
         return instance
 
 

@@ -39,7 +39,11 @@ RUN addgroup --system django \
 RUN mkdir -p ./darcydb/media && chown -R django:django ./darcydb/media
 #GDAL
 
-RUN apt-get update && apt-get install -y  binutils libproj-dev gdal-bin
+RUN apt-get update && apt-get install -y  binutils libproj-dev gdal-bin libpangocairo-1.0-0
+COPY ./fonts /fonts
+RUN cp -a /fonts/. /usr/share/fonts \
+    && rm -rf /fonts \
+    && fc-cache -f -v
 
 # Install required system dependencies
 RUN apt-get update && apt-get install --no-install-recommends -y \

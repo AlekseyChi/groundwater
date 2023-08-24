@@ -1,0 +1,123 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Times New Roman';
+  font-size: 12pt;
+  line-height: 1.4;
+  text-align: justify;
+}
+
+@page {
+  margin: 20mm 15mm 15mm 15mm;
+  @top-center {
+    content: element(header);
+    width: 100%;
+  }
+  @bottom-center {
+    content: counter(page);
+    font-size: 8pt;
+  }
+}
+
+@page: first {
+  border-style: double;
+  border-width: 10px;
+}
+#header {
+  position: running(header);
+  padding-top: 20px;
+  font-size: 15pt;
+  font-weight: bold;
+  text-align: center;
+  padding-bottom: 5px;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid black;
+}
+#footer {
+  position: running(footer);
+}
+
+.title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 14pt;
+}
+
+.company {
+  font-size: 16pt;
+  color: #000080;
+  padding-bottom: 15px;
+}
+
+.company-info {
+  margin-left: -11px;
+  margin-right: -11px;
+  border: 3px solid;
+  border-style: double;
+  font-size: 11pt;
+}
+
+.pass-body {
+  padding-top: 50px;
+}
+
+.intake-info {
+  padding: 15px;
+}
+
+.signature {
+  padding-top: 20rem;
+  width: 100%;
+}
+
+.info {
+  counter-reset: paragraph;
+}
+
+.info p::before {
+  counter-increment: paragraph;
+  content: counter(paragraph) '. ';
+}
+
+.content {
+  font-weight: bold;
+  text-align: left !important;
+}
+h4 {
+  font-size: 12pt;
+  text-align: center;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-base tr th,
+td {
+  border: 1px solid;
+  text-align: center;
+}
+
+.table-span {
+  table-layout: fixed;
+  font-size: 10pt;
+}
+
+.rotate {
+  transform: rotate(270deg);
+  white-space: pre-wrap;
+  font-size: 9pt;
+  line-height: 1;
+}
+
+.inside-rotate-td {
+  width: 7%;
+  height: 70px;
+}
+
+.pump-complex td {
+  text-align: left;
+  border: none;
+}

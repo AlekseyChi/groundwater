@@ -44,6 +44,8 @@ botocore==1.30.0
     # via
     #   boto3
     #   s3transfer
+brotli==1.0.9
+    # via fonttools
 celery==5.3.1
     # via
     #   -r base.in
@@ -58,6 +60,7 @@ cffi==1.15.1
     # via
     #   argon2-cffi-bindings
     #   cryptography
+    #   weasyprint
 cfgv==3.3.1
     # via pre-commit
 charset-normalizer==3.1.0
@@ -83,6 +86,8 @@ cligj==0.7.2
     # via fiona
 colorama==0.4.6
     # via sphinx-autobuild
+contourpy==1.1.0
+    # via matplotlib
 coverage==7.2.7
     # via
     #   -r local.in
@@ -93,6 +98,10 @@ cron-descriptor==1.4.0
     # via django-celery-beat
 cryptography==41.0.3
     # via pyjwt
+cssselect2==0.7.0
+    # via weasyprint
+cycler==0.11.0
+    # via matplotlib
 decorator==5.1.1
     # via
     #   ipdb
@@ -159,8 +168,6 @@ django-model-utils==4.3.1
     # via -r base.in
 django-nested-admin==4.0.2
     # via -r base.in
-django-postgres-copy==2.7.3
-    # via -r base.in
 django-redis==5.3.0
     # via -r base.in
 django-simple-history==3.3.0
@@ -209,10 +216,16 @@ flake8-isort==6.0.0
     # via -r local.in
 flower==2.0.0
     # via -r base.in
+fonttools[woff]==4.42.1
+    # via
+    #   matplotlib
+    #   weasyprint
 geopandas==0.13.2
     # via -r base.in
 hiredis==2.2.3
     # via -r base.in
+html5lib==1.1
+    # via weasyprint
 humanize==4.6.0
     # via flower
 identify==2.5.24
@@ -238,13 +251,17 @@ isort==5.12.0
 jedi==0.18.2
     # via ipython
 jinja2==3.1.2
-    # via sphinx
+    # via
+    #   -r base.in
+    #   sphinx
 jmespath==1.0.1
     # via
     #   boto3
     #   botocore
 jsonschema==4.17.3
     # via drf-spectacular
+kiwisolver==1.4.5
+    # via matplotlib
 kombu==5.3.1
     # via celery
 lazy-object-proxy==1.9.0
@@ -257,6 +274,8 @@ markupsafe==2.1.3
     # via
     #   jinja2
     #   werkzeug
+matplotlib==3.7.2
+    # via -r base.in
 matplotlib-inline==0.1.6
     # via ipython
 mccabe==0.7.0
@@ -276,6 +295,8 @@ nodeenv==1.8.0
     # via pre-commit
 numpy==1.25.2
     # via
+    #   contourpy
+    #   matplotlib
     #   pandas
     #   shapely
 oauthlib==3.2.2
@@ -288,6 +309,7 @@ packaging==23.1
     # via
     #   black
     #   geopandas
+    #   matplotlib
     #   pytest
     #   pytest-sugar
     #   sphinx
@@ -304,7 +326,11 @@ pexpect==4.8.0
 pickleshare==0.7.5
     # via ipython
 pillow==9.5.0
-    # via -r base.in
+    # via
+    #   -r base.in
+    #   matplotlib
+    #   tilemapbase
+    #   weasyprint
 platformdirs==3.6.0
     # via
     #   black
@@ -330,6 +356,8 @@ pycodestyle==2.10.0
     # via flake8
 pycparser==2.21
     # via cffi
+pydyf==0.7.0
+    # via weasyprint
 pyflakes==3.0.1
     # via flake8
 pygments==2.15.1
@@ -351,6 +379,10 @@ pylint-plugin-utils==0.8.2
     # via
     #   pylint-celery
     #   pylint-django
+pyparsing==3.0.9
+    # via matplotlib
+pyphen==0.14.0
+    # via weasyprint
 pyproj==3.6.0
     # via geopandas
 pyrsistent==0.19.3
@@ -371,6 +403,7 @@ python-dateutil==2.8.2
     #   botocore
     #   celery
     #   faker
+    #   matplotlib
     #   pandas
     #   python-crontab
 python-monkey-business==1.0.0
@@ -400,6 +433,7 @@ requests==2.31.0
     #   djangorestframework-stubs
     #   requests-oauthlib
     #   sphinx
+    #   tilemapbase
 requests-oauthlib==1.3.1
     # via django-allauth
 s3transfer==0.6.1
@@ -410,6 +444,7 @@ six==1.16.0
     # via
     #   asttokens
     #   fiona
+    #   html5lib
     #   livereload
     #   python-dateutil
     #   python-monkey-business
@@ -447,6 +482,12 @@ termcolor==2.3.0
     # via pytest-sugar
 text-unidecode==1.3
     # via python-slugify
+tilemapbase==0.4.7
+    # via -r base.in
+tinycss2==1.2.1
+    # via
+    #   cssselect2
+    #   weasyprint
 tomli==2.0.1
     # via
     #   black
@@ -507,6 +548,13 @@ watchfiles==0.19.0
     # via -r local.in
 wcwidth==0.2.6
     # via prompt-toolkit
+weasyprint==59.0
+    # via -r base.in
+webencodings==0.5.1
+    # via
+    #   cssselect2
+    #   html5lib
+    #   tinycss2
 werkzeug[watchdog]==2.3.6
     # via -r local.in
 whitenoise==6.5.0
@@ -517,6 +565,8 @@ xlrd==2.0.1
     # via tablib
 xlwt==1.3.0
     # via tablib
+zopfli==0.2.2
+    # via fonttools
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

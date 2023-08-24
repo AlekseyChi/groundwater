@@ -1,0 +1,9 @@
+{% for key, value in position_info.items() %}
+<p>
+  <span class="content"><strong>{{ key }}</strong></span>
+  <span class="underline">{{ value }}</span>
+</p>
+{% endfor %}
+<span style="text-align: center">
+  <img src="data:image/jpeg;base64,{{ schema_pic }}" />
+</span>
