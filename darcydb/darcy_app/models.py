@@ -94,7 +94,7 @@ class DictEquipment(BaseModel):
         db_table = "dict_equipment"
 
     def __str__(self):
-        return self.name
+        return self.brand
 
 
 class DictDocOrganizations(BaseModel):
@@ -656,6 +656,9 @@ class WellsConstruction(BaseModel):
         unique_together = (("well", "depth_from", "construction_type", "depth_till", "diameter"),)
         ordering = ("depth_from",)
 
+    def __str__(self):
+        return str(self.pk)
+
 
 class WellsEfw(BaseModel):
     """
@@ -745,7 +748,7 @@ class WellsDepression(BaseModel):
         unique_together = (("efw_id",),)
 
     def __str__(self):
-        return ""
+        return str(self.pk)
 
 
 class WellsSample(BaseModel):
@@ -827,7 +830,7 @@ class WellsChem(BaseModel):
         ordering = ("parameter__chem_name",)
 
     def __str__(self):
-        return ""
+        return str(self.pk)
 
 
 class Fields(BaseModel):
@@ -882,7 +885,7 @@ class Balance(BaseModel):
         db_table = "fields_balance"
 
     def __str__(self):
-        return ""
+        return str(self.pk)
 
 
 class Attachments(BaseModel):
@@ -939,6 +942,9 @@ class LicenseToWells(BaseModel):
         db_table = "license_to_wells"
         unique_together = (("well", "license"),)
 
+    def __str__(self):
+        return f"{self.well} - {self.license}"
+
 
 class WaterUsers(BaseModel):
     name = models.CharField(max_length=150, unique=True, verbose_name="Водопользователь")
@@ -949,6 +955,9 @@ class WaterUsers(BaseModel):
         verbose_name = "Водопользователь"
         verbose_name_plural = "Водопользователи"
         db_table = "water_users"
+
+    def __str__(self):
+        return self.name
 
 
 class WaterUsersChange(BaseModel):
@@ -962,3 +971,6 @@ class WaterUsersChange(BaseModel):
         verbose_name_plural = "История водопользователя"
         db_table = "water_users_change"
         unique_together = (("water_user", "date"),)
+
+    def __str__(self):
+        return f"{self.water_user} - {self.date} - {self.license}"
