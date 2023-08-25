@@ -1,18 +1,19 @@
-<div class="company">{{ company }}</div>
-<div class="company-info">{{ company_info }}</div>
+<div class="company">{{ title_info.company }}</div>
+<div class="company-info">{{ title_info.company_info }}</div>
 <div class="pass-body">
   <div style="font-size: 20pt; padding-bottom: 15px">ПАСПОРТ</div>
-  <div style="font-size: 16pt">{{ type_well }}</div>
-  <div class="intake-info">{{ intake_info }}</div>
+  <div style="font-size: 16pt">{{ title_info.type_well }}</div>
+  <div class="intake-info">{{ title_info.user_info }}</div>
 </div>
 <div>
   <table class="signature">
     <tbody>
       <tr>
-        <td>{{ post }}</td>
-        <td>{{ sign }}</td>
-        <td>{{ worker }}</td>
+        <td>{{ title_info.post }}</td>
+        <td>{{ title_info.sign }}</td>
+        <td>{{ title_info.worker }}</td>
       </tr>
     </tbody>
   </table>
+  <div style="text-align: center; margin-top: 7rem">{{ title_info.year }}</div>
 </div>

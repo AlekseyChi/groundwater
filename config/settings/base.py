@@ -361,3 +361,5 @@ AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME", default="darcydb-bucket
 AWS_S3_REGION_NAME = env("AWS_S3_REGION_NAME", default="ru-central1")
 AWS_S3_SIGNATURE_VERSION = env("AWS_S3_SIGNATURE_VERSION", default="s3v4")
 DEFAULT_FILE_STORAGE = "myapp.storage_backends.YandexObjectStorage"
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000

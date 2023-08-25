@@ -14,10 +14,6 @@ body {
     content: element(header);
     width: 100%;
   }
-  @bottom-center {
-    content: counter(page);
-    font-size: 8pt;
-  }
 }
 
 @page: first {
@@ -67,8 +63,15 @@ body {
 }
 
 .signature {
-  padding-top: 20rem;
+  margin-top: 20rem;
   width: 100%;
+  border-collapse: collapse;
+  border: none;
+}
+
+.signature td,
+.signature th {
+  border: none;
 }
 
 .info {

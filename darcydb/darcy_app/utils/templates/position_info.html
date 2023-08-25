@@ -1,9 +1,17 @@
+<h4>МЕСТОПОЛОЖЕНИЕ СКВАЖИНЫ № {{ well_id }}</h4>
 {% for key, value in position_info.items() %}
 <p>
-  <span class="content"><strong>{{ key }}</strong></span>
+  <span class="content"><strong>{{ key }}:</strong></span>
   <span class="underline">{{ value }}</span>
 </p>
 {% endfor %}
-<span style="text-align: center">
-  <img src="data:image/jpeg;base64,{{ schema_pic }}" />
-</span>
+<div style="text-align: center">
+  <img
+    src="data:image/jpeg;base64,{{ schema_pic }}"
+    style="width: 550px; height: 450px; align: center"
+  />
+  <span
+    ><br />
+    Масштаб 1: 40000</span
+  >
+</div>
