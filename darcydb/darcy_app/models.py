@@ -385,6 +385,7 @@ class WellsGeophysics(BaseModel):
     organization = models.CharField(max_length=100, blank=True, null=True, verbose_name="Наименование организации")
     researches = models.TextField(verbose_name="Геофизические исследования")
     conclusion = models.TextField(verbose_name="Результаты исследований")
+    depths = GenericRelation("WellsDepth")
     doc = models.ForeignKey("Documents", models.CASCADE, blank=True, null=True, verbose_name="Документ")
     history = HistoricalRecords(table_name="wells_geophysics_history")
 

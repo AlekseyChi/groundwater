@@ -175,6 +175,7 @@ class WellsSampleInline(nested_admin.NestedStackedInline):
 
 class WellsGeophysicsInline(nested_admin.NestedStackedInline):
     model = WellsGeophysics
+    inlines = [WellsDepthInline]
     extra = 1
     max_num = 1
 

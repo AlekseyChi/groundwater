@@ -5,8 +5,17 @@
     <title>Header and Footer Example</title>
   </head>
   <body>
+    <div style="margin-bottom: 1.5rem" id="header">
+      {% include 'header.html' %}
+    </div>
     <div class="title">{% include 'title.html' %}</div>
     <div style="page-break-before: always"></div>
     <div class="info">{% include 'position_info.html' %}</div>
+    <div style="page-break-before: always"></div>
+    <div class="construction">{% include 'construction.html' %}</div>
+    <div class="geophysics">{% include 'geophysics.html' %}</div>
+    <div class="extra">{% include 'extra_data.html' %}</div>
+    <div style="page-break-before: always"></div>
+    <div>{% include 'brief_remind.html' %}</div>
   </body>
 </html>

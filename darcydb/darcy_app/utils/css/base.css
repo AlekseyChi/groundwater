@@ -13,23 +13,31 @@ body {
   @top-center {
     content: element(header);
     width: 100%;
+    margin-bottom: 2rem;
+  }
+  @top-right {
+    content: counter(page);
+    font-size: 8pt;
   }
 }
 
 @page: first {
   border-style: double;
   border-width: 10px;
+  @top-center {
+    content: none;
+  }
+  @top-right {
+    content: none;
+  }
 }
+
 #header {
   position: running(header);
-  padding-top: 20px;
-  font-size: 15pt;
-  font-weight: bold;
-  text-align: center;
   padding-bottom: 5px;
-  margin-bottom: 1.5rem;
   border-bottom: 1px solid black;
 }
+
 #footer {
   position: running(footer);
 }
@@ -42,8 +50,19 @@ body {
 
 .company {
   font-size: 16pt;
-  color: #000080;
   padding-bottom: 15px;
+}
+
+.container-watermark {
+  position: relative;
+}
+
+.watermark {
+  position: absolute;
+  top: 40%;
+  left: 25%;
+  opacity: 0.4; /* 0 to 1 (0 is fully transparent and 1 is fully opaque) */
+  z-index: 0; /* Ensure it sits on top of other content */
 }
 
 .company-info {
@@ -55,13 +74,24 @@ body {
 }
 
 .pass-body {
-  padding-top: 50px;
+  padding-top: 70px;
 }
 
 .intake-info {
   padding: 15px;
 }
+.header-table {
+  width: 100%;
+  padding-top: 20px;
+  font-size: 11pt;
+  border-collapse: collapse;
+  border: none;
+}
 
+.header-table td,
+.header-table th {
+  border: none;
+}
 .signature {
   margin-top: 20rem;
   width: 100%;
@@ -101,6 +131,7 @@ table {
 td {
   border: 1px solid;
   text-align: center;
+  padding: 10px;
 }
 
 .table-span {
@@ -123,4 +154,9 @@ td {
 .pump-complex td {
   text-align: left;
   border: none;
+}
+
+.brief {
+  margin: 0.2rem;
+  font-size: 11pt;
 }
