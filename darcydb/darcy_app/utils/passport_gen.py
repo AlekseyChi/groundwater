@@ -6,6 +6,7 @@ import os
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import tilemapbase
+from django.db.models import F, Q
 from geopy.geocoders import Photon
 from jinja2 import Environment, FileSystemLoader
 from shapely.geometry import Point
@@ -15,15 +16,28 @@ from ..models import (
     DictEntities,
     LicenseToWells,
     WaterUsersChange,
+    WellsAquifers,
+    WellsAquiferUsage,
     WellsConstruction,
+    WellsDepression,
     WellsDrilledData,
+    WellsEfw,
     WellsGeophysics,
+    WellsLithology,
+    WellsSample,
 )
 
 passport_inst = DictEntities.objects.get(entity__name="тип документа", name="Паспорт скважины")
 
 
 class PDF:
+    @staticmethod
+    def check_none(value):
+        if value is not None:
+            return value.name
+        else:
+            return ""
+
     @staticmethod
     def get_logo():
         this_folder = os.path.dirname(os.path.abspath(__file__))
@@ -66,11 +80,15 @@ class PDF:
         }
         return title_info
 
-    def create_position(self):
+    def get_address(self):
         geolocator = Photon(user_agent="myGeocoder")
         address = geolocator.reverse(f"{self.instance.geom.y}, {self.instance.geom.x}").raw["properties"]
+        return address
+
+    def create_position(self):
         licenses = self.get_license()
         water_user = self.get_water_user()
+        address = self.get_address()
         position_info = {
             "Республика": address.get("country"),
             "Область": address.get("state"),
@@ -85,14 +103,101 @@ class PDF:
         }
         return position_info
 
+    def get_drilled_instance(self):
+        return WellsDrilledData.objects.filter(well=self.instance).first()
+
+    def get_geophysics_instance(self):
+        return WellsGeophysics.objects.filter(well=self.instance, doc__typo=passport_inst).first()
+
+    def get_sample_instance(self):
+        return WellsSample.objects.filter(well=self.instance).order_by("-date").first()
+
     def create_drilled_base(self):
-        drill = WellsDrilledData.objects.filter(well=self.instance).first()
+        drill = self.get_drilled_instance()
         drilled_info = {}
         if drill:
-            drilled_info["Буровая организация, выполнявшая бурение"] = (drill.organization,)
+            drilled_info["Буровая организация, выполнявшая бурение"] = drill.organization
             drilled_info["Бурение окончено"] = f"{drill.date_end.year} г."
-
         return drilled_info
+
+    def get_pump_data(self, archive=True):
+        if archive:
+            efw = (
+                WellsEfw.objects.filter(well=self.instance).exclude(doc__typo=passport_inst).order_by("-date").first()
+            )
+        else:
+            efw = WellsEfw.objects.filter(well=self.instance, doc__typo=passport_inst).order_by("-date").first()
+        rate = ""
+        depression = ""
+        stat_wat = ""
+        specific_rate = ""
+        if efw:
+            stat_wat = efw.waterdepths.first()
+            depression_instance = WellsDepression.objects.get(efw=efw)
+            rates = depression_instance.rates.first()
+            dyn_wat = depression_instance.waterdepths.order_by("-time_measure").first()
+            depression = dyn_wat.water_depth - stat_wat.water_depth
+            rate = rates.rate
+            specific_rate = round(rate / depression, 2)
+        return rate, depression, specific_rate, stat_wat
+
+    def create_archive_data(self):
+        drill = self.get_drilled_instance()
+        geophysics = self.get_geophysics_instance()
+        rate_old, depression_old, specific_rate_old, _ = self.get_pump_data()
+        rate_new, depression_new, specific_rate_new, watdepth_new = self.get_pump_data(archive=False)
+        depth_archive = ""
+        depth_fact = ""
+        watdepth_archive = ""
+        if drill:
+            depth_instance_old = drill.depths.first()
+            watdepth_instance_old = drill.waterdepths.first()
+            if depth_instance_old:
+                depth_archive = depth_instance_old.depth
+            if watdepth_instance_old:
+                watdepth_archive = watdepth_instance_old.water_depth
+        if geophysics:
+            depth_instance_new = geophysics.depths.first()
+            if depth_instance_new:
+                depth_fact = depth_instance_new.depth
+        archive_data = (
+            (
+                "Глубина, м",
+                depth_archive,
+                depth_fact,
+            ),
+            (
+                "Конструкция, мм/м",
+                "",
+                "",
+            ),
+            (
+                "Тип, диаметр, интервал и длина рабочей части фильтра , мм/м",
+                "",
+                "",
+            ),
+            (
+                "Статический уровень, м",
+                watdepth_archive,
+                watdepth_new,
+            ),
+            (
+                "Дебит, м3/час",
+                rate_old,
+                rate_new,
+            ),
+            (
+                "Удельный дебит, м3/час",
+                specific_rate_old,
+                specific_rate_new,
+            ),
+            (
+                "Понижение, м",
+                depression_old,
+                depression_new,
+            ),
+        )
+        return archive_data
 
     def create_construction_data(self):
         construction = WellsConstruction.objects.filter(well=self.instance)
@@ -100,9 +205,8 @@ class PDF:
             return construction
 
     def create_geophysics_data(self):
-        geophysics = WellsGeophysics.objects.filter(well=self.instance, doc__typo=passport_inst).first()
+        geophysics = self.get_geophysics_instance()
         if geophysics:
-            print(type(geophysics.date))
             geophysics_data = {
                 "Наименование организации": geophysics.organization,
                 "Дата производства работ": geophysics.date,  # .strftime("%d %b %y"),
@@ -110,6 +214,67 @@ class PDF:
                 "Результаты геофизических исследований": geophysics.conclusion,
             }
             return geophysics_data
+
+    def form_lithology_description(self, lit):
+        string_desc = [
+            f"{self.check_none(lit.color)} {lit.rock}",
+            self.check_none(lit.composition),
+            self.check_none(lit.structure),
+            self.check_none(lit.mineral),
+            self.check_none(lit.secondary_change),
+            self.check_none(lit.cement),
+            self.check_none(lit.fracture),
+            self.check_none(lit.weathering),
+            self.check_none(lit.caverns),
+            self.check_none(lit.inclusions),
+        ]
+        return ", ".join([el for el in string_desc if el]).strip().capitalize()
+
+    def create_lithology(self):
+        aquifer = WellsAquifers.objects.filter(well=self.instance)
+        lithology = WellsLithology.objects.filter(well=self.instance)
+        aq_usage = WellsAquiferUsage.objects.filter(well=self.instance)
+        data = []
+        if lithology.exists():
+            thick = 0
+            for i, hor in enumerate(lithology):
+                aq = aquifer.filter(bot_elev__lte=hor.bot_elev).last()
+                if aq_usage.filter(aquifer=aq.aquifer).exists():
+                    comments = "Да"
+                else:
+                    comments = "Нет"
+                description = self.form_lithology_description(hor)
+                thick = hor.bot_elev - thick
+                data.append((i + 1, str(aq.aquifer).capitalize(), description, thick, hor.bot_elev, comments))
+        return data
+
+    def create_sample_data(self):
+        sample = self.get_sample_instance()
+        sample_data = {}
+        if sample:
+            sample_data["Дата взятия пробы"] = sample.date
+            if sample.doc:
+                sample_data.update(
+                    {
+                        "Дата производства анализа пробы": sample.doc.creation_date,
+                        "Организация, выполнившая анализ воды": sample.doc.org_executor,
+                    }
+                )
+            sample_data["Протокол №"] = sample.name
+        return sample_data
+
+    def create_chem_conclusion(self):
+        sample = self.get_sample_instance()
+        if sample:
+            data = []
+            chem = sample.chemvalues.filter(Q(chem_value__gte=F("parameter__chem_pdk")))
+            for qs in chem:
+                row = (
+                    f"{qs.parameter.chem_name} {qs.chem_value} мг/л "
+                    f"({round(qs.chem_value / qs.parameter.chem_pdk, 2) if qs.parameter.chem_pdk else ''}ПДК)"
+                )
+                data.append(row)
+            return ", ".join(data)
 
     def get_extra_data(self):
         return self.instance.extra.get("comments")
@@ -150,8 +315,12 @@ def generate_passport(well):
     position_info = pdf.create_position()
     schema = pdf.create_schema()
     drilled_info = pdf.create_drilled_base()
+    drilled_data = pdf.create_archive_data()
+    geo_journal = pdf.create_lithology()
     construction_data = pdf.create_construction_data()
     geophysics_data = pdf.create_geophysics_data()
+    sample_data = pdf.create_sample_data()
+    conclusion = pdf.create_chem_conclusion()
     extra_data = pdf.get_extra_data()
     rendered_html = template.render(
         logo=logo,
@@ -162,8 +331,12 @@ def generate_passport(well):
         position_info=position_info,
         schema_pic=schema,
         drilled_header=drilled_info,
+        drilled_data=drilled_data,
+        geo_journal=geo_journal,
         construction_data=construction_data,
         geophysics_data=geophysics_data,
+        sample_data=sample_data,
+        conclusion=conclusion,
         extra_data=extra_data,
     )
     html = HTML(string=rendered_html).render(stylesheets=[CSS("darcydb/darcy_app/utils/css/base.css")])

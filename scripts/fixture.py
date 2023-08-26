@@ -733,7 +733,7 @@ def run():
                     type_level=True,
                     extra=data_source,
                 ).save()
-            depression = WellsDepression(efw_id=efw)
+            depression = WellsDepression(efw=efw)
             depression.save()
             if row["DynUr"]:
                 WellsWaterDepth(

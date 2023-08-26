@@ -9,11 +9,12 @@ body {
 }
 
 @page {
-  margin: 20mm 15mm 15mm 15mm;
+  margin: 23mm 15mm 15mm 13mm;
   @top-center {
     content: element(header);
     width: 100%;
-    margin-bottom: 2rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
   }
   @top-right {
     content: counter(page);
@@ -22,6 +23,7 @@ body {
 }
 
 @page: first {
+  margin: 20mm 15mm 15mm 10mm;
   border-style: double;
   border-width: 10px;
   @top-center {
@@ -139,6 +141,15 @@ td {
   font-size: 10pt;
 }
 
+.journal {
+  font-size: 11pt;
+  padding: 2px;
+}
+.chapter {
+  margin-bottom: 2rem;
+  page-break-inside: avoid;
+  page-break-before: always;
+}
 .rotate {
   transform: rotate(270deg);
   white-space: pre-wrap;

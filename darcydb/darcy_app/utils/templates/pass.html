@@ -9,13 +9,15 @@
       {% include 'header.html' %}
     </div>
     <div class="title">{% include 'title.html' %}</div>
-    <div style="page-break-before: always"></div>
-    <div class="info">{% include 'position_info.html' %}</div>
-    <div style="page-break-before: always"></div>
-    <div class="construction">{% include 'construction.html' %}</div>
-    <div class="geophysics">{% include 'geophysics.html' %}</div>
+    <div class="info chapter">{% include 'position_info.html' %}</div>
+    <div class="geol-tech chapter">{% include 'geol_tech.html' %}</div>
+    <div class="geol-tech chapter">{% include 'geo_journal.html' %}</div>
+    <div class="chapter">
+      <div class="construction">{% include 'construction.html' %}</div>
+      <div class="geophysics">{% include 'geophysics.html' %}</div>
+    </div>
+    <div class="chem chapter">{% include 'chem.html' %}</div>
     <div class="extra">{% include 'extra_data.html' %}</div>
-    <div style="page-break-before: always"></div>
-    <div>{% include 'brief_remind.html' %}</div>
+    <div class="chapter">{% include 'brief_remind.html' %}</div>
   </body>
 </html>

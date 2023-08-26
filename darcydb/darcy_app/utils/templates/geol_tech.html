@@ -4,7 +4,7 @@
 </h4>
 <div class="drilled-data">
   {% for key, value in drilled_header.items() %}
-  <p>{{ key }} {{ value }}</p>
+  <p><strong>{{ key }}:</strong> {{ value }}</p>
   {% endfor %}
   <h4>ПРОЕКТНЫЕ И ФАКТИЧЕСКИЕ ДАННЫЕ ПО ПРОБУРЕННОЙ СКВАЖИНЕ</h4>
   <table class="table-base">
@@ -22,30 +22,4 @@
     {% endfor %}
   </table>
   <p>Изменение в проектном задании на бурение скважины согласованы:</p>
-  <table class="table-base">
-    <tr>
-      При бурении скважины № {{ well }} были пройдены следующие горные породы:
-      <u>
-        <strong>
-          Геолого-литологический разрез приводится по данным ГИС с учётом
-          архивных данных
-        </strong>
-      </u>
-    </tr>
-    <tr>
-      <td>№ п. п.</td>
-      <td>Геологический возраст пройденных пород</td>
-      <td>Описание пройденных пород и характер водоносности</td>
-      <td>Мощность пласта, м</td>
-      <td>Глубина подошвы пласта, м</td>
-      <td>Примечание</td>
-    </tr>
-    {% for row in geo_journal %}
-    <tr>
-      {% for value in row %}
-      <td>{{ value }}</td>
-      {% endfor %}
-    </tr>
-    {% endfor %}
-  </table>
 </div>

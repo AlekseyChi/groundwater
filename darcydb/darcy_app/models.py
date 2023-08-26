@@ -481,6 +481,20 @@ class WellsTemperature(BaseModel):
     def __str__(self):
         return ""
 
+    @classmethod
+    def get_all_related_objects(cls):
+        distinct_content_types = cls.objects.values_list("content_type", flat=True).distinct()
+        all_related_objects = []
+        for content_type_id in distinct_content_types:
+            content_type = ContentType.objects.get_for_id(content_type_id)
+            model_class = content_type.model_class()
+            object_ids = cls.objects.filter(content_type=content_type).values_list("object_id", flat=True)
+
+            related_objects = model_class.objects.filter(id__in=object_ids)
+            all_related_objects.extend(related_objects)
+
+        return all_related_objects
+
 
 class WellsDepth(BaseModel):
     """
@@ -737,7 +751,7 @@ class WellsDepression(BaseModel):
     значениях динамического уровня.
     """
 
-    efw_id = models.ForeignKey("WellsEfw", models.CASCADE)
+    efw = models.ForeignKey("WellsEfw", models.CASCADE)
     waterdepths = GenericRelation("WellsWaterDepth")
     rates = GenericRelation("WellsRate")
     history = HistoricalRecords(table_name="wells_depression_history")
@@ -746,7 +760,7 @@ class WellsDepression(BaseModel):
         verbose_name = "Журнал ОФР"
         verbose_name_plural = "Журнал ОФР"
         db_table = "wells_depression"
-        unique_together = (("efw_id",),)
+        unique_together = (("efw",),)
 
     def __str__(self):
         return str(self.pk)

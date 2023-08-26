@@ -157,7 +157,7 @@ class WellsDepressionInline(nested_admin.NestedTabularInline):
 class WellsEfwInlines(nested_admin.NestedStackedInline):
     form = WellsEfwForm
     model = WellsEfw
-    inlines = [WellsDepressionInline]
+    inlines = [WellsWaterDepthDrilledInline, WellsDepressionInline]
     max_num = 1
 
 
