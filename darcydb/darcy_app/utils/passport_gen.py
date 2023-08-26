@@ -2,8 +2,10 @@ import base64
 import datetime
 import io
 import os
+from decimal import Decimal
 
 import geopandas as gpd
+import markdown
 import matplotlib.pyplot as plt
 import tilemapbase
 from django.db.models import F, Q
@@ -31,6 +33,10 @@ passport_inst = DictEntities.objects.get(entity__name="тип документа
 
 
 class PDF:
+    @staticmethod
+    def time_to_seconds(t):
+        return (t.hour * 3600) + (t.minute * 60) + t.second
+
     @staticmethod
     def check_none(value):
         if value is not None:
@@ -132,18 +138,116 @@ class PDF:
         stat_wat = ""
         specific_rate = ""
         if efw:
-            stat_wat = efw.waterdepths.first()
+            stat_wat = efw.waterdepths.first().water_depth
             depression_instance = WellsDepression.objects.get(efw=efw)
             rates = depression_instance.rates.first()
             dyn_wat = depression_instance.waterdepths.order_by("-time_measure").first()
-            depression = dyn_wat.water_depth - stat_wat.water_depth
+            depression = dyn_wat.water_depth - stat_wat
             rate = rates.rate
             specific_rate = round(rate / depression, 2)
         return rate, depression, specific_rate, stat_wat
 
+    def get_pump_complex(self):
+        efw = (
+            WellsEfw.objects.filter(well=self.instance, doc__typo=passport_inst)
+            .exclude(type_efw__name="откачки одиночные пробные")
+            .first()
+        )
+        efw_data = levels = recommendations = ""
+        if efw:
+            stat_level = efw.waterdepths.first().water_depth
+            dpr_instance = WellsDepression.objects.get(efw=efw)
+            dyn_level = dpr_instance.waterdepths.all().order_by("-time_measure").first().water_depth
+            rate = dpr_instance.rates.first().rate
+            depression = dyn_level - stat_level
+            specific_rate = round(rate / depression, 2)
+            rate_hour = round(rate * Decimal(3.6), 2)
+            rate_day = round(rate * Decimal(86.4), 2)
+            efw_data = {
+                "Дата производства откачки": efw.date.date(),
+                "Продолжительность откачки": f"{efw.pump_time.hour} час",
+                "Водомерное устройство": efw.method_measure,
+                "Уровнемер, марка": efw.level_meter if efw.level_meter else "",
+                "Тип и марка насоса": efw.pump_type if efw.pump_type else "",
+                "Глубина установки насоса": f"{efw.pump_depth} м",
+                "Дебит": f"{rate} л/сек; {rate_hour} м3/час; {rate_day} м3/сут",
+                "Удельный дебит": f"{specific_rate} л/сек; {round(specific_rate * Decimal(3.6), 2)} м3/час",
+            }
+            levels = (
+                f"<strong>Статический уровень, м:</strong> {stat_level}; "
+                f"<strong>Динамический уровень, м:</strong> {dyn_level}; "
+                f"<strong>Понижение, м:</strong> {depression}"
+            )
+            recommendations = efw.extra.get("comments", "")
+        return efw_data, levels, recommendations
+
+    def get_test_pump(self):
+        efw = WellsEfw.objects.filter(
+            well=self.instance, doc__typo=passport_inst, type_efw__name="откачки одиночные пробные"
+        ).first()
+        test_pump = []
+        test_pump_info = {}
+        if efw:
+            stat_level = efw.waterdepths.first().water_depth
+            depr_qs = WellsDepression.objects.get(efw=efw)
+            wat_depths = depr_qs.waterdepths.all()
+            for i, qs in enumerate(wat_depths):
+                rate_inst = depr_qs.rates.filter(time_measure=qs.time_measure).first()
+                depression = qs.water_depth - stat_level
+                rate = ""
+                specific_rate = ""
+                if rate_inst:
+                    rate = round(rate_inst.rate * Decimal(3.6), 2)
+                    if depression:
+                        specific_rate = round((rate / depression), 2)
+                test_pump.append(
+                    (
+                        i + 1,
+                        qs.time_measure,
+                        qs.water_depth,
+                        depression,
+                        rate,
+                        specific_rate,
+                    )
+                )
+            last_time = wat_depths.last().time_measure
+            delta = datetime.timedelta(hours=last_time.hour, minutes=last_time.minute, seconds=last_time.second)
+            test_pump_info.update(
+                {
+                    "Ёмкость мерного сосуда, м3": efw.vessel_capacity,
+                    "Время наполнения ёмкости, сек": self.time_to_seconds(efw.vessel_time),
+                    "Начало откачки": efw.date.strftime("%d-%m-%Y г. %H:%M"),
+                    "Окончание откачки": (efw.date + delta).strftime("%d-%m-%Y г. %H:%M"),
+                    "Марка погружного насоса (компрессора)": efw.pump_type,
+                }
+            )
+        return test_pump, test_pump_info
+
+    def get_construction_formula(self):
+        construction = self.create_construction_data()
+        cnstr_html = ""
+        if construction:
+            cnstr_unit = " х ".join(
+                [f"\\frac{{{qs.diameter}}}{{{str(qs.depth_from)+ '-' + str(qs.depth_till)}}}" for qs in construction]
+            )
+            cnstr_html = markdown.markdown(
+                f"$`{cnstr_unit}`$",
+                extensions=[
+                    "markdown_katex",
+                ],
+                extension_configs={
+                    "markdown_katex": {
+                        "no_inline_svg": True,
+                        "insert_fonts_css": True,
+                    },
+                },
+            )
+        return cnstr_html
+
     def create_archive_data(self):
         drill = self.get_drilled_instance()
         geophysics = self.get_geophysics_instance()
+        construction_formula = self.get_construction_formula()
         rate_old, depression_old, specific_rate_old, _ = self.get_pump_data()
         rate_new, depression_new, specific_rate_new, watdepth_new = self.get_pump_data(archive=False)
         depth_archive = ""
@@ -168,12 +272,7 @@ class PDF:
             ),
             (
                 "Конструкция, мм/м",
-                "",
-                "",
-            ),
-            (
-                "Тип, диаметр, интервал и длина рабочей части фильтра , мм/м",
-                "",
+                construction_formula,
                 "",
             ),
             (
@@ -319,6 +418,8 @@ def generate_passport(well):
     geo_journal = pdf.create_lithology()
     construction_data = pdf.create_construction_data()
     geophysics_data = pdf.create_geophysics_data()
+    efr, levels, pump_recommendations = pdf.get_pump_complex()
+    test_pump, test_pump_info = pdf.get_test_pump()
     sample_data = pdf.create_sample_data()
     conclusion = pdf.create_chem_conclusion()
     extra_data = pdf.get_extra_data()
@@ -335,6 +436,11 @@ def generate_passport(well):
         geo_journal=geo_journal,
         construction_data=construction_data,
         geophysics_data=geophysics_data,
+        efr=efr,
+        levels=levels,
+        pump_recommendations=pump_recommendations,
+        test_pump=test_pump,
+        test_pump_info=test_pump_info,
         sample_data=sample_data,
         conclusion=conclusion,
         extra_data=extra_data,

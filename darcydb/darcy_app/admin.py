@@ -158,7 +158,8 @@ class WellsEfwInlines(nested_admin.NestedStackedInline):
     form = WellsEfwForm
     model = WellsEfw
     inlines = [WellsWaterDepthDrilledInline, WellsDepressionInline]
-    max_num = 1
+    extra = 1
+    # max_num = 1
 
 
 class WellsChemInline(nested_admin.NestedGenericTabularInline):

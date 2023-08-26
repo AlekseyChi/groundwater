@@ -262,6 +262,10 @@ class WellsDepressionForm(forms.ModelForm):
 
 
 class WellsEfwForm(forms.ModelForm):
+    comments = forms.CharField(
+        required=False, label="Примечания и рекомендации", widget=forms.Textarea(attrs={"rows": 2})
+    )
+
     class Meta:
         model = WellsEfw
         fields = "__all__"
@@ -277,6 +281,18 @@ class WellsEfwForm(forms.ModelForm):
         )
         self.fields["method_measure"].queryset = DictEntities.objects.filter(entity__name="способ замера дебита")
         # self.fields['date'].initial = timezone.now()
+
+        if self.instance.pk and self.instance.extra:
+            self.fields["comments"].initial = self.instance.extra.get("comments", "")
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.extra = {
+            "comments": self.cleaned_data["comments"],
+        }
+        if commit:
+            instance.save()
+        return instance
 
 
 # Documents

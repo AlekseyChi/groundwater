@@ -1,29 +1,12 @@
 <h4>РЕЗУЛЬТАТЫ ПРОБНОЙ ОТКАЧКИ</h4>
-<table class="table-span">
+<table class="journal">
   <tr>
-    <td rowspan="4" class="rotate" style="white-space: nowrap">№ понижения</td>
-    <td colspan="8">ОТКАЧКА (эрлифт)</td>
-    <td rowspan="4" class="rotate">Время откачки, час</td>
-    <td rowspan="4" style="width: 15%">
-      Марка погружного насоса, (компрессора)
-    </td>
-  </tr>
-  <tr>
-    <td colspan="4">Погружение труб</td>
-    <td rowspan="3" class="rotate">Динам. уровень воды, м</td>
-    <td rowspan="3" class="rotate">Понижение уровня, м</td>
-    <td rowspan="3" class="rotate">Дебит, м3/час</td>
-    <td rowspan="3" class="rotate">Удельный дебит, м3/час</td>
-  </tr>
-  <tr>
-    <td colspan="2">водоподъемные</td>
-    <td colspan="2">воздуходувные</td>
-  </tr>
-  <tr>
-    <td class="rotate inside-rotate-td">Диаметр, мм</td>
-    <td class="rotate inside-rotate-td">На глубину, м</td>
-    <td class="rotate inside-rotate-td">Диаметр, мм</td>
-    <td class="rotate inside-rotate-td">На глубину, м</td>
+    <td>№ понижения</td>
+    <td>Время замера, час:мин</td>
+    <td>Динам. уровень воды, м</td>
+    <td>Понижение уровня, м</td>
+    <td>Дебит, м3/час</td>
+    <td>Удельный дебит, м3/час</td>
   </tr>
   {% for row in test_pump %}
   <tr>
@@ -33,3 +16,6 @@
   </tr>
   {% endfor %}
 </table>
+{% for key, value in test_pump_info.items() %}
+<p><strong>{{key}}:</strong> {{value}}</p>
+{% endfor %}
