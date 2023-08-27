@@ -96,7 +96,6 @@ class PDF:
             "post": "Генеральный директор",
             "sign": "",
             "worker": "Р.М. Заманов",
-            "year": datetime.datetime.now().year,
         }
         return title_info
 
@@ -133,7 +132,7 @@ class PDF:
         return WellsSample.objects.filter(well=self.instance).order_by("-date").first()
 
     def get_geo_attachments(self):
-        aq = self.instance.attachments()
+        aq = self.instance
         geophysics = self.get_geophysics_instance()
         chem = self.get_sample_instance()
         aq_attachments = aq.attachments.all()
@@ -146,7 +145,8 @@ class PDF:
         drilled_info = {}
         if drill:
             drilled_info["Буровая организация, выполнявшая бурение"] = drill.organization
-            drilled_info["Бурение окончено"] = f"{drill.date_end.year} г."
+            drilled_info["Бурение начато"] = f"{drill.date_start.strftime('%d.%m.%Y')} г."
+            drilled_info["Бурение окончено"] = f"{drill.date_end.strftime('%d.%m.%Y')} г."
         return drilled_info
 
     def get_pump_data(self, archive=True):
@@ -193,8 +193,9 @@ class PDF:
                 "Уровнемер, марка": efw.level_meter if efw.level_meter else "",
                 "Тип и марка насоса": efw.pump_type if efw.pump_type else "",
                 "Глубина установки насоса": f"{efw.pump_depth} м",
-                "Дебит": f"{rate} л/сек; {rate_hour} м3/час; {rate_day} м3/сут",
-                "Удельный дебит": f"{specific_rate} л/сек; {round(specific_rate * Decimal(3.6), 2)} м3/час",
+                "Дебит": f"{rate} л/сек; {rate_hour} м<sup>3</sup>/час; {rate_day} м<sup>3</sup>/сут",
+                "Удельный дебит": f"{specific_rate} л/сек; "
+                f"{round(specific_rate * Decimal(3.6), 2)} м<sup>3</sup>/(час*м)",
             }
             levels = (
                 f"<strong>Статический уровень, м:</strong> {stat_level}; "
@@ -237,7 +238,7 @@ class PDF:
             delta = datetime.timedelta(hours=last_time.hour, minutes=last_time.minute, seconds=last_time.second)
             test_pump_info.update(
                 {
-                    "Ёмкость мерного сосуда, м3": efw.vessel_capacity,
+                    "Ёмкость мерного сосуда, м<sup>3</sup>": efw.vessel_capacity,
                     "Время наполнения ёмкости, сек": self.time_to_seconds(efw.vessel_time),
                     "Начало откачки": efw.date.strftime("%d-%m-%Y г. %H:%M"),
                     "Окончание откачки": (efw.date + delta).strftime("%d-%m-%Y г. %H:%M"),
@@ -314,12 +315,12 @@ class PDF:
                 watdepth_new,
             ),
             (
-                "Дебит, м3/час",
+                "Дебит, м<sup>3</sup>/час",
                 rate_old,
                 rate_new,
             ),
             (
-                "Удельный дебит, м3/час",
+                "Удельный дебит, м<sup>3</sup>/(час*м)",
                 specific_rate_old,
                 specific_rate_new,
             ),
@@ -368,7 +369,7 @@ class PDF:
         aq_usage = WellsAquiferUsage.objects.filter(well=self.instance)
         data = []
         if lithology.exists():
-            thick = 0
+            top_elev = 0
             for i, hor in enumerate(lithology):
                 aq = aquifer.filter(bot_elev__lte=hor.bot_elev).last()
                 if aq_usage.filter(aquifer=aq.aquifer).exists():
@@ -376,7 +377,8 @@ class PDF:
                 else:
                     comments = "Нет"
                 description = self.form_lithology_description(hor)
-                thick = hor.bot_elev - thick
+                thick = hor.bot_elev - top_elev
+                top_elev = hor.bot_elev
                 data.append((i + 1, str(aq.aquifer).capitalize(), description, thick, hor.bot_elev, comments))
         return data
 
@@ -461,6 +463,7 @@ def generate_passport(well):
     extra_data = pdf.get_extra_data()
     rendered_html = template.render(
         logo=logo,
+        year=datetime.datetime.now().year,
         watermark=watermark,
         sign=sign,
         stamp=stamp,

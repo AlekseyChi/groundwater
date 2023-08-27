@@ -61,7 +61,7 @@ body {
 
 .watermark {
   position: absolute;
-  top: 40%;
+  top: 35%;
   left: 25%;
   opacity: 0.4; /* 0 to 1 (0 is fully transparent and 1 is fully opaque) */
   z-index: 0; /* Ensure it sits on top of other content */
@@ -103,7 +103,7 @@ body {
   border: none;
 }
 .signature {
-  margin-top: 20rem;
+  margin-top: 15rem;
   width: 100%;
   border-collapse: collapse;
   border: none;
