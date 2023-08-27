@@ -175,14 +175,14 @@ class WellsChemInline(nested_admin.NestedGenericTabularInline):
 
 class WellsSampleInline(nested_admin.NestedStackedInline):
     model = WellsSample
-    inlines = [WellsChemInline]
+    inlines = [WellsChemInline, AttachmentsInline]
     extra = 1
     max_num = 1
 
 
 class WellsGeophysicsInline(nested_admin.NestedStackedInline):
     model = WellsGeophysics
-    inlines = [WellsDepthInline]
+    inlines = [WellsDepthInline, AttachmentsInline]
     extra = 1
     max_num = 1
 

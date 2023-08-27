@@ -272,6 +272,7 @@ class Wells(BaseModel):
         help_text="WGS84",
     )
     docs = GenericRelation("Documents")
+    attachments = GenericRelation("Attachments")
     history = HistoricalRecords(table_name="wells_history")
 
     class Meta:
@@ -386,6 +387,7 @@ class WellsGeophysics(BaseModel):
     researches = models.TextField(verbose_name="Геофизические исследования")
     conclusion = models.TextField(verbose_name="Результаты исследований")
     depths = GenericRelation("WellsDepth")
+    attachments = GenericRelation("Attachments")
     doc = models.ForeignKey("Documents", models.CASCADE, blank=True, null=True, verbose_name="Документ")
     history = HistoricalRecords(table_name="wells_geophysics_history")
 
@@ -779,6 +781,7 @@ class WellsSample(BaseModel):
     name = models.CharField(max_length=150, verbose_name="Номер пробы")
     doc = models.ForeignKey("Documents", models.CASCADE, blank=True, null=True, verbose_name="Документ")
     chemvalues = GenericRelation("WellsChem")
+    attachments = GenericRelation("Attachments")
     history = HistoricalRecords(table_name="wells_sample_history")
 
     class Meta:
@@ -904,7 +907,11 @@ class Balance(BaseModel):
 
 
 class Attachments(BaseModel):
-    img = models.ImageField(upload_to="images/", verbose_name="Вложение")
+    img = models.ImageField(
+        upload_to="images/",
+        storage=YandexObjectStorage() if not settings.DEBUG else FileSystemStorage(location=settings.MEDIA_ROOT),
+        verbose_name="Вложение",
+    )
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
@@ -917,6 +924,11 @@ class Attachments(BaseModel):
 
     def image_tag(self):
         return mark_safe("<img src='/media/%s' width='150' height='150' />" % (self.img))
+
+    def delete(self, *args, **kwargs):
+        storage, path = self.path.storage, self.path.path
+        super().delete(*args, **kwargs)
+        storage.delete(path)
 
     def __str__(self):
         return self.img.name

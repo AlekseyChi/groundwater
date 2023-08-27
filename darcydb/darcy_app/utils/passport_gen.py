@@ -47,6 +47,18 @@ class PDF:
             return ""
 
     @staticmethod
+    def get_sign():
+        this_folder = os.path.dirname(os.path.abspath(__file__))
+        img = "file://" + os.path.join(this_folder, "static", "sign.png")
+        return img
+
+    @staticmethod
+    def get_stamp():
+        this_folder = os.path.dirname(os.path.abspath(__file__))
+        img = "file://" + os.path.join(this_folder, "static", "stamp.png")
+        return img
+
+    @staticmethod
     def get_logo():
         this_folder = os.path.dirname(os.path.abspath(__file__))
         img = "file://" + os.path.join(this_folder, "static", "M_Darcy_logo_rus.png")
@@ -119,6 +131,15 @@ class PDF:
 
     def get_sample_instance(self):
         return WellsSample.objects.filter(well=self.instance).order_by("-date").first()
+
+    def get_geo_attachments(self):
+        aq = self.instance.attachments()
+        geophysics = self.get_geophysics_instance()
+        chem = self.get_sample_instance()
+        aq_attachments = aq.attachments.all()
+        geo_attachments = geophysics.attachments.all()
+        chem_attachments = chem.attachments.all()
+        return aq_attachments, geo_attachments, chem_attachments
 
     def create_drilled_base(self):
         drill = self.get_drilled_instance()
@@ -225,31 +246,41 @@ class PDF:
             )
         return test_pump, test_pump_info
 
-    def get_construction_formula(self):
+    def get_construction_formula(self, archive=True):
         construction = self.create_construction_data()
         cnstr_html = ""
         if construction:
-            cnstr_unit = " х ".join(
-                [f"\\frac{{{qs.diameter}}}{{{str(qs.depth_from)+ '-' + str(qs.depth_till)}}}" for qs in construction]
-            )
-            cnstr_html = markdown.markdown(
-                f"$`{cnstr_unit}`$",
-                extensions=[
-                    "markdown_katex",
-                ],
-                extension_configs={
-                    "markdown_katex": {
-                        "no_inline_svg": True,
-                        "insert_fonts_css": True,
+            archive_date = construction.order_by("date").first().date
+            if archive:
+                u_construction = construction.filter(date=archive_date)
+            else:
+                u_construction = construction.exclude(date=archive_date)
+            if u_construction:
+                cnstr_unit = " х ".join(
+                    [
+                        f"\\frac{{{qs.diameter}}}{{{str(qs.depth_from)+ '-' + str(qs.depth_till)}}}"
+                        for qs in construction
+                    ]
+                )
+                cnstr_html = markdown.markdown(
+                    f"$`{cnstr_unit}`$",
+                    extensions=[
+                        "markdown_katex",
+                    ],
+                    extension_configs={
+                        "markdown_katex": {
+                            "no_inline_svg": True,
+                            "insert_fonts_css": True,
+                        },
                     },
-                },
-            )
+                )
         return cnstr_html
 
     def create_archive_data(self):
         drill = self.get_drilled_instance()
         geophysics = self.get_geophysics_instance()
-        construction_formula = self.get_construction_formula()
+        construction_formula_old = self.get_construction_formula()
+        construction_formula_new = self.get_construction_formula(archive=False)
         rate_old, depression_old, specific_rate_old, _ = self.get_pump_data()
         rate_new, depression_new, specific_rate_new, watdepth_new = self.get_pump_data(archive=False)
         depth_archive = ""
@@ -274,8 +305,8 @@ class PDF:
             ),
             (
                 "Конструкция, мм/м",
-                construction_formula,
-                "",
+                construction_formula_old,
+                construction_formula_new,
             ),
             (
                 "Статический уровень, м",
@@ -411,9 +442,12 @@ def generate_passport(well):
     pdf = PDF(well)
     logo = pdf.get_logo()
     watermark = pdf.get_watermark()
+    sign = pdf.get_sign()
+    stamp = pdf.get_stamp()
     well_id = f"{well.pk}{'/ГВК' + str(well.extra['name_gwk']) if well.extra.get('name_gwk') else ''}"
     title = pdf.create_title()
     position_info = pdf.create_position()
+    aq_attachments, geo_attachments, chem_attachments = pdf.get_geo_attachments()
     schema = pdf.create_schema()
     drilled_info = pdf.create_drilled_base()
     drilled_data = pdf.create_archive_data()
@@ -428,6 +462,8 @@ def generate_passport(well):
     rendered_html = template.render(
         logo=logo,
         watermark=watermark,
+        sign=sign,
+        stamp=stamp,
         well_id=well_id,
         type_well=f"{well.typo.name[:-2]}ой".upper(),
         title_info=title,
@@ -446,6 +482,9 @@ def generate_passport(well):
         sample_data=sample_data,
         conclusion=conclusion,
         extra_data=extra_data,
+        aq_attachments=aq_attachments,
+        geo_attachments=geo_attachments,
+        chem_attachments=chem_attachments,
     )
     output = io.BytesIO()
     html = HTML(string=rendered_html).render(stylesheets=[CSS("darcydb/darcy_app/utils/css/base.css")])

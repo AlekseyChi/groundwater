@@ -67,6 +67,14 @@ body {
   z-index: 0; /* Ensure it sits on top of other content */
 }
 
+.stamp {
+  position: absolute;
+  top: 70%;
+  left: 35%;
+  height: 200px;
+  opacity: 0.8; /* 0 to 1 (0 is fully transparent and 1 is fully opaque) */
+  z-index: 0; /* Ensure it sits on top of other content */
+}
 .company-info {
   margin-left: -11px;
   margin-right: -11px;
