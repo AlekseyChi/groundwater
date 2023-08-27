@@ -46,6 +46,7 @@ from .models import (
     WellsWaterDepth,
 )
 from .resources import WellsRegimeResource
+from .utils.passport_gen import generate_passport
 
 ADMIN_ORDERING = [
     (
@@ -188,6 +189,7 @@ class WellsLithologyInline(nested_admin.NestedTabularInline):
 
 
 class WellsAdmin(nested_admin.NestedModelAdmin):
+    change_form_template = "darcy_app/wells_change_form.html"
     form = WellsForm
     model = Wells
     inlines = [
@@ -225,6 +227,12 @@ class WellsAdmin(nested_admin.NestedModelAdmin):
         "extra",
         "uuid",
     )
+
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+        if "_generate_passport" in request.POST:
+            generate_passport(form.instance)
+            self.message_user(request, "Паспорт создан.")
 
 
 darcy_admin.register(Wells, WellsAdmin)

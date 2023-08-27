@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
+from django.core.files.storage import FileSystemStorage
 from django.utils import timezone
 from django.utils.safestring import mark_safe
 from simple_history.models import HistoricalRecords
@@ -177,7 +178,9 @@ class Documents(BaseModel):
 class DocumentsPath(BaseModel):
     doc = models.ForeignKey("Documents", on_delete=models.CASCADE)
     path = models.FileField(
-        upload_to=user_directory_path, storage=YandexObjectStorage(), verbose_name="Файл документа"
+        upload_to=user_directory_path,
+        storage=YandexObjectStorage() if not settings.DEBUG else FileSystemStorage(location=settings.MEDIA_ROOT),
+        verbose_name="Файл документа",
     )
     history = HistoricalRecords(table_name="documents_path_history")
 
@@ -197,13 +200,10 @@ class DocumentsPath(BaseModel):
     #         file_path = self.generate_file_path(file.name)
     #         save_file_to_media_directory.delay(self.pk, file.read(), file_path)
 
-    # def delete(self, *args, **kwargs):
-    #     storage, path = self.path.storage, self.path.path
-    #     super(DocumentsPath, self).delete(*args, **kwargs)
-    #     storage.delete(path)
-    #
-    # def generate_file_path(self, filename):
-    #     return "doc_{0}/{1}".format(self.doc.pk, filename)
+    def delete(self, *args, **kwargs):
+        storage, path = self.path.storage, self.path.path
+        super().delete(*args, **kwargs)
+        storage.delete(path)
 
     def generate_presigned_url(self):
         s3_client = boto3.client(

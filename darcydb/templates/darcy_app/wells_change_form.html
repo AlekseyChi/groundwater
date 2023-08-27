@@ -1,0 +1,6 @@
+{% extends 'admin/change_form.html' %}
+
+{% block submit_buttons_bottom %}
+    <input type="submit" value="Сгенерировать паспорт" name="_generate_passport">
+    {{ block.super }}
+{% endblock %}

@@ -8,6 +8,7 @@ import geopandas as gpd
 import markdown
 import matplotlib.pyplot as plt
 import tilemapbase
+from django.core.files.base import ContentFile
 from django.db.models import F, Q
 from geopy.geocoders import Photon
 from jinja2 import Environment, FileSystemLoader
@@ -16,6 +17,7 @@ from weasyprint import CSS, HTML
 
 from ..models import (
     DictEntities,
+    DocumentsPath,
     LicenseToWells,
     WaterUsersChange,
     WellsAquifers,
@@ -445,5 +447,15 @@ def generate_passport(well):
         conclusion=conclusion,
         extra_data=extra_data,
     )
+    output = io.BytesIO()
     html = HTML(string=rendered_html).render(stylesheets=[CSS("darcydb/darcy_app/utils/css/base.css")])
-    html.write_pdf("./1.pdf")
+    html.write_pdf(target=output)
+    output.seek(0)
+    name_pdf = f"Паспорт_{well.pk}.pdf"
+    doc_instance = well.docs.filter(typo=passport_inst).last()
+    document_path = DocumentsPath.objects.filter(doc=doc_instance).first()
+    if document_path:
+        document_path.delete()
+    document_path = DocumentsPath(doc=doc_instance)
+    document_path.path.save(name_pdf, ContentFile(output.read()))
+    document_path.save()
