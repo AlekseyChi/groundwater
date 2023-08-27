@@ -1,3 +1,5 @@
+import datetime
+
 import nested_admin
 from django.contrib.admin import DateFieldListFilter
 from django.contrib.gis import admin
@@ -242,7 +244,16 @@ class WellsAdmin(nested_admin.NestedModelAdmin):
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)
         if "_generate_passport" in request.POST:
-            generate_passport(form.instance)
+            code = DictEntities.objects.get(entity__name="тип документа", name="Паспорт скважины")
+            doc_instance = form.instance.docs.filter(typo=code).last()
+            if not doc_instance:
+                doc_instance = form.instance.docs.create(
+                    name=f"Паспорт скважины №{form.instance.pk}",
+                    typo=code,
+                    creation_date=datetime.datetime.now().date(),
+                    object_id=form.instance.pk,
+                )
+            generate_passport(form.instance, doc_instance)
             self.message_user(request, "Паспорт создан.")
 
 

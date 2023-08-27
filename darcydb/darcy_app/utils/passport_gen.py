@@ -16,7 +16,6 @@ from shapely.geometry import Point
 from weasyprint import CSS, HTML
 
 from ..models import (
-    DictEntities,
     DocumentsPath,
     LicenseToWells,
     WaterUsersChange,
@@ -30,8 +29,6 @@ from ..models import (
     WellsLithology,
     WellsSample,
 )
-
-passport_inst = DictEntities.objects.get(entity__name="тип документа", name="Паспорт скважины")
 
 
 class PDF:
@@ -70,8 +67,9 @@ class PDF:
         img = "file://" + os.path.join(this_folder, "static", "Darcy monogram.png")
         return img
 
-    def __init__(self, instance):
+    def __init__(self, instance, doc_instance):
         self.instance = instance
+        self.doc_instance = doc_instance
 
     def get_license(self):
         license_to_wells = LicenseToWells.objects.filter(well=self.instance).first()
@@ -126,18 +124,21 @@ class PDF:
         return WellsDrilledData.objects.filter(well=self.instance).first()
 
     def get_geophysics_instance(self):
-        return WellsGeophysics.objects.filter(well=self.instance, doc__typo=passport_inst).first()
+        return WellsGeophysics.objects.filter(well=self.instance, doc=self.doc_instance).first()
 
     def get_sample_instance(self):
         return WellsSample.objects.filter(well=self.instance).order_by("-date").first()
 
-    def get_geo_attachments(self):
+    def get_attachments(self):
         aq = self.instance
         geophysics = self.get_geophysics_instance()
         chem = self.get_sample_instance()
         aq_attachments = aq.attachments.all()
-        geo_attachments = geophysics.attachments.all()
-        chem_attachments = chem.attachments.all()
+        geo_attachments = chem_attachments = []
+        if geophysics:
+            geo_attachments = geophysics.attachments.all()
+        if chem:
+            chem_attachments = chem.attachments.all()
         return aq_attachments, geo_attachments, chem_attachments
 
     def create_drilled_base(self):
@@ -151,11 +152,9 @@ class PDF:
 
     def get_pump_data(self, archive=True):
         if archive:
-            efw = (
-                WellsEfw.objects.filter(well=self.instance).exclude(doc__typo=passport_inst).order_by("-date").first()
-            )
+            efw = WellsEfw.objects.filter(well=self.instance).exclude(doc=self.doc_instance).order_by("-date").first()
         else:
-            efw = WellsEfw.objects.filter(well=self.instance, doc__typo=passport_inst).order_by("-date").first()
+            efw = WellsEfw.objects.filter(well=self.instance, doc=self.doc_instance).order_by("-date").first()
         rate = ""
         depression = ""
         stat_wat = ""
@@ -172,11 +171,12 @@ class PDF:
 
     def get_pump_complex(self):
         efw = (
-            WellsEfw.objects.filter(well=self.instance, doc__typo=passport_inst)
+            WellsEfw.objects.filter(well=self.instance, doc=self.doc_instance)
             .exclude(type_efw__name="откачки одиночные пробные")
             .first()
         )
-        efw_data = levels = recommendations = ""
+        efw_data = {}
+        levels = recommendations = ""
         if efw:
             stat_level = efw.waterdepths.first().water_depth
             dpr_instance = WellsDepression.objects.get(efw=efw)
@@ -207,7 +207,7 @@ class PDF:
 
     def get_test_pump(self):
         efw = WellsEfw.objects.filter(
-            well=self.instance, doc__typo=passport_inst, type_efw__name="откачки одиночные пробные"
+            well=self.instance, doc=self.doc_instance, type_efw__name="откачки одиночные пробные"
         ).first()
         test_pump = []
         test_pump_info = {}
@@ -372,6 +372,8 @@ class PDF:
             top_elev = 0
             for i, hor in enumerate(lithology):
                 aq = aquifer.filter(bot_elev__lte=hor.bot_elev).last()
+                if not aq:
+                    aq = aquifer.first()
                 if aq_usage.filter(aquifer=aq.aquifer).exists():
                     comments = "Да"
                 else:
@@ -438,10 +440,10 @@ class PDF:
         return schema
 
 
-def generate_passport(well):
+def generate_passport(well, document):
     env = Environment(loader=FileSystemLoader("darcydb/darcy_app/utils/templates"))
     template = env.get_template("pass.html")
-    pdf = PDF(well)
+    pdf = PDF(well, document)
     logo = pdf.get_logo()
     watermark = pdf.get_watermark()
     sign = pdf.get_sign()
@@ -449,7 +451,7 @@ def generate_passport(well):
     well_id = f"{well.pk}{'/ГВК' + str(well.extra['name_gwk']) if well.extra.get('name_gwk') else ''}"
     title = pdf.create_title()
     position_info = pdf.create_position()
-    aq_attachments, geo_attachments, chem_attachments = pdf.get_geo_attachments()
+    aq_attachments, geo_attachments, chem_attachments = pdf.get_attachments()
     schema = pdf.create_schema()
     drilled_info = pdf.create_drilled_base()
     drilled_data = pdf.create_archive_data()
@@ -492,12 +494,11 @@ def generate_passport(well):
     output = io.BytesIO()
     html = HTML(string=rendered_html).render(stylesheets=[CSS("darcydb/darcy_app/utils/css/base.css")])
     html.write_pdf(target=output)
-    output.seek(0)
     name_pdf = f"Паспорт_{well.pk}.pdf"
-    doc_instance = well.docs.filter(typo=passport_inst).last()
-    document_path = DocumentsPath.objects.filter(doc=doc_instance).first()
+    document_path = DocumentsPath.objects.filter(doc=document).first()
     if document_path:
         document_path.delete()
-    document_path = DocumentsPath(doc=doc_instance)
+    document_path = DocumentsPath(doc=document)
+    output.seek(0)
     document_path.path.save(name_pdf, ContentFile(output.read()))
     document_path.save()
