@@ -350,6 +350,8 @@ JET_SIDE_MENU_ITEMS = {  # A list of application or custom item dicts
                 {"name": "wellssample"},
                 {"name": "fields"},
                 {"name": "documents"},
+                {"name": "license"},
+                {"name": "waterusers"},
             ],
         },
     ]

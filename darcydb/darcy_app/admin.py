@@ -29,6 +29,10 @@ from .models import (
     Entities,
     Fields,
     Intakes,
+    License,
+    LicenseToWells,
+    WaterUsers,
+    WaterUsersChange,
     Wells,
     WellsAquifers,
     WellsChem,
@@ -60,6 +64,7 @@ ADMIN_ORDERING = [
             "Fields",
             "Documents",
             "DictPump",
+            "License",
             # "ChemCodes",
             # "AquiferCodes",
         ],
@@ -188,12 +193,18 @@ class WellsLithologyInline(nested_admin.NestedTabularInline):
     extra = 1
 
 
+class LicenseToWellsInline(nested_admin.NestedTabularInline):
+    model = LicenseToWells
+    extra = 1
+
+
 class WellsAdmin(nested_admin.NestedModelAdmin):
     change_form_template = "darcy_app/wells_change_form.html"
     form = WellsForm
     model = Wells
     inlines = [
         DocumentsInline,
+        LicenseToWellsInline,
         WellsAquifersInline,
         WellsLithologyInline,
         WellsConstructionInline,
@@ -346,6 +357,40 @@ class WellsSampleAdmin(nested_admin.NestedModelAdmin):
 
 
 darcy_admin.register(WellsSample, WellsSampleAdmin)
+
+
+# WaterUsers
+# -------------------------------------------------------------------------------
+
+
+class WaterUsersChangeInline(nested_admin.NestedTabularInline):
+    model = WaterUsersChange
+    extra = 1
+
+
+class WaterUsersAdmin(nested_admin.NestedModelAdmin):
+    model = WaterUsers
+    inlines = [WaterUsersChangeInline]
+    list_display = search_fields = list_filter = ("name",)
+
+
+darcy_admin.register(WaterUsers, WaterUsersAdmin)
+
+
+# License
+# -------------------------------------------------------------------------------
+
+
+class LicenseAdmin(nested_admin.NestedModelAdmin):
+    model = License
+    inlines = [LicenseToWellsInline, WaterUsersChangeInline]
+    list_display = ("name",)
+    search_fields = ("name", "date_start", "date_end", "department")
+    list_filter = ("name", "date_start", "date_end")
+
+
+darcy_admin.register(License, LicenseAdmin)
+
 
 # Others
 # -------------------------------------------------------------------------------
