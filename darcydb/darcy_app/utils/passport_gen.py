@@ -84,7 +84,7 @@ class PDF:
     def create_title(self):
         water_user = self.get_water_user()
         title_info = {
-            "company": "Общество с ограниченной ответственностью<br>«Дарси»<br> (ООО «Дарси»)",
+            "company": "Общество с ограниченной ответственностью «Дарси» (ООО «Дарси»)",
             "company_info": "Адрес: 117105, город Москва, Варшавское шоссе, "
             "дом 37 а строение 2, офис 0411.<br>Телефон: +7(495)968-04-82",
             "type_well": f"{self.instance.typo.name[:-2]}ой скважины<br> № {self.instance.pk}/"
@@ -336,6 +336,8 @@ class PDF:
         construction = WellsConstruction.objects.filter(well=self.instance)
         if construction.exists():
             return construction
+        else:
+            return []
 
     def create_geophysics_data(self):
         geophysics = self.get_geophysics_instance()
@@ -404,12 +406,13 @@ class PDF:
         if sample:
             data = []
             chem = sample.chemvalues.filter(Q(chem_value__gte=F("parameter__chem_pdk")))
-            for qs in chem:
-                row = (
-                    f"{qs.parameter.chem_name} {qs.chem_value} мг/л "
-                    f"({round(qs.chem_value / qs.parameter.chem_pdk, 2) if qs.parameter.chem_pdk else ''}ПДК)"
-                )
-                data.append(row)
+            if chem.exists():
+                for qs in chem:
+                    row = (
+                        f"{qs.parameter.chem_name} {qs.chem_value} мг/л "
+                        f"({round(qs.chem_value / qs.parameter.chem_pdk, 2) if qs.parameter.chem_pdk else ''}ПДК)"
+                    )
+                    data.append(row)
             return ", ".join(data)
 
     def get_extra_data(self):

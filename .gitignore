@@ -282,3 +282,5 @@ geoserver/data*
 .envs/*
 !.envs/.local/
 scripts/sources/
+darcydb/darcy_app/utils/static/sign.png
+darcydb/darcy_app/utils/static/stamp.png
