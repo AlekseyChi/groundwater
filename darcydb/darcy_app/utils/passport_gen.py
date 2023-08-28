@@ -404,16 +404,16 @@ class PDF:
     def create_chem_conclusion(self):
         sample = self.get_sample_instance()
         if sample:
-            data = []
             chem = sample.chemvalues.filter(Q(chem_value__gte=F("parameter__chem_pdk")))
             if chem.exists():
+                data = []
                 for qs in chem:
                     row = (
                         f"{qs.parameter.chem_name} {qs.chem_value} мг/л "
                         f"({round(qs.chem_value / qs.parameter.chem_pdk, 2) if qs.parameter.chem_pdk else ''}ПДК)"
                     )
                     data.append(row)
-            return ", ".join(data)
+                return ", ".join(data)
 
     def get_extra_data(self):
         return self.instance.extra.get("comments")
