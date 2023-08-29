@@ -408,8 +408,12 @@ class PDF:
             if chem.exists():
                 data = []
                 for qs in chem:
+                    chem_str = (
+                        f"{qs.parameter.chem_name} "
+                        f"{round(qs.chem_value, 2) if qs.chem_value >= 1 else qs.chem_value} мг/л "
+                    )
                     row = (
-                        f"{qs.parameter.chem_name} {qs.chem_value} мг/л "
+                        f"{chem_str} "
                         f"({round(qs.chem_value / qs.parameter.chem_pdk, 2) if qs.parameter.chem_pdk else ''}ПДК)"
                     )
                     data.append(row)
@@ -426,7 +430,7 @@ class PDF:
         tilemapbase.start_logging()
         tilemapbase.init(create=True)
         x, y = gdf["geometry"][0].x, gdf["geometry"][0].y
-        margin = 5000  # meters
+        margin = 3810  # meters
         extent = tilemapbase.Extent.from_3857(x - margin, x + margin, y + margin, y - margin)
         dpi = 100
         fig, ax = plt.subplots(figsize=(12, 12))

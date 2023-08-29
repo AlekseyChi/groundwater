@@ -84,7 +84,7 @@ body {
 }
 
 .pass-body {
-  padding-top: 70px;
+  padding-top: 150px;
 }
 
 .intake-info {
@@ -103,7 +103,7 @@ body {
   border: none;
 }
 .signature {
-  margin-top: 15rem;
+  margin-top: 10rem;
   width: 100%;
   border-collapse: collapse;
   border: none;
