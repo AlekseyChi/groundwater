@@ -6,7 +6,7 @@ from django.core.files.base import ContentFile
 from jinja2 import Environment, FileSystemLoader
 from weasyprint import CSS, HTML
 
-from ..models import DocumentsPath, WellsDepression
+from ..models import DocumentsPath, WellsAquifers, WellsDepression, WellsLithology
 from .doc_gen import PDF
 
 
@@ -17,24 +17,29 @@ class PumpJournal(PDF):
 
     def create_info_data(self):
         field = self.get_fields()
+        intake = self.get_intakes()
         # address = self.get_address()
         water_user = self.get_water_user()
-        aquifers = self.get_aquifer_usage()
-        aquifers_str = ""
-        if aquifers.exists():
-            aquifers_str = ", ".join(aquifers.values_list("aquifer__aquifer_name", flat=True))
+        top, bot, lit, aq = self.create_aquifer_data()
+        geophysics = self.get_geophysics_instance()
+        depth_fact = ""
+        if geophysics:
+            depth_instance_new = geophysics.depths.first()
+            if depth_instance_new:
+                depth_fact = depth_instance_new.depth
         info = {
             "Месторождение": field.field_name if field else "",
+            "Участок работ": intake.intake_name if intake else "",
             # "Местоположение": f"{address['country']}, {address['state']}, {address['county']}",
             "Недропользователь": water_user.name if water_user else "",
             "Адрес (почтовый) владельца скважины": water_user.position if water_user else "",
-            "Целевой водоносный горизонт": aquifers_str,
-            "Отметка устья скважины": self.instance.head,
-            "Глубина скважины": "",
-            "Водовмещающие породы": "",
-            "Глубина кровли водоносного горизонта": "",
-            "Глубина подошвы водоносного горизонта": "",
-            "Даты проведения опыта": "",
+            "Целевой водоносный горизонт": aq.capitalize() if aq else "",
+            "Отметка устья скважины": f"{self.instance.head} м",
+            "Глубина скважины": f"{depth_fact} м",
+            "Водовмещающие породы": lit,
+            "Глубина кровли водоносного горизонта": f"{top} м",
+            "Глубина подошвы водоносного горизонта": f"{bot} м",
+            "Даты проведения опыта": self.efw.date.date().strftime("%d.%m.%Y"),
             "Статический уровень воды на начало откачки": "",
             "Динамический уровень воды на конец откачки": "",
         }
@@ -58,12 +63,15 @@ class PumpJournal(PDF):
         stat_level = self.efw.waterdepths.first().water_depth
         depr_qs = WellsDepression.objects.get(efw=self.efw)
         wat_depths = depr_qs.waterdepths.all()
+        dyn_level = ""
+        rate_fin = ""
+        depression = ""
         for i, qs in enumerate(wat_depths):
             rate_inst = depr_qs.rates.filter(time_measure=qs.time_measure).first()
             depression = qs.water_depth - stat_level
             rate = ""
             if rate_inst:
-                rate = round(rate_inst.rate * Decimal(3.6), 2)
+                rate = rate_fin = round(rate_inst.rate * Decimal(3.6), 2)
             pump_data.append(
                 (
                     self.efw.date.date(),
@@ -75,8 +83,24 @@ class PumpJournal(PDF):
                     "",
                 )
             )
-        dyn_level = wat_depths.order_by("-time_measure").first()
-        return dyn_level, stat_level, pump_data
+            dyn_level = qs.water_depth
+        return dyn_level, stat_level, rate_fin, round(rate_fin / depression, 2), depression, pump_data
+
+    def create_aquifer_data(self):
+        aquifer = WellsAquifers.objects.filter(well=self.instance)
+        lithology = WellsLithology.objects.filter(well=self.instance)
+        aq_usage = self.get_aquifer_usage()
+        if lithology.exists():
+            top_elev = 0
+            for i, hor in enumerate(lithology):
+                aq = aquifer.filter(bot_elev__lte=hor.bot_elev).last()
+                if not aq:
+                    aq = aquifer.first()
+                if aq_usage.filter(aquifer=aq.aquifer).exists():
+                    description = self.form_lithology_description(hor)
+                    return top_elev, hor.bot_elev, description, aq.aquifer
+                top_elev = hor.bot_elev
+        return ""
 
 
 def generate_pump_journal(efw, document):
@@ -92,7 +116,12 @@ def generate_pump_journal(efw, document):
     info = pdf.create_info_data()
     construction_data = pdf.create_construction_data()
     instrumental_data = pdf.get_instrumental_data()
-    dyn_wat, stat_wat, pump_data = pdf.get_pump_data()
+    dyn_wat, stat_wat, rate, specific_rate, depression, pump_data = pdf.get_pump_data()
+    info["Статический уровень воды на начало откачки"] = f"{stat_wat} м"
+    info["Динамический уровень воды на конец откачки"] = f"{dyn_wat} м"
+    info["Понижение на конец откачки"] = f"{depression} м"
+    info["Дебит"] = f"{rate} м<sup>3</sup>/час"
+    info["Удельный дебит"] = f"{specific_rate} м<sup>3</sup>/(час*м)"
     rendered_html = template.render(
         doc_type="Журнал опытной откачки".upper(),
         logo=logo,

@@ -53,9 +53,28 @@ class PDF:
         self.instance = instance
         self.doc_instance = doc_instance
 
+    def form_lithology_description(self, lit):
+        string_desc = [
+            f"{self.check_none(lit.color)} {lit.rock}",
+            self.check_none(lit.composition),
+            self.check_none(lit.structure),
+            self.check_none(lit.mineral),
+            self.check_none(lit.secondary_change),
+            self.check_none(lit.cement),
+            self.check_none(lit.fracture),
+            self.check_none(lit.weathering),
+            self.check_none(lit.caverns),
+            self.check_none(lit.inclusions),
+        ]
+        return ", ".join([el for el in string_desc if el]).strip().capitalize()
+
     def get_fields(self):
         fields = self.instance.field
-        return fields if fields else None
+        return fields if fields else ""
+
+    def get_intakes(self):
+        intakes = self.instance.intake
+        return intakes if intakes else ""
 
     def get_license(self):
         license_to_wells = LicenseToWells.objects.filter(well=self.instance).first()

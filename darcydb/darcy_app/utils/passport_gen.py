@@ -253,21 +253,6 @@ class Passports(PDF):
             }
             return geophysics_data
 
-    def form_lithology_description(self, lit):
-        string_desc = [
-            f"{self.check_none(lit.color)} {lit.rock}",
-            self.check_none(lit.composition),
-            self.check_none(lit.structure),
-            self.check_none(lit.mineral),
-            self.check_none(lit.secondary_change),
-            self.check_none(lit.cement),
-            self.check_none(lit.fracture),
-            self.check_none(lit.weathering),
-            self.check_none(lit.caverns),
-            self.check_none(lit.inclusions),
-        ]
-        return ", ".join([el for el in string_desc if el]).strip().capitalize()
-
     def create_lithology(self):
         aquifer = WellsAquifers.objects.filter(well=self.instance)
         lithology = WellsLithology.objects.filter(well=self.instance)
