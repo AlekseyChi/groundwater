@@ -1,3 +1,5 @@
+import datetime
+
 import nested_admin
 from django.contrib.admin import DateFieldListFilter
 from django.contrib.gis import admin
@@ -13,6 +15,7 @@ from .forms import (
     WellsAquifersForm,
     WellsEfwForm,
     WellsForm,
+    WellsLithologyForm,
     WellsRegimeForm,
     WellsWaterDepthForm,
     WellsWaterDepthPumpForm,
@@ -22,12 +25,16 @@ from .models import (
     Balance,
     DictDocOrganizations,
     DictEntities,
-    DictPump,
+    DictEquipment,
     Documents,
     DocumentsPath,
     Entities,
     Fields,
     Intakes,
+    License,
+    LicenseToWells,
+    WaterUsers,
+    WaterUsersChange,
     Wells,
     WellsAquifers,
     WellsChem,
@@ -36,6 +43,8 @@ from .models import (
     WellsDepth,
     WellsDrilledData,
     WellsEfw,
+    WellsGeophysics,
+    WellsLithology,
     WellsRate,
     WellsRegime,
     WellsSample,
@@ -43,6 +52,8 @@ from .models import (
     WellsWaterDepth,
 )
 from .resources import WellsRegimeResource
+from .utils.passport_gen import generate_passport
+from .utils.pump_journals_gen import generate_pump_journal
 
 ADMIN_ORDERING = [
     (
@@ -56,6 +67,7 @@ ADMIN_ORDERING = [
             "Fields",
             "Documents",
             "DictPump",
+            "License",
             # "ChemCodes",
             # "AquiferCodes",
         ],
@@ -154,8 +166,9 @@ class WellsDepressionInline(nested_admin.NestedTabularInline):
 class WellsEfwInlines(nested_admin.NestedStackedInline):
     form = WellsEfwForm
     model = WellsEfw
-    inlines = [WellsDepressionInline]
-    max_num = 1
+    inlines = [WellsWaterDepthDrilledInline, WellsDepressionInline]
+    extra = 1
+    # max_num = 1
 
 
 class WellsChemInline(nested_admin.NestedGenericTabularInline):
@@ -165,20 +178,42 @@ class WellsChemInline(nested_admin.NestedGenericTabularInline):
 
 class WellsSampleInline(nested_admin.NestedStackedInline):
     model = WellsSample
-    inlines = [WellsChemInline]
+    inlines = [WellsChemInline, AttachmentsInline]
     extra = 1
     max_num = 1
 
 
+class WellsGeophysicsInline(nested_admin.NestedStackedInline):
+    model = WellsGeophysics
+    inlines = [WellsDepthInline, AttachmentsInline]
+    extra = 1
+    max_num = 1
+
+
+class WellsLithologyInline(nested_admin.NestedTabularInline):
+    model = WellsLithology
+    form = WellsLithologyForm
+    extra = 1
+
+
+class LicenseToWellsInline(nested_admin.NestedTabularInline):
+    model = LicenseToWells
+    extra = 1
+
+
 class WellsAdmin(nested_admin.NestedModelAdmin):
+    change_form_template = "darcy_app/doc_change_form.html"
     form = WellsForm
     model = Wells
     inlines = [
         DocumentsInline,
+        LicenseToWellsInline,
         WellsAquifersInline,
+        WellsLithologyInline,
         WellsConstructionInline,
         WellsDrilledDataInline,
         WellsEfwInlines,
+        WellsGeophysicsInline,
         WellsSampleInline,
         AttachmentsInline,
     ]
@@ -195,6 +230,7 @@ class WellsAdmin(nested_admin.NestedModelAdmin):
         "name_gwk",
         "name_drill",
         "name_subject",
+        "comments",
     )
     list_display = (
         "__str__",
@@ -205,6 +241,21 @@ class WellsAdmin(nested_admin.NestedModelAdmin):
         "extra",
         "uuid",
     )
+
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+        if "_generate_doc" in request.POST:
+            code = DictEntities.objects.get(entity__name="тип документа", name="Паспорт скважины")
+            doc_instance = form.instance.docs.filter(typo=code).last()
+            if not doc_instance:
+                doc_instance = form.instance.docs.create(
+                    name=f"Паспорт скважины №{form.instance.pk}",
+                    typo=code,
+                    creation_date=datetime.datetime.now().date(),
+                    object_id=form.instance.pk,
+                )
+            generate_passport(form.instance, doc_instance)
+            self.message_user(request, "Паспорт создан.")
 
 
 darcy_admin.register(Wells, WellsAdmin)
@@ -271,11 +322,29 @@ darcy_admin.register(Fields, FieldsAdmin)
 # WellsEfw
 # -------------------------------------------------------------------------------
 class WellsEfwAdmin(nested_admin.NestedModelAdmin):
+    change_form_template = "darcy_app/doc_change_form.html"
     form = WellsEfwForm
     model = WellsEfw
     inlines = [WellsDepressionInline]
     list_display = ("well", "date", "type_efw")
     list_filter = ("date", "well", TypeEfwFilter)
+
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+        if "_generate_doc" in request.POST:
+            code = DictEntities.objects.get(entity__name="тип документа", name="Журнал опытно-фильтрационных работ")
+            doc_instance = form.instance.doc
+            if not doc_instance:
+                doc_instance = Documents.objects.create(
+                    name=f"Журнал опытной откачки из скважины №{form.instance.well} от {form.instance.date}",
+                    typo=code,
+                    creation_date=datetime.datetime.now().date(),
+                    object_id=form.instance.pk,
+                )
+                form.instance.doc = doc_instance
+                form.instance.save()
+            generate_pump_journal(form.instance, doc_instance)
+            self.message_user(request, "Журнал создан.")
 
 
 darcy_admin.register(WellsEfw, WellsEfwAdmin)
@@ -319,7 +388,41 @@ class WellsSampleAdmin(nested_admin.NestedModelAdmin):
 
 darcy_admin.register(WellsSample, WellsSampleAdmin)
 
+
+# WaterUsers
+# -------------------------------------------------------------------------------
+
+
+class WaterUsersChangeInline(nested_admin.NestedTabularInline):
+    model = WaterUsersChange
+    extra = 1
+
+
+class WaterUsersAdmin(nested_admin.NestedModelAdmin):
+    model = WaterUsers
+    inlines = [WaterUsersChangeInline]
+    list_display = search_fields = list_filter = ("name",)
+
+
+darcy_admin.register(WaterUsers, WaterUsersAdmin)
+
+
+# License
+# -------------------------------------------------------------------------------
+
+
+class LicenseAdmin(nested_admin.NestedModelAdmin):
+    model = License
+    inlines = [LicenseToWellsInline, WaterUsersChangeInline]
+    list_display = ("name",)
+    search_fields = ("name", "date_start", "date_end", "department")
+    list_filter = ("name", "date_start", "date_end")
+
+
+darcy_admin.register(License, LicenseAdmin)
+
+
 # Others
 # -------------------------------------------------------------------------------
-darcy_admin.register(DictPump)
+darcy_admin.register(DictEquipment)
 darcy_admin.register(DictDocOrganizations)

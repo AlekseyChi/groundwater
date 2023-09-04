@@ -1,0 +1,25 @@
+<h4>
+  ГЕОЛОГО-ТЕХНИЧЕСКИЕ ДАННЫЕ ПО СООРУЖЁННОЙ СКВАЖИНЕ <br />
+  {{ well_id }}
+</h4>
+<div class="drilled-data">
+  {% for key, value in drilled_header.items() %}
+  <p><strong>{{ key }}:</strong> {{ value }}</p>
+  {% endfor %}
+  <h4>ПРОЕКТНЫЕ И ФАКТИЧЕСКИЕ ДАННЫЕ ПО ПРОБУРЕННОЙ СКВАЖИНЕ</h4>
+  <table class="table-base">
+    <tr>
+      <th>Параметры</th>
+      <th>Архивные</th>
+      <th>Фактические с учётом ГИС и проведенных ОФР</th>
+    </tr>
+    {% for row in drilled_data %}
+    <tr>
+      {% for value in row %}
+      <td>{{ value }}</td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
+  <p>Изменение в проектном задании на бурение скважины согласованы:</p>
+</div>

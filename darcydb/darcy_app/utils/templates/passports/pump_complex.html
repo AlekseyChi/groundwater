@@ -1,0 +1,12 @@
+<h4>РЕЗУЛЬТАТЫ ОПЫТНОЙ ОТКАЧКИ ПОГРУЖНЫМ НАСОСОМ</h4>
+{% for key, value in efr.items() %}
+<p><strong>{{ key }}:</strong> {{ value }}</p>
+{% endfor %}
+<p>{{ levels }}</p>
+<p>
+  <strong
+    >Выводы и рекомендации по откачке воды из скважины во время ее
+    эксплуатации:</strong
+  >
+  {{ pump_recommendations }}
+</p>

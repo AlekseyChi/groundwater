@@ -7,6 +7,15 @@ hiredis # https://github.com/redis/hiredis-py
 celery  # pyup: < 6.0  # https://github.com/celery/celery
 django-celery-beat  # https://github.com/celery/django-celery-beat
 flower  # https://github.com/mher/flower
+geopandas
+pandas
+matplotlib
+tilemapbase
+weasyprint
+Jinja2
+geopy
+Markdown
+markdown-katex
 
 # Django
 # ------------------------------------------------------------------------------

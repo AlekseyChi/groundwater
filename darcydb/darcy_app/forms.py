@@ -6,6 +6,7 @@ from django.contrib.postgres.forms import SimpleArrayField
 from .models import (
     Balance,
     DictEntities,
+    DictEquipment,
     Documents,
     Fields,
     Intakes,
@@ -15,6 +16,7 @@ from .models import (
     WellsConstruction,
     WellsDepression,
     WellsEfw,
+    WellsLithology,
     WellsRegime,
     WellsWaterDepth,
 )
@@ -42,6 +44,9 @@ class WellsForm(forms.ModelForm):
         help_text="Можно указать несколько номеров через запятую",
         delimiter=",",
     )
+    comments = forms.CharField(
+        required=False, label="Дополнительные данные по скважине", widget=forms.Textarea(attrs={"rows": 2})
+    )
 
     class Meta:
         model = Wells
@@ -57,13 +62,14 @@ class WellsForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["typo"].queryset = DictEntities.objects.filter(entity=1)
-        self.fields["moved"].queryset = DictEntities.objects.filter(entity=3)
+        self.fields["typo"].queryset = DictEntities.objects.filter(entity__name="тип скважины")
+        self.fields["moved"].queryset = DictEntities.objects.filter(entity__name="уточнение местоположения")
 
         if self.instance.pk and self.instance.extra:
             self.fields["name_gwk"].initial = self.instance.extra.get("name_gwk", "")
             self.fields["name_drill"].initial = self.instance.extra.get("name_drill", "")
             self.fields["name_subject"].initial = self.instance.extra.get("name_subject", "")
+            self.fields["comments"].initial = self.instance.extra.get("comments", "")
 
         if self.instance.pk and self.instance.geom:
             point = self.instance.geom
@@ -96,6 +102,7 @@ class WellsForm(forms.ModelForm):
             "name_gwk": self.cleaned_data["name_gwk"],
             "name_drill": self.cleaned_data["name_drill"],
             "name_subject": self.cleaned_data["name_subject"],
+            "comments": self.cleaned_data["comments"],
         }
         lat = self._dms_to_decimal(
             self.cleaned_data["latitude_degrees"],
@@ -153,7 +160,9 @@ class WellsConstructionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["construction_type"].queryset = DictEntities.objects.filter(entity=8)
+        self.fields["construction_type"].queryset = DictEntities.objects.filter(
+            entity__name="тип конструкции скважины"
+        )
 
 
 class WellsWaterDepthForm(forms.ModelForm):
@@ -183,6 +192,28 @@ class WellsWaterDepthPumpForm(forms.ModelForm):
     class Meta:
         model = WellsWaterDepth
         exclude = ("content_type", "object_id", "content_object", "type_level")
+
+
+class WellsLithologyForm(forms.ModelForm):
+    class Meta:
+        model = WellsLithology
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["rock"].queryset = DictEntities.objects.filter(entity__name="тип пород")
+        self.fields["color"].queryset = DictEntities.objects.filter(entity__name="цвет пород")
+        self.fields["composition"].queryset = DictEntities.objects.filter(entity__name="гран.состав")
+        self.fields["structure"].queryset = DictEntities.objects.filter(entity__name="структура породы")
+        self.fields["mineral"].queryset = DictEntities.objects.filter(entity__name="минеральный состав")
+        self.fields["secondary_change"].queryset = DictEntities.objects.filter(
+            entity__name="тип вторичного изменения пород"
+        )
+        self.fields["cement"].queryset = DictEntities.objects.filter(entity__name="тип цемента")
+        self.fields["fracture"].queryset = DictEntities.objects.filter(entity__name="хар. трещиноватости пород")
+        self.fields["weathering"].queryset = DictEntities.objects.filter(entity__name="степень выветрелости пород")
+        self.fields["caverns"].queryset = DictEntities.objects.filter(entity__name="тип каверн")
+        self.fields["inclusions"].queryset = DictEntities.objects.filter(entity__name="тип включения")
 
 
 class WellsDepressionForm(forms.ModelForm):
@@ -229,15 +260,37 @@ class WellsDepressionForm(forms.ModelForm):
 
 
 class WellsEfwForm(forms.ModelForm):
+    comments = forms.CharField(
+        required=False, label="Примечания и рекомендации", widget=forms.Textarea(attrs={"rows": 2})
+    )
+
     class Meta:
         model = WellsEfw
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["type_efw"].queryset = DictEntities.objects.filter(entity=2)
-        self.fields["method_measure"].queryset = DictEntities.objects.filter(entity=4)
+        self.fields["type_efw"].queryset = DictEntities.objects.filter(entity__name="тип офр")
+        self.fields["pump_type"].queryset = DictEquipment.objects.filter(
+            typo__name="насос", typo__entity__name="тип оборудования"
+        )
+        self.fields["level_meter"].queryset = DictEquipment.objects.filter(
+            typo__name="уровнемер", typo__entity__name="тип оборудования"
+        )
+        self.fields["method_measure"].queryset = DictEntities.objects.filter(entity__name="способ замера дебита")
         # self.fields['date'].initial = timezone.now()
+
+        if self.instance.pk and self.instance.extra:
+            self.fields["comments"].initial = self.instance.extra.get("comments", "")
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.extra = {
+            "comments": self.cleaned_data["comments"],
+        }
+        if commit:
+            instance.save()
+        return instance
 
 
 # Documents
@@ -250,7 +303,7 @@ class DocumentsForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["typo"].queryset = DictEntities.objects.filter(entity=6)
+        self.fields["typo"].queryset = DictEntities.objects.filter(entity__name="тип документа")
 
 
 class IntakesForm(forms.ModelForm):
@@ -308,4 +361,4 @@ class BalanceForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["typo"].queryset = DictEntities.objects.filter(entity=5)
+        self.fields["typo"].queryset = DictEntities.objects.filter(entity__name="тип подземных вод")

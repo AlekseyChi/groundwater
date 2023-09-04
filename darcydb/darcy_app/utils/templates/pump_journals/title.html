@@ -1,0 +1,30 @@
+<div class="company">{{ title_info.company }}</div>
+<div class="company-info">{{ title_info.company_info }}</div>
+<div class="pass-body">
+  <div class="container-watermark" style="margin-bottom: 4rem">
+    <img src="{{ watermark }}" class="watermark" />
+  </div>
+  <div style="font-size: 20pt; padding-bottom: 15px">
+    ЖУРНАЛ ОПЫТНОЙ ОТКАЧКИ
+  </div>
+  <div style="font-size: 16pt">{{ title_info.type_well }}</div>
+  <div class="intake-info">
+    {{ title_info.water_user }} <br />
+    {{ title_info.user_info }}
+  </div>
+</div>
+<div>
+  <table class="signature">
+    <tbody>
+      <tr>
+        <td>{{ title_info.post }}</td>
+        <td>
+          <img src="{{ sign }}" class="stamp" />
+          <img src="{{ stamp }}" class="stamp" />
+        </td>
+        <td>{{ title_info.worker }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="text-align: center; margin-top: 8.5rem">{{ year }}</div>
+</div>
