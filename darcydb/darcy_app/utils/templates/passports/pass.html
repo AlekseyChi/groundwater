@@ -2,28 +2,36 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Header and Footer Example</title>
+    <title>Well Passport</title>
   </head>
   <body>
     <div style="margin-bottom: 1.5rem" id="header">
       {% include 'header.html' %}
     </div>
-    <div class="title">{% include 'title.html' %}</div>
-    <div class="info chapter">{% include 'position_info.html' %}</div>
-    <div class="geol-tech chapter">{% include 'geol_tech.html' %}</div>
-    <div class="geol-tech chapter">{% include 'geo_journal.html' %}</div>
-    <div class="chapter">
-      <div class="construction">{% include 'construction.html' %}</div>
-      <div class="geophysics">{% include 'geophysics.html' %}</div>
+    <div class="title">{% include 'passports/title.html' %}</div>
+    <div class="info chapter">{% include 'passports/position_info.html' %}</div>
+    <div class="geol-tech chapter">
+      {% include 'passports/geol_tech.html' %}
+    </div>
+    <div class="geol-tech chapter">
+      {% include 'passports/geo_journal.html' %}
     </div>
     <div class="chapter">
-      <div class="test-pump">{% include 'test_pump.html' %}</div>
-      <div class="pump-complex">{% include 'pump_complex.html' %}</div>
+      <div class="construction">
+        {% include 'passports/construction.html' %}
+      </div>
+      <div class="geophysics">{% include 'passports/geophysics.html' %}</div>
     </div>
-    <div class="chem chapter">{% include 'chem.html' %}</div>
-    <div class="extra">{% include 'extra_data.html' %}</div>
-    <div class="chapter">{% include 'appendix.html' %}</div>
-    <div class="chapter">{% include 'attachments.html' %}</div>
-    <div class="chapter">{% include 'brief_remind.html' %}</div>
+    <div class="chapter">
+      <div class="test-pump">{% include 'passports/test_pump.html' %}</div>
+      <div class="pump-complex">
+        {% include 'passports/pump_complex.html' %}
+      </div>
+    </div>
+    <div class="chem chapter">{% include 'passports/chem.html' %}</div>
+    <div class="extra">{% include 'passports/extra_data.html' %}</div>
+    <div class="chapter">{% include 'passports/appendix.html' %}</div>
+    <div class="chapter">{% include 'passports/attachments.html' %}</div>
+    <div class="chapter">{% include 'passports/brief_remind.html' %}</div>
   </body>
 </html>

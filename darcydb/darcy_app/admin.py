@@ -53,6 +53,7 @@ from .models import (
 )
 from .resources import WellsRegimeResource
 from .utils.passport_gen import generate_passport
+from .utils.pump_journals_gen import generate_pump_journal
 
 ADMIN_ORDERING = [
     (
@@ -201,7 +202,7 @@ class LicenseToWellsInline(nested_admin.NestedTabularInline):
 
 
 class WellsAdmin(nested_admin.NestedModelAdmin):
-    change_form_template = "darcy_app/wells_change_form.html"
+    change_form_template = "darcy_app/doc_change_form.html"
     form = WellsForm
     model = Wells
     inlines = [
@@ -243,7 +244,7 @@ class WellsAdmin(nested_admin.NestedModelAdmin):
 
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)
-        if "_generate_passport" in request.POST:
+        if "_generate_doc" in request.POST:
             code = DictEntities.objects.get(entity__name="тип документа", name="Паспорт скважины")
             doc_instance = form.instance.docs.filter(typo=code).last()
             if not doc_instance:
@@ -321,11 +322,27 @@ darcy_admin.register(Fields, FieldsAdmin)
 # WellsEfw
 # -------------------------------------------------------------------------------
 class WellsEfwAdmin(nested_admin.NestedModelAdmin):
+    change_form_template = "darcy_app/doc_change_form.html"
     form = WellsEfwForm
     model = WellsEfw
     inlines = [WellsDepressionInline]
     list_display = ("well", "date", "type_efw")
     list_filter = ("date", "well", TypeEfwFilter)
+
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+        if "_generate_doc" in request.POST:
+            code = DictEntities.objects.get(entity__name="тип документа", name="Журнал опытно-фильтрационных работ")
+            doc_instance = form.instance.doc
+            if not doc_instance:
+                doc_instance = form.instance.docs.create(
+                    name=f"Журнал опытной откачки из скважины №{form.instance.well} от {form.instance.date}",
+                    typo=code,
+                    creation_date=datetime.datetime.now().date(),
+                    object_id=form.instance.pk,
+                )
+            generate_pump_journal(form.instance, doc_instance)
+            self.message_user(request, "Журнал создан.")
 
 
 darcy_admin.register(WellsEfw, WellsEfwAdmin)

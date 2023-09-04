@@ -366,8 +366,8 @@ class Passports(PDF):
 
 
 def generate_passport(well, document):
-    env = Environment(loader=FileSystemLoader("darcydb/darcy_app/utils/templates/passports"))
-    template = env.get_template("pass.html")
+    env = Environment(loader=FileSystemLoader("darcydb/darcy_app/utils/templates"))
+    template = env.get_template("passports/pass.html")
     pdf = Passports(well, document)
     logo = pdf.get_logo()
     watermark = pdf.get_watermark()
