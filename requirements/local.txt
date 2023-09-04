@@ -157,7 +157,7 @@ django-debug-toolbar==4.1.0
 django-environ==0.10.0
     # via -r base.in
 django-extensions==3.2.3
-    # via -r local.in
+    # via -r base.in
 django-filter==23.2
     # via -r base.in
 django-import-export==3.2.0

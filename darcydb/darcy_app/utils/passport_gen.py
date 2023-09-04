@@ -13,15 +13,7 @@ from jinja2 import Environment, FileSystemLoader
 from shapely.geometry import Point
 from weasyprint import CSS, HTML
 
-from ..models import (
-    DocumentsPath,
-    WellsAquifers,
-    WellsAquiferUsage,
-    WellsConstruction,
-    WellsDepression,
-    WellsEfw,
-    WellsLithology,
-)
+from ..models import DocumentsPath, WellsAquifers, WellsAquiferUsage, WellsDepression, WellsEfw, WellsLithology
 from .doc_gen import PDF
 
 
@@ -249,13 +241,6 @@ class Passports(PDF):
             ),
         )
         return archive_data
-
-    def create_construction_data(self):
-        construction = WellsConstruction.objects.filter(well=self.instance)
-        if construction.exists():
-            return construction
-        else:
-            return []
 
     def create_geophysics_data(self):
         geophysics = self.get_geophysics_instance()

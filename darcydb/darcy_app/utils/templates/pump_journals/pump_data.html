@@ -16,4 +16,11 @@
     <th>Часы</th>
     <th>Минуты</th>
   </tr>
+  {% for row in pump_data %}
+  <tr>
+    {% for value in row %}
+    <td>{{ value }}</td>
+    {% endfor %}
+  </tr>
+  {% endfor %}
 </table>

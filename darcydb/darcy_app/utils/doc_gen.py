@@ -6,6 +6,7 @@ from ..models import (
     LicenseToWells,
     WaterUsersChange,
     WellsAquiferUsage,
+    WellsConstruction,
     WellsDrilledData,
     WellsGeophysics,
     WellsSample,
@@ -99,3 +100,10 @@ class PDF:
     def get_aquifer_usage(self):
         aquifers = WellsAquiferUsage.objects.filter(well=self.instance)
         return aquifers
+
+    def create_construction_data(self):
+        construction = WellsConstruction.objects.filter(well=self.instance)
+        if construction.exists():
+            return construction
+        else:
+            return []
