@@ -1,7 +1,6 @@
 import base64
 import datetime
 import io
-import os
 from decimal import Decimal
 
 import geopandas as gpd
@@ -10,98 +9,23 @@ import matplotlib.pyplot as plt
 import tilemapbase
 from django.core.files.base import ContentFile
 from django.db.models import F, Q
-from geopy.geocoders import Photon
 from jinja2 import Environment, FileSystemLoader
 from shapely.geometry import Point
 from weasyprint import CSS, HTML
 
 from ..models import (
     DocumentsPath,
-    LicenseToWells,
-    WaterUsersChange,
     WellsAquifers,
     WellsAquiferUsage,
     WellsConstruction,
     WellsDepression,
-    WellsDrilledData,
     WellsEfw,
-    WellsGeophysics,
     WellsLithology,
-    WellsSample,
 )
+from .doc_gen import PDF
 
 
-class PDF:
-    @staticmethod
-    def time_to_seconds(t):
-        return (t.hour * 3600) + (t.minute * 60) + t.second
-
-    @staticmethod
-    def check_none(value):
-        if value is not None:
-            return value.name
-        else:
-            return ""
-
-    @staticmethod
-    def get_sign():
-        this_folder = os.path.dirname(os.path.abspath(__file__))
-        img = "file://" + os.path.join(this_folder, "static", "sign.png")
-        return img
-
-    @staticmethod
-    def get_stamp():
-        this_folder = os.path.dirname(os.path.abspath(__file__))
-        img = "file://" + os.path.join(this_folder, "static", "stamp.png")
-        return img
-
-    @staticmethod
-    def get_logo():
-        this_folder = os.path.dirname(os.path.abspath(__file__))
-        img = "file://" + os.path.join(this_folder, "static", "M_Darcy_logo_rus.png")
-        return img
-
-    @staticmethod
-    def get_watermark():
-        this_folder = os.path.dirname(os.path.abspath(__file__))
-        img = "file://" + os.path.join(this_folder, "static", "Darcy monogram.png")
-        return img
-
-    def __init__(self, instance, doc_instance):
-        self.instance = instance
-        self.doc_instance = doc_instance
-
-    def get_license(self):
-        license_to_wells = LicenseToWells.objects.filter(well=self.instance).first()
-        return license_to_wells.license if license_to_wells else None
-
-    def get_water_user(self):
-        licenses = self.get_license()
-        if licenses:
-            water_users_change = WaterUsersChange.objects.filter(license=licenses).first()
-            return water_users_change.water_user if water_users_change else None
-
-    def create_title(self):
-        water_user = self.get_water_user()
-        title_info = {
-            "company": "Общество с ограниченной ответственностью «Дарси» (ООО «Дарси»)",
-            "company_info": "Адрес: 117105, город Москва, Варшавское шоссе, "
-            "дом 37 а строение 2, офис 0411.<br>Телефон: +7(495)968-04-82",
-            "type_well": f"{self.instance.typo.name[:-2]}ой скважины<br> № {self.instance.pk}/"
-            f"{'ГВК - ' + str(self.instance.extra['name_gwk']) if self.instance.extra.get('name_gwk') else ''}",
-            "water_user": water_user.name if water_user else "",
-            "user_info": water_user.position if water_user else "",
-            "post": "Генеральный директор",
-            "sign": "",
-            "worker": "Р.М. Заманов",
-        }
-        return title_info
-
-    def get_address(self):
-        geolocator = Photon(user_agent="myGeocoder")
-        address = geolocator.reverse(f"{self.instance.geom.y}, {self.instance.geom.x}").raw["properties"]
-        return address
-
+class Passports(PDF):
     def create_position(self):
         licenses = self.get_license()
         water_user = self.get_water_user()
@@ -116,18 +40,12 @@ class PDF:
             "Абсолютная отметка устья скважины": f"{self.instance.head} м",
             "Назначение скважины": f"{self.instance.typo.name[:-2]}ая",
             "Сведения о использовании": licenses.gw_purpose if licenses else "",
-            "Лицензия на право пользования недрами": f"{licenses.name} от {licenses.date_start}" if licenses else "",
+            "Лицензия на право пользования недрами": f"{licenses.name} от "
+            f"{licenses.date_start.strftime('%d.%m.%Y')}"
+            if licenses
+            else "",
         }
         return position_info
-
-    def get_drilled_instance(self):
-        return WellsDrilledData.objects.filter(well=self.instance).first()
-
-    def get_geophysics_instance(self):
-        return WellsGeophysics.objects.filter(well=self.instance, doc=self.doc_instance).first()
-
-    def get_sample_instance(self):
-        return WellsSample.objects.filter(well=self.instance).order_by("-date").first()
 
     def get_attachments(self):
         aq = self.instance
@@ -187,7 +105,7 @@ class PDF:
             rate_hour = round(rate * Decimal(3.6), 2)
             rate_day = round(rate * Decimal(86.4), 2)
             efw_data = {
-                "Дата производства откачки": efw.date.date(),
+                "Дата производства откачки": efw.date.strftime("%d.%m.%Y"),
                 "Продолжительность откачки": f"{efw.pump_time.hour} час",
                 "Водомерное устройство": efw.method_measure,
                 "Уровнемер, марка": efw.level_meter if efw.level_meter else "",
@@ -240,8 +158,8 @@ class PDF:
                 {
                     "Ёмкость мерного сосуда, м<sup>3</sup>": efw.vessel_capacity,
                     "Время наполнения ёмкости, сек": self.time_to_seconds(efw.vessel_time),
-                    "Начало откачки": efw.date.strftime("%d-%m-%Y г. %H:%M"),
-                    "Окончание откачки": (efw.date + delta).strftime("%d-%m-%Y г. %H:%M"),
+                    "Начало откачки": efw.date.strftime("%d.%m.%Y г. %H:%M"),
+                    "Окончание откачки": (efw.date + delta).strftime("%d.%m.%Y г. %H:%M"),
                     "Марка погружного насоса (компрессора)": efw.pump_type,
                 }
             )
@@ -344,7 +262,7 @@ class PDF:
         if geophysics:
             geophysics_data = {
                 "Наименование организации": geophysics.organization,
-                "Дата производства работ": geophysics.date,  # .strftime("%d %b %y"),
+                "Дата производства работ": geophysics.date.strftime("%d.%m.%Y"),
                 "В скважине произведены следующие геофизические исследования": geophysics.researches,
                 "Результаты геофизических исследований": geophysics.conclusion,
             }
@@ -390,11 +308,11 @@ class PDF:
         sample = self.get_sample_instance()
         sample_data = {}
         if sample:
-            sample_data["Дата взятия пробы"] = sample.date
+            sample_data["Дата взятия пробы"] = sample.date.strftime("%d.%m.%Y")
             if sample.doc:
                 sample_data.update(
                     {
-                        "Дата производства анализа пробы": sample.doc.creation_date,
+                        "Дата производства анализа пробы": sample.doc.creation_date.strftime("%d.%m.%Y"),
                         "Организация, выполнившая анализ воды": sample.doc.org_executor,
                     }
                 )
@@ -448,9 +366,9 @@ class PDF:
 
 
 def generate_passport(well, document):
-    env = Environment(loader=FileSystemLoader("darcydb/darcy_app/utils/templates"))
+    env = Environment(loader=FileSystemLoader("darcydb/darcy_app/utils/templates/passports"))
     template = env.get_template("pass.html")
-    pdf = PDF(well, document)
+    pdf = Passports(well, document)
     logo = pdf.get_logo()
     watermark = pdf.get_watermark()
     sign = pdf.get_sign()
