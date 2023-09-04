@@ -73,6 +73,8 @@ def import_csv_to_model(file_path="", entity_name=None):
 def run():
     st = time.time()
     tables = [
+        "documents",
+        "documents_path",
         "wells",
         "intakes",
         "fields",
