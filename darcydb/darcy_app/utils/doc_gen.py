@@ -2,7 +2,14 @@ import os
 
 from geopy.geocoders import Photon
 
-from ..models import LicenseToWells, WaterUsersChange, WellsDrilledData, WellsGeophysics, WellsSample
+from ..models import (
+    LicenseToWells,
+    WaterUsersChange,
+    WellsAquiferUsage,
+    WellsDrilledData,
+    WellsGeophysics,
+    WellsSample,
+)
 
 
 class PDF:
@@ -45,6 +52,10 @@ class PDF:
         self.instance = instance
         self.doc_instance = doc_instance
 
+    def get_fields(self):
+        fields = self.instance.field
+        return fields if fields else None
+
     def get_license(self):
         license_to_wells = LicenseToWells.objects.filter(well=self.instance).first()
         return license_to_wells.license if license_to_wells else None
@@ -84,3 +95,7 @@ class PDF:
 
     def get_sample_instance(self):
         return WellsSample.objects.filter(well=self.instance).order_by("-date").first()
+
+    def get_aquifer_usage(self):
+        aquifers = WellsAquiferUsage.objects.filter(well=self.instance)
+        return aquifers

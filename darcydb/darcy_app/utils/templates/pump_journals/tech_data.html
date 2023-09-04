@@ -1,0 +1,25 @@
+<h4>КОНСТРУКЦИЯ СКВАЖИНЫ</h4>
+<table class="table-base">
+  <tr>
+    <th>Дата установки</th>
+    <th>Тип конструкции</th>
+    <th>Диаметр, мм</th>
+    <th>Глубина от, м</th>
+    <th>Глубина до, м</th>
+  </tr>
+  {% for row in construction_data %}
+  <tr>
+    <td>{{ row.date }}</td>
+    <td>{{ row.construction_type }}</td>
+    <td>{{ row.diameter }}</td>
+    <td>{{ row.depth_from }}</td>
+    <td>{{ row.depth_till }}</td>
+  </tr>
+  {% endfor %}
+</table>
+<h4>ИНСТРУМЕНТАЛЬНЫЕ ДАННЫЕ</h4>
+<h3>НАСОС</h3>
+<h3>ПРИБОР ИЗМЕРЕНИЯ РАСХОДА ВОДЫ</h3>
+<h3>ИЗМЕРЕНИЯ УРОВНЯ ВОДЫ</h3>
+
+<p>*Все выполненные измерения уровня воды приведены к устью скважины.</p>

@@ -335,12 +335,14 @@ class WellsEfwAdmin(nested_admin.NestedModelAdmin):
             code = DictEntities.objects.get(entity__name="тип документа", name="Журнал опытно-фильтрационных работ")
             doc_instance = form.instance.doc
             if not doc_instance:
-                doc_instance = form.instance.docs.create(
+                doc_instance = Documents.objects.create(
                     name=f"Журнал опытной откачки из скважины №{form.instance.well} от {form.instance.date}",
                     typo=code,
                     creation_date=datetime.datetime.now().date(),
                     object_id=form.instance.pk,
                 )
+                form.instance.doc = doc_instance
+                form.instance.save()
             generate_pump_journal(form.instance, doc_instance)
             self.message_user(request, "Журнал создан.")
 

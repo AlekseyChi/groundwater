@@ -389,6 +389,7 @@ def generate_passport(well, document):
     conclusion = pdf.create_chem_conclusion()
     extra_data = pdf.get_extra_data()
     rendered_html = template.render(
+        doc_type="Паспорт".upper(),
         logo=logo,
         year=datetime.datetime.now().year,
         watermark=watermark,
