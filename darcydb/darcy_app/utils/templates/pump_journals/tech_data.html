@@ -18,8 +18,11 @@
   {% endfor %}
 </table>
 <h4>ИНСТРУМЕНТАЛЬНЫЕ ДАННЫЕ</h4>
-<h3>НАСОС</h3>
-<h3>ПРИБОР ИЗМЕРЕНИЯ РАСХОДА ВОДЫ</h3>
-<h3>ИЗМЕРЕНИЯ УРОВНЯ ВОДЫ</h3>
+{% for key, value in instrumental_data.items() %}
+<p>
+  <span class="content"><strong>{{ key }}:</strong></span>
+  <span class="underline">{{ value }}</span>
+</p>
+{% endfor %}
 
 <p>*Все выполненные измерения уровня воды приведены к устью скважины.</p>

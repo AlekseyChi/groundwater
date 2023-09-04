@@ -11,4 +11,11 @@
     <th>Часы</th>
     <th>Минуты</th>
   </tr>
+  {% for row in recovery_data %}
+  <tr>
+    {% for value in row %}
+    <td>{{ value }}</td>
+    {% endfor %}
+  </tr>
+  {% endfor %}
 </table>
