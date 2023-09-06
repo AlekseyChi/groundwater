@@ -201,9 +201,13 @@ class DocumentsPath(BaseModel):
     #         save_file_to_media_directory.delay(self.pk, file.read(), file_path)
 
     def delete(self, *args, **kwargs):
-        storage, path = self.path.storage, self.path.path
-        super().delete(*args, **kwargs)
-        storage.delete(path)
+        if settings.DEBUG:
+            storage, path = self.path.storage, self.path.path
+            super().delete(*args, **kwargs)
+            storage.delete(path)
+        else:
+            self.path.delete(save=False)
+            super().delete(*args, **kwargs)
 
     def generate_presigned_url(self):
         s3_client = boto3.client(
