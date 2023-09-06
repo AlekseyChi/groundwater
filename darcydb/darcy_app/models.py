@@ -642,7 +642,7 @@ class WellsLithology(BaseModel):
 
 class WellsConstruction(BaseModel):
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
-    date = models.DateField(verbose_name="Дата установки")
+    date = models.DateField(verbose_name="Дата установки", blank=True, null=True)
     construction_type = models.ForeignKey(
         "DictEntities", models.DO_NOTHING, db_column="construction_type", verbose_name="Тип конструкции"
     )

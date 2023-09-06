@@ -1,6 +1,6 @@
 import os
 
-from geopy.geocoders import Photon
+import requests
 
 from ..models import (
     LicenseToWells,
@@ -103,9 +103,14 @@ class PDF:
         return title_info
 
     def get_address(self):
-        geolocator = Photon(user_agent="myGeocoder")
-        address = geolocator.reverse(f"{self.instance.geom.y}, {self.instance.geom.x}").raw["properties"]
-        return address
+        lat, lon = self.instance.geom.y, self.instance.geom.x
+        url = f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=json&accept-language=ru&zoom=15"
+        try:
+            result = requests.get(url=url)
+            address = result.json()
+            return address["address"]
+        except Exception as e:
+            return e
 
     def get_drilled_instance(self):
         return WellsDrilledData.objects.filter(well=self.instance).first()
