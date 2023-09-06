@@ -1,7 +1,12 @@
-from django.contrib.admin.widgets import AdminTextInputWidget
+import datetime
+
+import numpy as np
+import pandas as pd
+from django.contrib.admin.widgets import AdminTextInputWidget, AdminTimeWidget
 from django.contrib.gis import forms
 from django.contrib.gis.geos import Point
 from django.contrib.postgres.forms import SimpleArrayField
+from django.core.exceptions import ValidationError
 
 from .models import (
     Balance,
@@ -17,7 +22,9 @@ from .models import (
     WellsDepression,
     WellsEfw,
     WellsLithology,
+    WellsRate,
     WellsRegime,
+    WellsTemperature,
     WellsWaterDepth,
 )
 
@@ -130,7 +137,6 @@ class WellsAquifersForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         if self.instance.pk:
             if WellsAquiferUsage.objects.filter(well=self.instance.well, aquifer=self.instance.aquifer).exists():
                 self.fields["base_aquifer"].initial = WellsAquiferUsage.objects.get(
@@ -166,6 +172,7 @@ class WellsConstructionForm(forms.ModelForm):
 
 
 class WellsWaterDepthForm(forms.ModelForm):
+    time_measure = forms.TimeField(widget=AdminTimeWidget(), label="Время замера")
     comments = forms.CharField(label="Примечания", max_length=300, required=False, widget=AdminTextInputWidget)
 
     class Meta:
@@ -178,6 +185,10 @@ class WellsWaterDepthForm(forms.ModelForm):
         if self.instance.pk and self.instance.extra:
             self.fields["comments"].initial = self.instance.extra.get("comments", "")
 
+    def clean_time_measure(self):
+        time_obj = self.cleaned_data["time_measure"]
+        return datetime.timedelta(hours=time_obj.hour, minutes=time_obj.minute, seconds=time_obj.second)
+
     def save(self, commit=True):
         instance = super().save(commit=False)
         instance.extra = {
@@ -188,16 +199,52 @@ class WellsWaterDepthForm(forms.ModelForm):
         return instance
 
 
-class WellsWaterDepthPumpForm(forms.ModelForm):
+class WellsTemperatureForm(forms.ModelForm):
+    time_measure = forms.TimeField(widget=AdminTimeWidget(), label="Время замера")
+
     class Meta:
-        model = WellsWaterDepth
-        exclude = ("content_type", "object_id", "content_object", "type_level")
+        model = WellsTemperature
+        exclude = ("content_type", "object_id", "content_object")
+
+    def clean_time_measure(self):
+        time_obj = self.cleaned_data["time_measure"]
+        return datetime.timedelta(hours=time_obj.hour, minutes=time_obj.minute, seconds=time_obj.second)
+
+
+class WellsRateForm(forms.ModelForm):
+    time_measure = forms.TimeField(widget=AdminTimeWidget(), label="Время замера")
+
+    class Meta:
+        model = WellsRate
+        exclude = ("content_type", "object_id", "content_object")
+
+    def clean_time_measure(self):
+        time_obj = self.cleaned_data["time_measure"]
+        return datetime.timedelta(hours=time_obj.hour, minutes=time_obj.minute, seconds=time_obj.second)
 
 
 class WellsLithologyForm(forms.ModelForm):
+    description = forms.CharField(label="Доп. описание", required=False)
+    field_order = ["rock", "description"]
+
     class Meta:
         model = WellsLithology
-        fields = "__all__"
+        fields = [
+            "rock",
+            "description",
+            "color",
+            "composition",
+            "structure",
+            "mineral",
+            "secondary_change",
+            "cement",
+            "fracture",
+            "weathering",
+            "caverns",
+            "inclusions",
+            "bot_elev",
+            "doc",
+        ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -215,11 +262,25 @@ class WellsLithologyForm(forms.ModelForm):
         self.fields["caverns"].queryset = DictEntities.objects.filter(entity__name="тип каверн")
         self.fields["inclusions"].queryset = DictEntities.objects.filter(entity__name="тип включения")
 
+        if self.instance.pk and self.instance.extra:
+            self.fields["description"].initial = self.instance.extra.get("description", "")
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.extra = {
+            "description": self.cleaned_data["description"],
+        }
+        if commit:
+            instance.save()
+        return instance
+
 
 class WellsDepressionForm(forms.ModelForm):
-    time_measure = forms.TimeField(label="Время замера", required=True)
-    water_depth = forms.FloatField(label="Глубина воды, м", required=True)
-    rate = forms.FloatField(label="Дебит, л/с", required=True)
+    csv_file = forms.FileField(
+        required=False,
+        label="CSV файл",
+        help_text="CSV файл со следующими столбцами: 'time_measure', 'water_depth', 'rate'",
+    )
 
     class Meta:
         model = WellsDepression
@@ -227,42 +288,61 @@ class WellsDepressionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if kwargs.get("instance"):
-            self.fields["time_measure"].initial = kwargs["instance"].waterdepths.first().time_measure
-            self.fields["water_depth"].initial = kwargs["instance"].waterdepths.first().water_depth
-            self.fields["rate"].initial = kwargs["instance"].rates.first().rate
 
-    def save(self, *args, **kwargs):
-        time_measure = self.cleaned_data.pop("time_measure")
-        water_depth = self.cleaned_data.pop("water_depth")
-        rate = self.cleaned_data.pop("rate")
-        instance = super().save(*args, **kwargs)
-        if water_depth:
-            if self.instance.waterdepths.first():
-                watinstance = self.instance.waterdepths.first()
-                watinstance.time_measure = time_measure
-                watinstance.water_depth = water_depth
-                watinstance.save()
-            else:
-                self.instance.waterdepths.create(
-                    object_id=self.instance.pk, time_measure=time_measure, water_depth=water_depth
-                )
-        if rate:
-            if self.instance.rates.first():
-                rateinstance = self.instance.rates.first()
-                rateinstance.time_measure = time_measure
-                rateinstance.rate = rate
-                rateinstance.save()
-            else:
-                self.instance.rates.create(object_id=self.instance.pk, time_measure=time_measure, rate=rate)
-
+    def save(self, commit=True):
+        csv_file = self.cleaned_data.pop("csv_file")
+        instance = super().save(commit=False)
+        if commit:
+            instance.save()
+            if csv_file:
+                data = pd.read_csv(csv_file)
+                print(data)
+                data["time_measure"] = pd.to_timedelta(data["time_measure"] + ":00")
+                data = data.replace(np.nan, None)
+                for index, row in data.iterrows():
+                    if row["time_measure"]:
+                        if row["water_depth"]:
+                            instance.waterdepths.create(
+                                time_measure=row["time_measure"], water_depth=row["water_depth"]
+                            )
+                        if row["rate"]:
+                            instance.rates.create(time_measure=row["time_measure"], rate=row["rate"])
         return instance
+
+
+class DurationField(forms.Field):
+    widget = forms.TextInput
+
+    def to_python(self, value):
+        if value in self.empty_values:
+            return None
+
+        try:
+            hours, minutes, seconds = map(int, value.split(":"))
+            return datetime.timedelta(hours=hours, minutes=minutes, seconds=seconds)
+        except ValueError:
+            raise ValidationError("Неверный формат. Используйте часы:минуты:секунды")
+
+    def prepare_value(self, value):
+        if isinstance(value, datetime.timedelta):
+            total_seconds = int(value.total_seconds())
+            hours, remainder = divmod(total_seconds, 3600)
+            minutes, seconds = divmod(remainder, 60)
+            return f"{hours:02}:{minutes:02}:{seconds:02}"
+        return value
+
+
+class WellsWaterDepthPumpForm(forms.ModelForm):
+    class Meta:
+        model = WellsWaterDepth
+        exclude = ("content_type", "object_id", "content_object", "type_level")
 
 
 class WellsEfwForm(forms.ModelForm):
     comments = forms.CharField(
         required=False, label="Примечания и рекомендации", widget=forms.Textarea(attrs={"rows": 2})
     )
+    pump_time = DurationField(label="Продолжительность откачки")
 
     class Meta:
         model = WellsEfw
@@ -276,6 +356,9 @@ class WellsEfwForm(forms.ModelForm):
         )
         self.fields["level_meter"].queryset = DictEquipment.objects.filter(
             typo__name="уровнемер", typo__entity__name="тип оборудования"
+        )
+        self.fields["rate_measure"].queryset = DictEquipment.objects.filter(
+            typo__name="расходомер", typo__entity__name="тип оборудования"
         )
         self.fields["method_measure"].queryset = DictEntities.objects.filter(entity__name="способ замера дебита")
         # self.fields['date'].initial = timezone.now()
@@ -362,3 +445,13 @@ class BalanceForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["typo"].queryset = DictEntities.objects.filter(entity__name="тип подземных вод")
+
+
+class DictEquipmentForm(forms.ModelForm):
+    class Meta:
+        model = DictEquipment
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["typo"].queryset = DictEntities.objects.filter(entity__name="тип оборудования")
