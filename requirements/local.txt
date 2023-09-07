@@ -220,11 +220,7 @@ fonttools[woff]==4.42.1
     # via
     #   matplotlib
     #   weasyprint
-geographiclib==2.0
-    # via geopy
 geopandas==0.13.2
-    # via -r base.in
-geopy==2.3.0
     # via -r base.in
 hiredis==2.2.3
     # via -r base.in
@@ -272,6 +268,8 @@ lazy-object-proxy==1.9.0
     # via astroid
 livereload==2.6.3
     # via sphinx-autobuild
+lxml==4.9.3
+    # via python-docx
 markdown==3.4.4
     # via
     #   -r base.in
@@ -418,6 +416,8 @@ python-dateutil==2.8.2
     #   matplotlib
     #   pandas
     #   python-crontab
+python-docx==0.8.11
+    # via -r base.in
 python-monkey-business==1.0.0
     # via django-nested-admin
 python-slugify==8.0.1

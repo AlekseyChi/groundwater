@@ -15,6 +15,7 @@ weasyprint
 Jinja2
 Markdown
 markdown-katex
+python-docx
 
 # Django
 # ------------------------------------------------------------------------------
