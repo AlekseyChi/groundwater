@@ -169,7 +169,12 @@ class Documents(BaseModel):
         verbose_name = "Документ"
         verbose_name_plural = "Документация"
         db_table = "documents"
-        unique_together = (("name", "typo", "content_type", "object_id"),)
+        unique_together = (
+            (
+                "name",
+                "typo",
+            ),
+        )
         ordering = ("-creation_date",)
 
     def __str__(self):
