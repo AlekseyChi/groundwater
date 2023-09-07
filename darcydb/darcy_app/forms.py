@@ -277,7 +277,7 @@ class WellsLithologyForm(forms.ModelForm):
 class WellsDepressionForm(forms.ModelForm):
     csv_file = forms.FileField(
         required=False,
-        label="CSV файл",
+        label="Импортировать данные с файла",
         help_text="CSV файл со следующими столбцами: 'time_measure', 'water_depth', 'rate'",
     )
 
