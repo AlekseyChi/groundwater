@@ -225,7 +225,6 @@ class WellsRateForm(forms.ModelForm):
 
 class WellsLithologyForm(forms.ModelForm):
     description = forms.CharField(label="Доп. описание", required=False)
-    field_order = ["rock", "description"]
 
     class Meta:
         model = WellsLithology
