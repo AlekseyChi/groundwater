@@ -295,17 +295,21 @@ class WellsDepressionForm(forms.ModelForm):
             instance.save()
             if csv_file:
                 data = pd.read_csv(csv_file)
-                print(data)
-                data["time_measure"] = pd.to_timedelta(data["time_measure"] + ":00")
+                if "time_measure" in data.columns:
+                    data["time_measure"] = pd.to_timedelta(data["time_measure"], unit="m")
+                else:
+                    data = data.iloc[:, 0].str.split(";", expand=True)
+                    data.columns = ["time_measure", "water_depth", "rate"]
+                    data["time_measure"] = pd.to_timedelta(data["time_measure"].astype(float), unit="m")
                 data = data.replace(np.nan, None)
                 for index, row in data.iterrows():
                     if row["time_measure"]:
                         if row["water_depth"]:
                             instance.waterdepths.create(
-                                time_measure=row["time_measure"], water_depth=row["water_depth"]
+                                time_measure=row["time_measure"], water_depth=float(row["water_depth"])
                             )
                         if row["rate"]:
-                            instance.rates.create(time_measure=row["time_measure"], rate=row["rate"])
+                            instance.rates.create(time_measure=row["time_measure"], rate=float(row["rate"]))
         return instance
 
 
