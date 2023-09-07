@@ -88,7 +88,9 @@ class PumpJournal(PDF):
 
     def get_recovery_data(self, dyn_wat):
         recovery_data = []
-        efw_recovery = WellsEfw.objects.filter(doc=self.efw.doc, type_efw__name="восстановление уровня").first()
+        efw_recovery = WellsEfw.objects.filter(
+            well=self.efw.well, doc=self.efw.doc, type_efw__name="восстановление уровня"
+        ).first()
         if efw_recovery:
             depr_qs = WellsDepression.objects.get(efw=efw_recovery)
             wat_depths = depr_qs.waterdepths.all()

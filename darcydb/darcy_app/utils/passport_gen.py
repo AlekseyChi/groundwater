@@ -338,6 +338,12 @@ class Passports(PDF):
         schema = base64.b64encode(schema_pic.read()).decode("utf-8")
         return schema
 
+    def save(self):
+        geophysics = self.get_geophysics_instance()
+        if geophysics:
+            geophysics.doc = self.doc_instance
+            geophysics.save()
+
 
 def generate_passport(well, document):
     env = Environment(loader=FileSystemLoader("darcydb/darcy_app/utils/templates"))
@@ -402,3 +408,4 @@ def generate_passport(well, document):
     output.seek(0)
     document_path.path.save(name_pdf, ContentFile(output.read()))
     document_path.save()
+    pdf.save()
