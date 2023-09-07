@@ -1,18 +1,27 @@
 <p style="text-align: right">Приложение № 1</p>
 {% for attach in aq_attachments %}
 <div style="page-break-after: always">
-  <img src="file://{{ attach.img.path }}" style="width: 95%; align: center" />
+  <img
+    src="data:image/png;base64, {{ attach }}"
+    style="width: 95%; align: center"
+  />
 </div>
 {% endfor %}
 <p style="text-align: right">Приложение № 2</p>
 {% for attach in geo_attachments %}
 <div style="page-break-after: always">
-  <img src="file://{{ attach.img.path }}" style="width: 95%; align: center" />
+  <img
+    src="data:image/png;base64, {{ attach }}"
+    style="width: 95%; align: center"
+  />
 </div>
 {% endfor %}
 <p style="text-align: right">Приложение № 3</p>
 {% for attach in chem_attachments %}
 <div style="page-break-after: always">
-  <img src="file://{{ attach.img.path }}" style="width: 95%; align: center" />
+  <img
+    src="data:image/png;base64, {{ attach }}"
+    style="width: 95%; align: center"
+  />
 </div>
 {% endfor %}
