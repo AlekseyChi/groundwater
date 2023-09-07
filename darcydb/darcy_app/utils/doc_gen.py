@@ -26,9 +26,9 @@ class PDF:
             return ""
 
     @staticmethod
-    def get_sign():
+    def get_sign(name="sign.png"):
         this_folder = os.path.dirname(os.path.abspath(__file__))
-        img = "file://" + os.path.join(this_folder, "static", "sign.png")
+        img = "file://" + os.path.join(this_folder, "static", name)
         return img
 
     @staticmethod

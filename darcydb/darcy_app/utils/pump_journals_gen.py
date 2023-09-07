@@ -123,6 +123,13 @@ class PumpJournal(PDF):
                 top_elev = hor.bot_elev
         return ""
 
+    def get_workers_signature(self):
+        sign_list = [
+            {"worker": "Кузьминов К. Г.", "sign": self.get_sign("pump1.png")},
+            {"worker": "Здановский И. И.", "sign": self.get_sign("pump2.png")},
+        ]
+        return sign_list
+
 
 def generate_pump_journal(efw, document):
     env = Environment(loader=FileSystemLoader("darcydb/darcy_app/utils/templates"))
@@ -144,6 +151,7 @@ def generate_pump_journal(efw, document):
     info["Дебит"] = f"{rate} м<sup>3</sup>/час"
     info["Удельный дебит"] = f"{specific_rate} м<sup>3</sup>/(час*м)"
     recovery_data = pdf.get_recovery_data(dyn_wat)
+    sign_list = pdf.get_workers_signature()
     rendered_html = template.render(
         doc_type="Журнал опытной откачки".upper(),
         logo=logo,
@@ -162,6 +170,7 @@ def generate_pump_journal(efw, document):
         dyn_wat=dyn_wat,
         recovery_data=recovery_data,
         conclusions=efw.extra.get("comments", ""),
+        sign_list=sign_list,
     )
     output = io.BytesIO()
     html = HTML(string=rendered_html).render(stylesheets=[CSS("darcydb/darcy_app/utils/css/base.css")])
