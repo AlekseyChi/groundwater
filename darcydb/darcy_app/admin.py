@@ -357,7 +357,8 @@ class WellsEfwAdmin(nested_admin.NestedModelAdmin):
                 form.instance.doc = doc_instance
                 form.instance.save()
             generate_pump_journal(form.instance, doc_instance)
-            self.message_user(request, "Журнал создан.")
+            doc_file = DocumentsPath.objects.filter(doc=doc_instance).last()
+            self.message_user(request, mark_safe(f'Журнал создан.<a href="{doc_file.path.url}">Скачать журнал</a>'))
 
 
 darcy_admin.register(WellsEfw, WellsEfwAdmin)
