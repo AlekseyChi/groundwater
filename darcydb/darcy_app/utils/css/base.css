@@ -179,3 +179,16 @@ td {
   margin: 0.2rem;
   font-size: 11pt;
 }
+
+.no-border {
+  width: 60%;
+  border-collapse: collapse;
+  border: none;
+}
+
+.no-border tr,
+.no-border td {
+  text-align: left;
+  border: none;
+  font-weight: bold;
+}
