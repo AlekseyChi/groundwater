@@ -168,7 +168,7 @@ class Documents(BaseModel):
         verbose_name = "Документ"
         verbose_name_plural = "Документация"
         db_table = "documents"
-        unique_together = (("content_type", "object_id"),)
+        unique_together = (("name", "typo", "content_type", "object_id"),)
         ordering = ("-creation_date",)
 
     def __str__(self):
@@ -660,7 +660,7 @@ class WellsConstruction(BaseModel):
         verbose_name = "Конструкция скважины"
         verbose_name_plural = "Конструкция скважины"
         db_table = "wells_construction"
-        unique_together = (("well", "depth_from", "construction_type", "depth_till", "diameter"),)
+        unique_together = (("well", "date", "depth_from", "construction_type", "depth_till", "diameter"),)
         ordering = ("depth_from",)
 
     def __str__(self):
