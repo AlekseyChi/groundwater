@@ -62,12 +62,27 @@ class Passports(PDF):
 
     def get_pump_data(self, archive=True):
         if archive:
-            efw = WellsEfw.objects.filter(well=self.instance).order_by("-date").first()
+            efw = (
+                WellsEfw.objects.filter(well=self.instance)
+                .exclude(type_efw__name="восстановление уровня")
+                .order_by("-date")
+                .first()
+            )
             if efw:
                 max_date = efw.date
-                efw = WellsEfw.objects.filter(well=self.instance).exclude(date=max_date).order_by("-date").first()
+                efw = (
+                    WellsEfw.objects.filter(well=self.instance)
+                    .exclude(date=max_date, type_efw__name="восстановление уровня")
+                    .order_by("-date")
+                    .first()
+                )
         else:
-            efw = WellsEfw.objects.filter(well=self.instance).order_by("-date").first()
+            efw = (
+                WellsEfw.objects.filter(well=self.instance)
+                .exclude(type_efw__name="восстановление уровня")
+                .order_by("-date")
+                .first()
+            )
         rate = ""
         depression = ""
         stat_wat = ""

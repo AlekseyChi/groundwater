@@ -346,7 +346,7 @@ class WellsEfwForm(forms.ModelForm):
     comments = forms.CharField(
         required=False, label="Примечания и рекомендации", widget=forms.Textarea(attrs={"rows": 2})
     )
-    pump_time = DurationField(label="Продолжительность откачки")
+    pump_time = DurationField(label="Продолжительность откачки", help_text="Часы:минуты:секунды")
 
     class Meta:
         model = WellsEfw
