@@ -925,9 +925,12 @@ class Attachments(BaseModel):
         return mark_safe("<img src='/media/%s' width='150' height='150' />" % (self.img))
 
     def delete(self, *args, **kwargs):
-        storage, path = self.path.storage, self.path.path
-        super().delete(*args, **kwargs)
-        storage.delete(path)
+        if settings.DEBUG:
+            storage, path = self.path.storage, self.path.path
+            super().delete(*args, **kwargs)
+            storage.delete(path)
+        else:
+            super().delete(*args, **kwargs)
 
     def get_base64_image(self):
         if isinstance(self.img.storage, FileSystemStorage):
