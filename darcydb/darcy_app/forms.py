@@ -312,6 +312,7 @@ class WellsDepressionForm(forms.ModelForm):
 
 class DurationField(forms.Field):
     widget = forms.TextInput
+    placeholder = "00:00:00"
 
     def to_python(self, value):
         if value in self.empty_values:

@@ -116,7 +116,7 @@ class PDF:
         return WellsDrilledData.objects.filter(well=self.instance).first()
 
     def get_geophysics_instance(self):
-        return WellsGeophysics.objects.filter(well=self.instance, doc=self.doc_instance).first()
+        return WellsGeophysics.objects.filter(well=self.instance).order_by("-date").first()
 
     def get_sample_instance(self):
         return WellsSample.objects.filter(well=self.instance).order_by("-date").first()

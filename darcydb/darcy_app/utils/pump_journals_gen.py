@@ -6,7 +6,7 @@ from django.core.files.base import ContentFile
 from jinja2 import Environment, FileSystemLoader
 from weasyprint import CSS, HTML
 
-from ..models import DocumentsPath, WellsAquifers, WellsDepression, WellsLithology
+from ..models import DocumentsPath, WellsAquifers, WellsDepression, WellsEfw, WellsLithology
 from .doc_gen import PDF
 
 
@@ -33,12 +33,12 @@ class PumpJournal(PDF):
             # "Местоположение": f"{address['country']}, {address['state']}, {address['county']}",
             "Недропользователь": water_user.name if water_user else "",
             "Адрес (почтовый) владельца скважины": water_user.position if water_user else "",
-            "Целевой водоносный горизонт": aq.capitalize() if aq else "",
-            "Отметка устья скважины": f"{self.instance.head} м",
-            "Глубина скважины": f"{depth_fact} м",
+            "Целевой водоносный горизонт": aq.aquifer_index if aq else "",
+            "Отметка устья скважины": f"{self.instance.head} м" if self.instance.head else "",
+            "Глубина скважины": f"{depth_fact} м" if depth_fact else "",
             "Водовмещающие породы": lit,
-            "Глубина кровли водоносного горизонта": f"{top} м",
-            "Глубина подошвы водоносного горизонта": f"{bot} м",
+            "Глубина кровли водоносного горизонта": f"{top} м" if top else "",
+            "Глубина подошвы водоносного горизонта": f"{bot} м" if bot else "",
             "Даты проведения опыта": self.efw.date.date().strftime("%d.%m.%Y"),
             "Статический уровень воды на начало откачки": "",
             "Динамический уровень воды на конец откачки": "",
@@ -47,14 +47,14 @@ class PumpJournal(PDF):
 
     def get_instrumental_data(self):
         data = {
-            "Тип, марка насоса": self.efw.pump_type,
-            "Глубина установки насоса": self.efw.pump_depth if self.efw.pump_depth else "",
-            "Ёмкость мерного сосуда, м3": self.efw.vessel_capacity if self.efw.vessel_capacity else "",
+            "Тип, марка насоса": self.efw.pump_type or "",
+            "Глубина установки насоса": self.efw.pump_depth or "",
+            "Ёмкость мерного сосуда, м3": self.efw.vessel_capacity or "",
             "Время наполнения ёмкости, сек": self.time_to_seconds(self.efw.vessel_time)
             if self.efw.vessel_time
             else "",
-            "Водомерное устройство": self.efw.method_measure if self.efw.method_measure else "",
-            "Наименование и марка уровнемера": self.efw.level_meter if self.efw.level_meter else "",
+            "Водомерное устройство": self.efw.rate_measure or "",
+            "Наименование и марка уровнемера": self.efw.level_meter or "",
         }
         return data
 
@@ -74,9 +74,9 @@ class PumpJournal(PDF):
                 rate = rate_fin = round(rate_inst.rate * Decimal(3.6), 2)
             pump_data.append(
                 (
-                    self.efw.date.date(),
-                    qs.time_measure.hour,
-                    qs.time_measure.minute,
+                    (self.efw.date + qs.time_measure).date(),
+                    int(qs.time_measure.total_seconds() // 3600),
+                    int(qs.time_measure.total_seconds() % 3600 // 60),
                     qs.water_depth,
                     depression,
                     rate,
@@ -85,6 +85,25 @@ class PumpJournal(PDF):
             )
             dyn_level = qs.water_depth
         return dyn_level, stat_level, rate_fin, round(rate_fin / depression, 2), depression, pump_data
+
+    def get_recovery_data(self, dyn_wat):
+        recovery_data = []
+        efw_recovery = WellsEfw.objects.filter(doc=self.efw.doc, type_efw__name="восстановление уровня").first()
+        if efw_recovery:
+            depr_qs = WellsDepression.objects.get(efw=efw_recovery)
+            wat_depths = depr_qs.waterdepths.all()
+            for qs in wat_depths:
+                recovery = dyn_wat - qs.water_depth
+                recovery_data.append(
+                    (
+                        (self.efw.date + qs.time_measure).date(),
+                        int(qs.time_measure.total_seconds() // 3600),
+                        int(qs.time_measure.total_seconds() % 3600 // 60),
+                        qs.water_depth,
+                        recovery,
+                    )
+                )
+        return recovery_data
 
     def create_aquifer_data(self):
         aquifer = WellsAquifers.objects.filter(well=self.instance)
@@ -122,6 +141,7 @@ def generate_pump_journal(efw, document):
     info["Понижение на конец откачки"] = f"{depression} м"
     info["Дебит"] = f"{rate} м<sup>3</sup>/час"
     info["Удельный дебит"] = f"{specific_rate} м<sup>3</sup>/(час*м)"
+    recovery_data = pdf.get_recovery_data(dyn_wat)
     rendered_html = template.render(
         doc_type="Журнал опытной откачки".upper(),
         logo=logo,
@@ -138,6 +158,7 @@ def generate_pump_journal(efw, document):
         stat_wat=stat_wat,
         pump_data=pump_data,
         dyn_wat=dyn_wat,
+        recovery_data=recovery_data,
         conclusions=efw.extra.get("comments", ""),
     )
     output = io.BytesIO()

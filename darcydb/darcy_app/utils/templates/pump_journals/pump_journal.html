@@ -12,7 +12,11 @@
     <div class="info chapter">{% include 'pump_journals/info.html' %}</div>
     <div class="chapter">{% include 'pump_journals/tech_data.html' %}</div>
     <div class="chapter">{% include 'pump_journals/pump_data.html' %}</div>
+    {% if recovery_data %}
     <div class="chapter">{% include 'pump_journals/recovery_data.html' %}</div>
+    {% endif %} {% if conclusions %}
     <div class="chapter">{% include 'pump_journals/conclusions.html' %}</div>
+    {% endif %}
+    <p>Подписи:</p>
   </body>
 </html>
