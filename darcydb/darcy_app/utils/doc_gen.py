@@ -66,8 +66,9 @@ class PDF:
             self.check_none(lit.caverns),
             self.check_none(lit.inclusions),
         ]
-        if lit.extra.get("description"):
-            string_desc.append(lit.extra["description"])
+        if lit.extra:
+            if lit.extra.get("description"):
+                string_desc.append(lit.extra["description"])
         return ", ".join([el for el in string_desc if el]).strip().capitalize()
 
     def get_fields(self):
