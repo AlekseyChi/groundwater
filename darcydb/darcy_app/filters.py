@@ -2,9 +2,7 @@
 
 from django.contrib import admin
 
-from .models import DictEntities
-
-# from django.utils.translation import gettext_lazy as _
+from .models import DictDocOrganizations, DictEntities
 
 
 class WellsTypeFilter(admin.SimpleListFilter):
@@ -12,7 +10,7 @@ class WellsTypeFilter(admin.SimpleListFilter):
     parameter_name = "typo"
 
     def lookups(self, request, model_admin):
-        return DictEntities.objects.filter(entity=1).values_list("id", "name")
+        return DictEntities.objects.filter(entity__name="тип скважины").values_list("id", "name")
 
     def queryset(self, request, queryset):
         if self.value():
@@ -26,7 +24,7 @@ class TypeEfwFilter(admin.SimpleListFilter):
     parameter_name = "type_efw"
 
     def lookups(self, request, model_admin):
-        return DictEntities.objects.filter(entity=2).values_list("id", "name")
+        return DictEntities.objects.filter(entity__name="тип офр").values_list("id", "name")
 
     def queryset(self, request, queryset):
         if self.value():
@@ -40,7 +38,7 @@ class DocTypeFilter(admin.SimpleListFilter):
     parameter_name = "typo"
 
     def lookups(self, request, model_admin):
-        return DictEntities.objects.filter(entity=6).values_list("id", "name")
+        return DictEntities.objects.filter(entity__name="тип документа").values_list("id", "name")
 
     def queryset(self, request, queryset):
         if self.value():
@@ -54,7 +52,7 @@ class DocSourceFilter(admin.SimpleListFilter):
     parameter_name = "source"
 
     def lookups(self, request, model_admin):
-        return DictEntities.objects.filter(entity=7).values_list("id", "name")
+        return DictDocOrganizations.objects.values_list("id", "name")
 
     def queryset(self, request, queryset):
         if self.value():
