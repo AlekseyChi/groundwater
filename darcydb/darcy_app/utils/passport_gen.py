@@ -23,9 +23,9 @@ class Passports(PDF):
         water_user = self.get_water_user()
         address = self.get_address()
         position_info = {
-            "Республика": address.get("country"),
-            "Область": address.get("state"),
-            "Район": address.get("county"),
+            "Республика": address.get("country", ""),
+            "Область": address.get("state", ""),
+            "Район": address.get("county", ""),
             "Владелец скважины": water_user.name if water_user else "",
             "Адрес (почтовый) владельца скважины": water_user.position if water_user else "",
             "Координаты скважины": f"{self.instance.geom.y} С.Ш., {self.instance.geom.x} В.Д.",
