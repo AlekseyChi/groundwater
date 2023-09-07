@@ -201,9 +201,13 @@ class DocumentsPath(BaseModel):
     #         save_file_to_media_directory.delay(self.pk, file.read(), file_path)
 
     def delete(self, *args, **kwargs):
-        storage, path = self.path.storage, self.path.path
-        super().delete(*args, **kwargs)
-        storage.delete(path)
+        if settings.DEBUG:
+            storage, path = self.path.storage, self.path.path
+            super().delete(*args, **kwargs)
+            storage.delete(path)
+        else:
+            self.path.delete(save=False)
+            super().delete(*args, **kwargs)
 
     def generate_presigned_url(self):
         s3_client = boto3.client(
@@ -238,7 +242,7 @@ class AquiferCodes(models.Model):
         db_table = "aquifer_codes"
 
     def __str__(self):
-        return self.aquifer_name
+        return f"{self.aquifer_name} ({self.aquifer_index})" if self.aquifer_index else self.aquifer_name
 
 
 class Wells(BaseModel):
@@ -412,7 +416,7 @@ class WellsWaterDepth(BaseModel):
     """
 
     type_level = models.BooleanField(verbose_name="Статический", blank=True, null=True, default=False)
-    time_measure = models.TimeField(verbose_name="Время замера")
+    time_measure = models.DurationField(verbose_name="Время замера")
     water_depth = models.DecimalField(
         max_digits=6,
         decimal_places=2,
@@ -440,7 +444,7 @@ class WellsRate(BaseModel):
     и обобщенные связи с другими возможными моделями.
     """
 
-    time_measure = models.TimeField(verbose_name="Время замера")
+    time_measure = models.DurationField(verbose_name="Время замера")
     rate = models.DecimalField(
         max_digits=7, decimal_places=3, verbose_name="Дебит л/с", help_text="до трех знаков после запятой"
     )
@@ -465,7 +469,7 @@ class WellsTemperature(BaseModel):
     и обобщенные связи с другими возможными моделями.
     """
 
-    time_measure = models.TimeField(verbose_name="Время замера")
+    time_measure = models.DurationField(verbose_name="Время замера")
     temperature = models.DecimalField(
         max_digits=6, decimal_places=2, verbose_name="Температура, ℃", help_text="до двух знаков после запятой"
     )
@@ -482,20 +486,6 @@ class WellsTemperature(BaseModel):
 
     def __str__(self):
         return ""
-
-    @classmethod
-    def get_all_related_objects(cls):
-        distinct_content_types = cls.objects.values_list("content_type", flat=True).distinct()
-        all_related_objects = []
-        for content_type_id in distinct_content_types:
-            content_type = ContentType.objects.get_for_id(content_type_id)
-            model_class = content_type.model_class()
-            object_ids = cls.objects.filter(content_type=content_type).values_list("object_id", flat=True)
-
-            related_objects = model_class.objects.filter(id__in=object_ids)
-            all_related_objects.extend(related_objects)
-
-        return all_related_objects
 
 
 class WellsDepth(BaseModel):
@@ -656,7 +646,7 @@ class WellsLithology(BaseModel):
 
 class WellsConstruction(BaseModel):
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
-    date = models.DateField(verbose_name="Дата установки")
+    date = models.DateField(verbose_name="Дата установки", blank=True, null=True)
     construction_type = models.ForeignKey(
         "DictEntities", models.DO_NOTHING, db_column="construction_type", verbose_name="Тип конструкции"
     )
@@ -725,7 +715,16 @@ class WellsEfw(BaseModel):
         blank=True,
         null=True,
     )
-    pump_time = models.TimeField(verbose_name="Продолжительность опыта")
+    rate_measure = models.ForeignKey(
+        "DictEquipment",
+        models.DO_NOTHING,
+        db_column="rate_measure",
+        related_name="rate_measure",
+        verbose_name="Расходомер",
+        blank=True,
+        null=True,
+    )
+    pump_time = models.DurationField(verbose_name="Продолжительность опыта")
     vessel_capacity = models.IntegerField(blank=True, null=True, verbose_name="Ёмкость мерного сосуда, м3")
     vessel_time = models.TimeField(blank=True, null=True, verbose_name="Время наполнения ёмкости, сек")
     doc = models.ForeignKey("Documents", models.CASCADE, blank=True, null=True, verbose_name="Документ")

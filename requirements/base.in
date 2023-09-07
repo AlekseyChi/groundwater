@@ -13,9 +13,9 @@ matplotlib
 tilemapbase
 weasyprint
 Jinja2
-geopy
 Markdown
 markdown-katex
+python-docx
 
 # Django
 # ------------------------------------------------------------------------------

@@ -62,9 +62,12 @@ class Passports(PDF):
 
     def get_pump_data(self, archive=True):
         if archive:
-            efw = WellsEfw.objects.filter(well=self.instance).exclude(doc=self.doc_instance).order_by("-date").first()
+            efw = WellsEfw.objects.filter(well=self.instance).order_by("-date").first()
+            if efw:
+                max_date = efw.date
+                efw = WellsEfw.objects.filter(well=self.instance).exclude(date=max_date).order_by("-date").first()
         else:
-            efw = WellsEfw.objects.filter(well=self.instance, doc=self.doc_instance).order_by("-date").first()
+            efw = WellsEfw.objects.filter(well=self.instance).order_by("-date").first()
         rate = ""
         depression = ""
         stat_wat = ""
@@ -81,8 +84,9 @@ class Passports(PDF):
 
     def get_pump_complex(self):
         efw = (
-            WellsEfw.objects.filter(well=self.instance, doc=self.doc_instance)
-            .exclude(type_efw__name="откачки одиночные пробные")
+            WellsEfw.objects.filter(well=self.instance)
+            .exclude(type_efw__name__in=["откачки одиночные пробные", "восстановление уровня"])
+            .order_by("-date")
             .first()
         )
         efw_data = {}
@@ -98,11 +102,11 @@ class Passports(PDF):
             rate_day = round(rate * Decimal(86.4), 2)
             efw_data = {
                 "Дата производства откачки": efw.date.strftime("%d.%m.%Y"),
-                "Продолжительность откачки": f"{efw.pump_time.hour} час",
-                "Водомерное устройство": efw.method_measure,
-                "Уровнемер, марка": efw.level_meter if efw.level_meter else "",
-                "Тип и марка насоса": efw.pump_type if efw.pump_type else "",
-                "Глубина установки насоса": f"{efw.pump_depth} м",
+                "Продолжительность откачки": f"{efw.pump_time.total_seconds() // 3600} час.",
+                "Водомерное устройство": efw.rate_measure or "",
+                "Уровнемер, марка": efw.level_meter or "",
+                "Тип и марка насоса": efw.pump_type or "",
+                "Глубина установки насоса": f"{efw.pump_depth} м" if efw.pump_depth else "",
                 "Дебит": f"{rate} л/сек; {rate_hour} м<sup>3</sup>/час; {rate_day} м<sup>3</sup>/сут",
                 "Удельный дебит": f"{specific_rate} л/сек; "
                 f"{round(specific_rate * Decimal(3.6), 2)} м<sup>3</sup>/(час*м)",
@@ -145,13 +149,13 @@ class Passports(PDF):
                     )
                 )
             last_time = wat_depths.last().time_measure
-            delta = datetime.timedelta(hours=last_time.hour, minutes=last_time.minute, seconds=last_time.second)
+            # delta = datetime.timedelta(hours=last_time.hour, minutes=last_time.minute, seconds=last_time.second)
             test_pump_info.update(
                 {
                     "Ёмкость мерного сосуда, м<sup>3</sup>": efw.vessel_capacity,
                     "Время наполнения ёмкости, сек": self.time_to_seconds(efw.vessel_time),
                     "Начало откачки": efw.date.strftime("%d.%m.%Y г. %H:%M"),
-                    "Окончание откачки": (efw.date + delta).strftime("%d.%m.%Y г. %H:%M"),
+                    "Окончание откачки": (efw.date + last_time).strftime("%d.%m.%Y г. %H:%M"),
                     "Марка погружного насоса (компрессора)": efw.pump_type,
                 }
             )
@@ -161,7 +165,7 @@ class Passports(PDF):
         construction = self.create_construction_data()
         cnstr_html = ""
         if construction:
-            archive_date = construction.order_by("date").first().date
+            archive_date = construction.filter(date__isnull=False).order_by("date").first().date
             if archive:
                 u_construction = construction.filter(date=archive_date)
             else:
@@ -253,21 +257,6 @@ class Passports(PDF):
             }
             return geophysics_data
 
-    def form_lithology_description(self, lit):
-        string_desc = [
-            f"{self.check_none(lit.color)} {lit.rock}",
-            self.check_none(lit.composition),
-            self.check_none(lit.structure),
-            self.check_none(lit.mineral),
-            self.check_none(lit.secondary_change),
-            self.check_none(lit.cement),
-            self.check_none(lit.fracture),
-            self.check_none(lit.weathering),
-            self.check_none(lit.caverns),
-            self.check_none(lit.inclusions),
-        ]
-        return ", ".join([el for el in string_desc if el]).strip().capitalize()
-
     def create_lithology(self):
         aquifer = WellsAquifers.objects.filter(well=self.instance)
         lithology = WellsLithology.objects.filter(well=self.instance)
@@ -286,7 +275,7 @@ class Passports(PDF):
                 description = self.form_lithology_description(hor)
                 thick = hor.bot_elev - top_elev
                 top_elev = hor.bot_elev
-                data.append((i + 1, str(aq.aquifer).capitalize(), description, thick, hor.bot_elev, comments))
+                data.append((i + 1, str(aq.aquifer.aquifer_index), description, thick, hor.bot_elev, comments))
         return data
 
     def create_sample_data(self):
@@ -349,6 +338,12 @@ class Passports(PDF):
         schema = base64.b64encode(schema_pic.read()).decode("utf-8")
         return schema
 
+    def save(self):
+        geophysics = self.get_geophysics_instance()
+        if geophysics:
+            geophysics.doc = self.doc_instance
+            geophysics.save()
+
 
 def generate_passport(well, document):
     env = Environment(loader=FileSystemLoader("darcydb/darcy_app/utils/templates"))
@@ -369,7 +364,7 @@ def generate_passport(well, document):
     construction_data = pdf.create_construction_data()
     geophysics_data = pdf.create_geophysics_data()
     efr, levels, pump_recommendations = pdf.get_pump_complex()
-    test_pump, test_pump_info = pdf.get_test_pump()
+    # test_pump, test_pump_info = pdf.get_test_pump()
     sample_data = pdf.create_sample_data()
     conclusion = pdf.create_chem_conclusion()
     extra_data = pdf.get_extra_data()
@@ -393,8 +388,8 @@ def generate_passport(well, document):
         efr=efr,
         levels=levels,
         pump_recommendations=pump_recommendations,
-        test_pump=test_pump,
-        test_pump_info=test_pump_info,
+        # test_pump=test_pump,
+        # test_pump_info=test_pump_info,
         sample_data=sample_data,
         conclusion=conclusion,
         extra_data=extra_data,
@@ -413,3 +408,4 @@ def generate_passport(well, document):
     output.seek(0)
     document_path.path.save(name_pdf, ContentFile(output.read()))
     document_path.save()
+    pdf.save()

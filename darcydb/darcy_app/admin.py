@@ -9,14 +9,18 @@ from jet.admin import CompactInline
 from .filters import DocSourceFilter, DocTypeFilter, TypeEfwFilter, WellsTypeFilter
 from .forms import (
     BalanceForm,
+    DictEquipmentForm,
     DocumentsForm,
     FieldsForm,
     IntakesForm,
     WellsAquifersForm,
+    WellsDepressionForm,
     WellsEfwForm,
     WellsForm,
     WellsLithologyForm,
+    WellsRateForm,
     WellsRegimeForm,
+    WellsTemperatureForm,
     WellsWaterDepthForm,
     WellsWaterDepthPumpForm,
 )
@@ -126,10 +130,15 @@ class WellsConstructionInline(nested_admin.NestedTabularInline):
     extra = 1
 
 
-class WellsWaterDepthDrilledInline(nested_admin.NestedGenericTabularInline):
-    form = WellsWaterDepthForm
+class WellsWaterDepthPumpInline(nested_admin.NestedGenericTabularInline):
     model = WellsWaterDepth
+    form = WellsWaterDepthPumpForm
     extra = 1
+    max_num = 1000
+
+
+class WellsWaterDepthDrilledInline(WellsWaterDepthPumpInline):
+    form = WellsWaterDepthForm
     max_num = 1
 
 
@@ -146,19 +155,21 @@ class WellsDrilledDataInline(nested_admin.NestedTabularInline):
     max_num = 1
 
 
-class WellsRateInline(nested_admin.NestedGenericTabularInline):
+class WellsRatePumpInline(nested_admin.NestedGenericTabularInline):
     model = WellsRate
     extra = 1
 
 
-class WellsWaterDepthPumpInline(WellsWaterDepthDrilledInline):
-    form = WellsWaterDepthPumpForm
-    max_num = 1000
+class WellsRateInline(WellsRatePumpInline):
+    model = WellsRate
+    form = WellsRateForm
+    extra = 1
 
 
 class WellsDepressionInline(nested_admin.NestedTabularInline):
     model = WellsDepression
-    inlines = [WellsWaterDepthPumpInline, WellsRateInline]
+    form = WellsDepressionForm
+    inlines = [WellsWaterDepthPumpInline, WellsRatePumpInline]
     extra = 1
     max_num = 1
 
@@ -358,6 +369,7 @@ class WellsWaterDepthInline(WellsWaterDepthDrilledInline):
 
 class WellsTemperatureInline(nested_admin.NestedGenericTabularInline):
     model = WellsTemperature
+    form = WellsTemperatureForm
     extra = 1
 
 
@@ -424,5 +436,12 @@ darcy_admin.register(License, LicenseAdmin)
 
 # Others
 # -------------------------------------------------------------------------------
-darcy_admin.register(DictEquipment)
+
+
+class DictEquipmentAdmin(nested_admin.NestedModelAdmin):
+    model = DictEquipment
+    form = DictEquipmentForm
+
+
+darcy_admin.register(DictEquipment, DictEquipmentAdmin)
 darcy_admin.register(DictDocOrganizations)
