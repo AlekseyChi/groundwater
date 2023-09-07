@@ -1,3 +1,4 @@
+import base64
 import uuid
 
 import boto3
@@ -927,6 +928,18 @@ class Attachments(BaseModel):
         storage, path = self.path.storage, self.path.path
         super().delete(*args, **kwargs)
         storage.delete(path)
+
+    def get_base64_image(self):
+        if isinstance(self.img.storage, FileSystemStorage):
+            # If the image is stored locally
+            with open(self.img.path, "rb") as f:
+                image_content = f.read()
+        else:
+            # If the image is stored in Yandex Object Storage
+            image_content = self.img.read()
+
+        base64_image = base64.b64encode(image_content).decode("utf-8")
+        return base64_image
 
     def __str__(self):
         return self.img.name
