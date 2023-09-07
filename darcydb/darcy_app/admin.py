@@ -3,6 +3,7 @@ import datetime
 import nested_admin
 from django.contrib.admin import DateFieldListFilter
 from django.contrib.gis import admin
+from django.utils.safestring import mark_safe
 from import_export.admin import ImportExportModelAdmin
 from jet.admin import CompactInline
 
@@ -266,7 +267,8 @@ class WellsAdmin(nested_admin.NestedModelAdmin):
                     object_id=form.instance.pk,
                 )
             generate_passport(form.instance, doc_instance)
-            self.message_user(request, "Паспорт создан.")
+            doc_file = DocumentsPath.objects.filter(doc=doc_instance).last()
+            self.message_user(request, mark_safe(f'Паспорт создан. <a href="{doc_file.path.url}">Скачать паспорт</a>'))
 
 
 darcy_admin.register(Wells, WellsAdmin)
