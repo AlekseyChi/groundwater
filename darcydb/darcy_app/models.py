@@ -206,7 +206,6 @@ class DocumentsPath(BaseModel):
             super().delete(*args, **kwargs)
             storage.delete(path)
         else:
-            self.path.delete(save=False)
             super().delete(*args, **kwargs)
 
     def generate_presigned_url(self):
