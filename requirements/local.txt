@@ -331,6 +331,8 @@ pathlib2==2.3.7.post1
     # via markdown-katex
 pathspec==0.11.1
     # via black
+pdf2image==1.16.3
+    # via -r base.in
 pexpect==4.8.0
     # via ipython
 pickleshare==0.7.5
@@ -339,6 +341,7 @@ pillow==9.5.0
     # via
     #   -r base.in
     #   matplotlib
+    #   pdf2image
     #   tilemapbase
     #   weasyprint
 platformdirs==3.6.0
