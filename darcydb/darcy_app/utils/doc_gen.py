@@ -30,23 +30,7 @@ class PDF:
             else:
                 return f"{tag_span}<{tag}>{text}</{tag}></span>"
 
-        # Use re.sub with a custom replacer function
-        # \d+ matches one or more digits, - is for the hyphen
-        # [a-z] matches any single lowercase character
         return re.sub(r"\d+-\d+|\d+|[a-z]", replacer, s)
-
-    # def insert_tag_before_first_number(s, tag="sub"):
-    #     match = re.search(r"\d", s)
-    #     match_low = re.search(r"[a-z]", s)
-    #     if match:
-    #         pos = match.start()
-    #         end = match.end()
-    #         return f'{s[:pos]}<span style="font-size: 9pt"><{tag}>{s[pos:end]}</{tag}>{s[end:]}</span>'
-    #     elif match_low:
-    #         pos = match_low.start()
-    #         return f'{s[:pos]}<span style="font-size: 9pt">{s[pos:]}</span>'
-    #     else:
-    #         return s
 
     @staticmethod
     def time_to_seconds(t):
@@ -165,6 +149,8 @@ class PDF:
     def create_construction_data(self):
         construction = WellsConstruction.objects.filter(well=self.instance)
         if construction.exists():
+            for qs in construction:
+                qs.date = qs.date if qs.date else "Нет сведений"
             return construction
         else:
             return []

@@ -243,12 +243,12 @@ class Passports(PDF):
                 watdepth_new,
             ),
             (
-                "Дебит, м<sup>3</sup>/час",
+                "Дебит, л/сек",
                 rate_old,
                 rate_new,
             ),
             (
-                "Удельный дебит, м<sup>3</sup>/(час*м)",
+                "Удельный дебит, л/(сек*м)",
                 specific_rate_old,
                 specific_rate_new,
             ),

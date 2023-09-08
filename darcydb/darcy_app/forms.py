@@ -303,7 +303,7 @@ class WellsDepressionForm(forms.ModelForm):
                     data["time_measure"] = pd.to_timedelta(data["time_measure"].astype(float), unit="m")
                 data = data.replace(np.nan, None)
                 for index, row in data.iterrows():
-                    if row["time_measure"]:
+                    if row["time_measure"] is not None:
                         if row["water_depth"]:
                             instance.waterdepths.create(
                                 time_measure=row["time_measure"], water_depth=float(row["water_depth"])
