@@ -20,7 +20,9 @@ class PumpJournal(PDF):
         intake = self.get_intakes()
         # address = self.get_address()
         water_user = self.get_water_user()
-        top, bot, lit, aq = self.create_aquifer_data()
+        aq_data = self.create_aquifer_data()
+        top = min([aq[0] for aq in aq_data])
+        bot = max([aq[1] for aq in aq_data])
         geophysics = self.get_geophysics_instance()
         depth_fact = ""
         if geophysics:
@@ -33,10 +35,10 @@ class PumpJournal(PDF):
             # "Местоположение": f"{address['country']}, {address['state']}, {address['county']}",
             "Недропользователь": water_user.name if water_user else "",
             "Адрес (почтовый) владельца скважины": water_user.position if water_user else "",
-            "Целевой водоносный горизонт": aq.aquifer_index if aq else "",
+            "Целевой водоносный горизонт": "-".join([self.insert_tags(aq[-1], "sub") for aq in aq_data]),
             "Отметка устья скважины": f"{self.instance.head} м" if self.instance.head else "",
             "Глубина скважины": f"{depth_fact} м" if depth_fact else "",
-            "Водовмещающие породы": lit,
+            "Водовмещающие породы": " и ".join([aq[2] for aq in aq_data]).capitalize(),
             "Глубина кровли водоносного горизонта": f"{top} м" if top else "",
             "Глубина подошвы водоносного горизонта": f"{bot} м" if bot else "",
             "Даты проведения опыта": self.efw.date.date().strftime("%d.%m.%Y"),
@@ -49,7 +51,7 @@ class PumpJournal(PDF):
         data = {
             "Тип, марка насоса": self.efw.pump_type or "",
             "Глубина установки насоса": self.efw.pump_depth or "",
-            "Ёмкость мерного сосуда, м3": self.efw.vessel_capacity or "",
+            "Ёмкость мерного сосуда, м<sup>3</sup>": self.efw.vessel_capacity or "",
             "Время наполнения ёмкости, сек": self.time_to_seconds(self.efw.vessel_time)
             if self.efw.vessel_time
             else "",
@@ -86,16 +88,18 @@ class PumpJournal(PDF):
             dyn_level = qs.water_depth
         return dyn_level, stat_level, rate_fin, round(rate_fin / depression, 2), depression, pump_data
 
-    def get_recovery_data(self, dyn_wat):
+    def get_recovery_data(self):
         recovery_data = []
         efw_recovery = WellsEfw.objects.filter(
             well=self.efw.well, doc=self.efw.doc, type_efw__name="восстановление уровня"
         ).first()
+        wat_start = ""
         if efw_recovery:
             depr_qs = WellsDepression.objects.get(efw=efw_recovery)
             wat_depths = depr_qs.waterdepths.all()
+            wat_start = depr_qs.waterdepths.first().water_depth
             for qs in wat_depths:
-                recovery = dyn_wat - qs.water_depth
+                recovery = wat_start - qs.water_depth
                 recovery_data.append(
                     (
                         (self.efw.date + qs.time_measure).date(),
@@ -105,12 +109,14 @@ class PumpJournal(PDF):
                         recovery,
                     )
                 )
-        return recovery_data
+        return wat_start, recovery_data
 
     def create_aquifer_data(self):
+        stat_level = self.efw.waterdepths.first().water_depth
         aquifer = WellsAquifers.objects.filter(well=self.instance)
-        lithology = WellsLithology.objects.filter(well=self.instance)
+        lithology = WellsLithology.objects.filter(well=self.instance, bot_elev__gte=stat_level)
         aq_usage = self.get_aquifer_usage()
+        data = []
         if lithology.exists():
             top_elev = 0
             for i, hor in enumerate(lithology):
@@ -118,10 +124,14 @@ class PumpJournal(PDF):
                 if not aq:
                     aq = aquifer.first()
                 if aq_usage.filter(aquifer=aq.aquifer).exists():
-                    description = self.form_lithology_description(hor)
-                    return top_elev, hor.bot_elev, description, aq.aquifer
+                    if data:
+                        if data[-1][3] == aq.aquifer.aquifer_index:
+                            continue
+                    data.append(
+                        [top_elev, hor.bot_elev, self.form_lithology_description(hor), aq.aquifer.aquifer_index]
+                    )
                 top_elev = hor.bot_elev
-        return ""
+        return data
 
     def get_workers_signature(self):
         sign_list = [
@@ -139,18 +149,18 @@ def generate_pump_journal(efw, document):
     watermark = pdf.get_watermark()
     sign = pdf.get_sign()
     stamp = pdf.get_stamp()
-    well_id = f"{efw.well.pk}{'/ГВК' + str(efw.well.extra['name_gwk']) if efw.well.extra.get('name_gwk') else ''}"
+    well_id = f"{efw.well.name}{'/ГВК' + str(efw.well.extra['name_gwk']) if efw.well.extra.get('name_gwk') else ''}"
     title = pdf.create_title()
     info = pdf.create_info_data()
     construction_data = pdf.create_construction_data()
     instrumental_data = pdf.get_instrumental_data()
     dyn_wat, stat_wat, rate, specific_rate, depression, pump_data = pdf.get_pump_data()
+    recovery_wat, recovery_data = pdf.get_recovery_data()
     info["Статический уровень воды на начало откачки"] = f"{stat_wat} м"
     info["Динамический уровень воды на конец откачки"] = f"{dyn_wat} м"
     info["Понижение на конец откачки"] = f"{depression} м"
     info["Дебит"] = f"{rate} м<sup>3</sup>/час"
     info["Удельный дебит"] = f"{specific_rate} м<sup>3</sup>/(час*м)"
-    recovery_data = pdf.get_recovery_data(dyn_wat)
     sign_list = pdf.get_workers_signature()
     rendered_html = template.render(
         doc_type="Журнал опытной откачки".upper(),
@@ -167,7 +177,7 @@ def generate_pump_journal(efw, document):
         instrumental_data=instrumental_data,
         stat_wat=stat_wat,
         pump_data=pump_data,
-        dyn_wat=dyn_wat,
+        recovery_wat=recovery_wat,
         recovery_data=recovery_data,
         conclusions=efw.extra.get("comments", ""),
         sign_list=sign_list,
