@@ -28,7 +28,7 @@ class Passports(PDF):
             "Район": address.get("county", ""),
             "Владелец скважины": water_user.name if water_user else "",
             "Адрес (почтовый) владельца скважины": water_user.position if water_user else "",
-            "Координаты скважины": f"{self.instance.geom.y} С.Ш., {self.instance.geom.x} В.Д.",
+            "Координаты скважины": f"{round(self.instance.geom.y, 5)} С.Ш., {round(self.instance.geom.x, 5)} В.Д.",
             "Абсолютная отметка устья скважины": f"{self.instance.head} м",
             "Назначение скважины": f"{self.instance.typo.name[:-2]}ая",
             "Сведения о использовании": licenses.gw_purpose if licenses else "",
@@ -54,10 +54,11 @@ class Passports(PDF):
     def create_drilled_base(self):
         drill = self.get_drilled_instance()
         drilled_info = {}
+        nd = "Нет сведений"
         if drill:
-            drilled_info["Буровая организация, выполнявшая бурение"] = drill.organization
-            drilled_info["Бурение начато"] = f"{drill.date_start.strftime('%d.%m.%Y')} г."
-            drilled_info["Бурение окончено"] = f"{drill.date_end.strftime('%d.%m.%Y')} г."
+            drilled_info["Буровая организация, выполнявшая бурение"] = drill.organization if drill.organization else nd
+            drilled_info["Бурение начато"] = f"{drill.date_start.strftime('%d.%m.%Y')} г." if drill.date_start else nd
+            drilled_info["Бурение окончено"] = f"{drill.date_end.strftime('%d.%m.%Y')} г." if drill.date_end else nd
         return drilled_info
 
     def get_pump_data(self, archive=True):
@@ -189,7 +190,7 @@ class Passports(PDF):
                 cnstr_unit = " х ".join(
                     [
                         f"\\frac{{{qs.diameter}}}{{{str(qs.depth_from)+ '-' + str(qs.depth_till)}}}"
-                        for qs in construction
+                        for qs in u_construction
                     ]
                 )
                 cnstr_html = markdown.markdown(
@@ -290,7 +291,16 @@ class Passports(PDF):
                 description = self.form_lithology_description(hor)
                 thick = hor.bot_elev - top_elev
                 top_elev = hor.bot_elev
-                data.append((i + 1, str(aq.aquifer.aquifer_index), description, thick, hor.bot_elev, comments))
+                data.append(
+                    (
+                        i + 1,
+                        self.insert_tag_before_first_number(str(aq.aquifer.aquifer_index)),
+                        description,
+                        thick,
+                        hor.bot_elev,
+                        comments,
+                    )
+                )
         return data
 
     def create_sample_data(self):
@@ -368,7 +378,7 @@ def generate_passport(well, document):
     watermark = pdf.get_watermark()
     sign = pdf.get_sign()
     stamp = pdf.get_stamp()
-    well_id = f"{well.pk}{'/ГВК' + str(well.extra['name_gwk']) if well.extra.get('name_gwk') else ''}"
+    well_id = f"{well.name}{'/ГВК' + str(well.extra['name_gwk']) if well.extra.get('name_gwk') else ''}"
     title = pdf.create_title()
     position_info = pdf.create_position()
     aq_attachments, geo_attachments, chem_attachments = pdf.get_attachments()
@@ -383,6 +393,7 @@ def generate_passport(well, document):
     sample_data = pdf.create_sample_data()
     conclusion = pdf.create_chem_conclusion()
     extra_data = pdf.get_extra_data()
+    sign_creator = pdf.get_sign("Мошин В.Е..png")
     rendered_html = template.render(
         doc_type="Паспорт".upper(),
         logo=logo,
@@ -411,11 +422,12 @@ def generate_passport(well, document):
         aq_attachments=aq_attachments,
         geo_attachments=geo_attachments,
         chem_attachments=chem_attachments,
+        sign_creator=sign_creator,
     )
     output = io.BytesIO()
     html = HTML(string=rendered_html).render(stylesheets=[CSS("darcydb/darcy_app/utils/css/base.css")])
     html.write_pdf(target=output)
-    name_pdf = f"Паспорт_{well.pk}.pdf"
+    name_pdf = f"Паспорт_{well.name}.pdf"
     document_path = DocumentsPath.objects.filter(doc=document).first()
     if document_path:
         document_path.delete()

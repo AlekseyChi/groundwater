@@ -125,8 +125,8 @@ class PumpJournal(PDF):
 
     def get_workers_signature(self):
         sign_list = [
-            {"worker": "Кузьминов К. Г.", "sign": self.get_sign("pump1.png")},
-            {"worker": "Здановский И. И.", "sign": self.get_sign("pump2.png")},
+            {"worker": "Кузьминов К.Г.", "sign": self.get_sign("Кузьминов К.Г..png")},
+            {"worker": "Здановский И.И.", "sign": self.get_sign("Здановский И.И..png")},
         ]
         return sign_list
 

@@ -1,4 +1,5 @@
 import os
+import re
 
 import requests
 
@@ -15,6 +16,19 @@ from ..models import (
 
 class PDF:
     @staticmethod
+    def insert_tag_before_first_number(s, tag="sub"):
+        # Search for the first occurrence of a number in the string
+        match = re.search(r"\d", s) or re.search(r"[a-z]", s)
+        if match:
+            # Find the position where the number occurs
+            pos = match.start()
+            # Insert the tag before the number
+            return f"{s[:pos]}<{tag}>{s[pos:]}</{tag}>"
+        else:
+            # If no number is found, return the original string
+            return s
+
+    @staticmethod
     def time_to_seconds(t):
         return (t.hour * 3600) + (t.minute * 60) + t.second
 
@@ -26,9 +40,9 @@ class PDF:
             return ""
 
     @staticmethod
-    def get_sign(name="sign.png"):
+    def get_sign(name="Заманов Р.М..png"):
         this_folder = os.path.dirname(os.path.abspath(__file__))
-        img = "file://" + os.path.join(this_folder, "static", name)
+        img = "file://" + os.path.join(this_folder, "static", "signatures", name)
         return img
 
     @staticmethod
@@ -95,7 +109,7 @@ class PDF:
             "company": "Общество с ограниченной ответственностью «Дарси» (ООО «Дарси»)",
             "company_info": "Адрес: 117105, город Москва, Варшавское шоссе, "
             "дом 37 а строение 2, офис 0411.<br>Телефон: +7(495)968-04-82",
-            "type_well": f"{self.instance.typo.name[:-2]}ой скважины<br> № {self.instance.pk}/"
+            "type_well": f"{self.instance.typo.name[:-2]}ой скважины<br> № {self.instance.name}/"
             f"{'ГВК - ' + str(self.instance.extra['name_gwk']) if self.instance.extra.get('name_gwk') else ''}",
             "water_user": water_user.name if water_user else "",
             "user_info": water_user.position if water_user else "",
