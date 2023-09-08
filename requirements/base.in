@@ -16,6 +16,7 @@ Jinja2
 Markdown
 markdown-katex
 python-docx
+pdf2image
 
 # Django
 # ------------------------------------------------------------------------------

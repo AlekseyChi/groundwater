@@ -1,4 +1,5 @@
 import base64
+import io
 import uuid
 
 import boto3
@@ -10,6 +11,7 @@ from django.contrib.gis.db import models
 from django.core.files.storage import FileSystemStorage
 from django.utils import timezone
 from django.utils.safestring import mark_safe
+from pdf2image import convert_from_bytes
 from simple_history.models import HistoricalRecords
 
 from .storage_backends import YandexObjectStorage
@@ -912,7 +914,7 @@ class Balance(BaseModel):
 
 
 class Attachments(BaseModel):
-    img = models.ImageField(
+    img = models.FileField(
         upload_to="images/",
         storage=YandexObjectStorage() if not settings.DEBUG else FileSystemStorage(location=settings.MEDIA_ROOT),
         verbose_name="Вложение",
@@ -939,16 +941,24 @@ class Attachments(BaseModel):
             super().delete(*args, **kwargs)
 
     def get_base64_image(self):
-        if isinstance(self.img.storage, FileSystemStorage):
-            # If the image is stored locally
-            with open(self.img.path, "rb") as f:
-                image_content = f.read()
+        image_content = []
+        if self.img.url.endswith(".pdf"):
+            images = convert_from_bytes(self.img.read())
+            for image in images:
+                buffered = io.BytesIO()
+                image.save(buffered, format="PNG")
+                image_content.append(buffered.getvalue())
         else:
-            # If the image is stored in Yandex Object Storage
-            image_content = self.img.read()
+            if isinstance(self.img.storage, FileSystemStorage):
+                # If the image is stored locally
+                with open(self.img.path, "rb") as f:
+                    image_content.append(f.read())
+            else:
+                # If the image is stored in Yandex Object Storage
+                image_content.append(self.img.read())
 
-        base64_image = base64.b64encode(image_content).decode("utf-8")
-        return base64_image
+        base64_images = [base64.b64encode(image).decode("utf-8") for image in image_content]
+        return base64_images
 
     def __str__(self):
         return self.img.name

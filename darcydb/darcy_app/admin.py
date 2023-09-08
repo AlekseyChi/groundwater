@@ -340,7 +340,7 @@ class WellsEfwAdmin(nested_admin.NestedModelAdmin):
     change_form_template = "darcy_app/doc_change_form.html"
     form = WellsEfwForm
     model = WellsEfw
-    inlines = [WellsDepressionInline]
+    inlines = [WellsWaterDepthDrilledInline, WellsDepressionInline]
     list_display = ("well", "date", "type_efw")
     list_filter = ("date", "well", TypeEfwFilter)
 
