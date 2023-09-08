@@ -39,7 +39,7 @@ class PumpJournal(PDF):
             "Отметка устья скважины": f"{self.instance.head} м" if self.instance.head else "",
             "Глубина скважины": f"{depth_fact} м" if depth_fact else "",
             "Водовмещающие породы": " и ".join([aq[2] for aq in aq_data]).capitalize(),
-            "Глубина кровли водоносного горизонта": f"{top} м" if top else "",
+            "Глубина кровли водоносного горизонта": f"{top} м" if top is not None else "",
             "Глубина подошвы водоносного горизонта": f"{bot} м" if bot else "",
             "Даты проведения опыта": self.efw.date.date().strftime("%d.%m.%Y"),
             "Статический уровень воды на начало откачки": "",
