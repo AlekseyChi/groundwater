@@ -292,7 +292,7 @@ class Passports(PDF):
                 data.append(
                     (
                         i + 1,
-                        self.insert_tag_before_first_number(str(aq.aquifer.aquifer_index)),
+                        self.insert_tags(str(aq.aquifer.aquifer_index), "sub"),
                         description,
                         thick,
                         hor.bot_elev,
@@ -325,7 +325,8 @@ class Passports(PDF):
                 for qs in chem:
                     chem_str = (
                         f"{qs.parameter.chem_name} "
-                        f"{round(qs.chem_value, 2) if qs.chem_value >= 1 else qs.chem_value} мг/л "
+                        f"{round(qs.chem_value, 2) if qs.chem_value >= 1 else qs.chem_value} "
+                        f"{qs.parameter.chem_measure} "
                     )
                     row = (
                         f"{chem_str} "

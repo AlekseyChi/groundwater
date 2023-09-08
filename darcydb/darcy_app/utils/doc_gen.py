@@ -16,18 +16,37 @@ from ..models import (
 
 class PDF:
     @staticmethod
-    def insert_tag_before_first_number(s, tag="sub"):
-        match = re.search(r"\d", s)
-        match_low = re.search(r"[a-z]", s)
-        if match:
-            pos = match.start()
-            end = match.end()
-            return f'{s[:pos]}<span style="font-size: 9pt"><{tag}>{s[pos:end]}</{tag}>{s[end:]}</span>'
-        elif match_low:
-            pos = match_low.start()
-            return f'{s[:pos]}<span style="font-size: 9pt">{s[pos:]}</span>'
-        else:
-            return s
+    def insert_tags(s, tag):
+        tag_span = '<span style="font-size: 9pt">'
+
+        def replacer(match):
+            text = match.group(0)
+            # Check if it's a lowercase character
+            if text.islower():
+                return f"{tag_span}{text}</span>"
+            # Check if it's a hyphenated number
+            elif "-" in text:
+                return f"{tag_span}<{tag}>{text}</{tag}></span>"
+            else:
+                return f"{tag_span}<{tag}>{text}</{tag}></span>"
+
+        # Use re.sub with a custom replacer function
+        # \d+ matches one or more digits, - is for the hyphen
+        # [a-z] matches any single lowercase character
+        return re.sub(r"\d+-\d+|\d+|[a-z]", replacer, s)
+
+    # def insert_tag_before_first_number(s, tag="sub"):
+    #     match = re.search(r"\d", s)
+    #     match_low = re.search(r"[a-z]", s)
+    #     if match:
+    #         pos = match.start()
+    #         end = match.end()
+    #         return f'{s[:pos]}<span style="font-size: 9pt"><{tag}>{s[pos:end]}</{tag}>{s[end:]}</span>'
+    #     elif match_low:
+    #         pos = match_low.start()
+    #         return f'{s[:pos]}<span style="font-size: 9pt">{s[pos:]}</span>'
+    #     else:
+    #         return s
 
     @staticmethod
     def time_to_seconds(t):
