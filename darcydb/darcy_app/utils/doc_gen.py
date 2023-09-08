@@ -17,15 +17,16 @@ from ..models import (
 class PDF:
     @staticmethod
     def insert_tag_before_first_number(s, tag="sub"):
-        # Search for the first occurrence of a number in the string
-        match = re.search(r"\d", s) or re.search(r"[a-z]", s)
+        match = re.search(r"\d", s)
+        match_low = re.search(r"[a-z]", s)
         if match:
-            # Find the position where the number occurs
             pos = match.start()
-            # Insert the tag before the number
-            return f"{s[:pos]}<{tag}>{s[pos:]}</{tag}>"
+            end = match.end()
+            return f'{s[:pos]}<span style="font-size: 9pt"><{tag}>{s[pos:end]}</{tag}>{s[end:]}</span>'
+        elif match_low:
+            pos = match_low.start()
+            return f'{s[:pos]}<span style="font-size: 9pt">{s[pos:]}</span>'
         else:
-            # If no number is found, return the original string
             return s
 
     @staticmethod

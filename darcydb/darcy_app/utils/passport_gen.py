@@ -62,28 +62,16 @@ class Passports(PDF):
         return drilled_info
 
     def get_pump_data(self, archive=True):
+        efw_qs = (
+            WellsEfw.objects.filter(well=self.instance)
+            .exclude(type_efw__name="восстановление уровня")
+            .order_by("-date")
+        )
         if archive:
-            efw = (
-                WellsEfw.objects.filter(well=self.instance)
-                .exclude(type_efw__name="восстановление уровня")
-                .order_by("-date")
-                .first()
-            )
-            if efw:
-                max_date = efw.date
-                efw = (
-                    WellsEfw.objects.filter(well=self.instance)
-                    .exclude(date=max_date, type_efw__name="восстановление уровня")
-                    .order_by("-date")
-                    .first()
-                )
+            efw = efw_qs.exclude(date__year=datetime.datetime.now().year).order_by("-date").first()
         else:
-            efw = (
-                WellsEfw.objects.filter(well=self.instance)
-                .exclude(type_efw__name="восстановление уровня")
-                .order_by("-date")
-                .first()
-            )
+            efw = efw_qs.filter(date__year=datetime.datetime.now().year).order_by("-date").first()
+
         rate = ""
         depression = ""
         stat_wat = ""
@@ -181,12 +169,22 @@ class Passports(PDF):
         construction = self.create_construction_data()
         cnstr_html = ""
         if construction:
-            archive_date = construction.filter(date__isnull=False).order_by("date").first().date
+            archive_date = (
+                construction.filter(date__isnull=False).exclude(date__year=datetime.datetime.now().year).first()
+            )
             if archive:
-                u_construction = construction.filter(date=archive_date)
+                if archive_date:
+                    u_construction = construction.filter(date=archive_date.date)
+                else:
+                    u_construction = construction.filter(date__isnull=False).exclude(
+                        date__year=datetime.datetime.now().year
+                    )
             else:
-                u_construction = construction.exclude(date=archive_date)
-            if u_construction:
+                if archive_date:
+                    u_construction = construction.exclude(date=archive_date.date)
+                else:
+                    u_construction = construction
+            if u_construction.exists():
                 cnstr_unit = " х ".join(
                     [
                         f"\\frac{{{qs.diameter}}}{{{str(qs.depth_from)+ '-' + str(qs.depth_till)}}}"
