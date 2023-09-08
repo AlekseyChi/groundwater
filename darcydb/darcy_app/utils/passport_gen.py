@@ -43,12 +43,13 @@ class Passports(PDF):
         aq = self.instance
         geophysics = self.get_geophysics_instance()
         chem = self.get_sample_instance()
-        aq_attachments = [attach.get_base64_image() for attach in aq.attachments.all()]
-        geo_attachments = chem_attachments = []
+        aq_attachments = geo_attachments = chem_attachments = []
+        if aq.attachments.exists():
+            aq_attachments = [item for attach in aq.attachments.all() for item in attach.get_base64_image()]
         if geophysics:
-            geo_attachments = [attach.get_base64_image() for attach in geophysics.attachments.all()]
+            geo_attachments = [item for attach in geophysics.attachments.all() for item in attach.get_base64_image()]
         if chem:
-            chem_attachments = [attach.get_base64_image() for attach in chem.attachments.all()]
+            chem_attachments = [item for attach in chem.attachments.all() for item in attach.get_base64_image()]
         return aq_attachments, geo_attachments, chem_attachments
 
     def create_drilled_base(self):

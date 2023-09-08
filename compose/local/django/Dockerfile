@@ -34,7 +34,7 @@ ENV BUILD_ENV ${BUILD_ENVIRONMENT}
 WORKDIR ${APP_HOME}
 #GDAL
 
-RUN apt-get update && apt-get install -y  binutils libproj-dev gdal-bin libpangocairo-1.0-0
+RUN apt-get update && apt-get install -y  binutils libproj-dev gdal-bin libpangocairo-1.0-0 poppler-utils
 COPY ./fonts /fonts
 RUN cp -a /fonts/. /usr/share/fonts \
     && rm -rf /fonts \
