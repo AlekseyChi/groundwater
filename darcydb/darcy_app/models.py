@@ -94,6 +94,7 @@ class DictEquipment(BaseModel):
         verbose_name = "Словарь оборудования"
         verbose_name_plural = "Словарь обородувания"
         db_table = "dict_equipment"
+        unique_together = (("brand", "typo"),)
 
     def __str__(self):
         return self.brand
