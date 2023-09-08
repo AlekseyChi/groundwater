@@ -15,6 +15,7 @@ from .forms import (
     FieldsForm,
     IntakesForm,
     WellsAquifersForm,
+    WellsConstructionForm,
     WellsDepressionForm,
     WellsEfwForm,
     WellsForm,
@@ -126,6 +127,7 @@ class WellsAquifersInline(nested_admin.NestedTabularInline):
 
 
 class WellsConstructionInline(nested_admin.NestedTabularInline):
+    form = WellsConstructionForm
     model = WellsConstruction
     # classes = ("collapse",)
     extra = 1
