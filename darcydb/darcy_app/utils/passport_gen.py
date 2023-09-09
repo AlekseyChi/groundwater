@@ -28,7 +28,8 @@ class Passports(PDF):
             "Район": address.get("county", ""),
             "Владелец скважины": water_user.name if water_user else "",
             "Адрес (почтовый) владельца скважины": water_user.position if water_user else "",
-            "Координаты скважины": f"{round(self.instance.geom.y, 5)} С.Ш., {round(self.instance.geom.x, 5)} В.Д.",
+            "Координаты скважины": f"{self.decimal_to_dms(self.instance.geom.y)} С.Ш., "
+            f"{self.decimal_to_dms(self.instance.geom.x)} В.Д.",
             "Абсолютная отметка устья скважины": f"{self.instance.head} м",
             "Назначение скважины": f"{self.instance.typo.name[:-2]}ая",
             "Сведения о использовании": licenses.gw_purpose if licenses else "",
@@ -54,12 +55,21 @@ class Passports(PDF):
 
     def create_drilled_base(self):
         drill = self.get_drilled_instance()
-        drilled_info = {}
-        nd = "Нет сведений"
+        nd = "нет сведений"
+        drilled_info = {
+            "Буровая организация, выполнявшая бурение": nd,
+            "Бурение начато": nd,
+            "Бурение окончено": nd,
+            "Тип бурения": nd,
+            "Буровая установка": nd,
+        }
         if drill:
             drilled_info["Буровая организация, выполнявшая бурение"] = drill.organization if drill.organization else nd
             drilled_info["Бурение начато"] = f"{drill.date_start.strftime('%d.%m.%Y')} г." if drill.date_start else nd
             drilled_info["Бурение окончено"] = f"{drill.date_end.strftime('%d.%m.%Y')} г." if drill.date_end else nd
+            drilled_info["Тип бурения"] = drill.drill_type if drill.drill_type else nd
+            drilled_info["Буровая установка"] = drill.drill_rig if drill.drill_rig else nd
+
         return drilled_info
 
     def get_pump_data(self, archive=True):
@@ -166,44 +176,56 @@ class Passports(PDF):
             )
         return test_pump, test_pump_info
 
-    def get_construction_formula(self, archive=True):
+    def get_construction_archive(self, archive_date):
         construction = self.create_construction_data()
-        cnstr_html = ""
-        if construction:
+        if archive_date:
+            u_construction = construction.filter(date=archive_date.date)
+        else:
+            u_construction = construction.filter(date__isnull=False).exclude(date__year=datetime.datetime.now().year)
+        return u_construction
+
+    def get_construction_new(self, archive_date):
+        construction = self.create_construction_data()
+        if archive_date:
+            u_construction = construction.exclude(date=archive_date.date)
+        else:
+            u_construction = construction
+        return u_construction
+
+    def construction_define(self, archive):
+        construction = self.create_construction_data()
+        if construction.exists():
             archive_date = (
                 construction.filter(date__isnull=False).exclude(date__year=datetime.datetime.now().year).first()
             )
             if archive:
-                if archive_date:
-                    u_construction = construction.filter(date=archive_date.date)
-                else:
-                    u_construction = construction.filter(date__isnull=False).exclude(
-                        date__year=datetime.datetime.now().year
-                    )
+                u_construction = self.get_construction_archive(archive_date)
             else:
-                if archive_date:
-                    u_construction = construction.exclude(date=archive_date.date)
-                else:
-                    u_construction = construction
-            if u_construction.exists():
-                cnstr_unit = " х ".join(
-                    [
-                        f"\\frac{{{qs.diameter}}}{{{str(qs.depth_from)+ '-' + str(qs.depth_till)}}}"
-                        for qs in u_construction
-                    ]
-                )
-                cnstr_html = markdown.markdown(
-                    f"$`{cnstr_unit}`$",
-                    extensions=[
-                        "markdown_katex",
-                    ],
-                    extension_configs={
-                        "markdown_katex": {
-                            "no_inline_svg": True,
-                            "insert_fonts_css": True,
-                        },
+                u_construction = self.get_construction_new(archive_date)
+            for qs in u_construction:
+                qs.date = qs.date if qs.date else "Нет сведений"
+            return u_construction
+        return construction
+
+    def get_construction_formula(self, archive=True):
+        u_construction = self.construction_define(archive=archive)
+        cnstr_html = ""
+        if u_construction:
+            cnstr_unit = " х ".join(
+                [f"\\frac{{{qs.diameter}}}{{{str(qs.depth_from)+ '-' + str(qs.depth_till)}}}" for qs in u_construction]
+            )
+            cnstr_html = markdown.markdown(
+                f"$`{cnstr_unit}`$",
+                extensions=[
+                    "markdown_katex",
+                ],
+                extension_configs={
+                    "markdown_katex": {
+                        "no_inline_svg": True,
+                        "insert_fonts_css": True,
                     },
-                )
+                },
+            )
         return cnstr_html
 
     def create_archive_data(self):
@@ -386,7 +408,10 @@ def generate_passport(well, document):
     drilled_info = pdf.create_drilled_base()
     drilled_data = pdf.create_archive_data()
     geo_journal = pdf.create_lithology()
-    construction_data = pdf.create_construction_data()
+    # construction_data = pdf.create_construction_data()
+    construction_data = pdf.construction_define(archive=False)
+    if not construction_data.exists():
+        construction_data = pdf.construction_define(archive=True)
     geophysics_data = pdf.create_geophysics_data()
     efr, levels, pump_recommendations = pdf.get_pump_complex()
     # test_pump, test_pump_info = pdf.get_test_pump()
