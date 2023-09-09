@@ -182,7 +182,12 @@ class WellsEfwInlines(nested_admin.NestedStackedInline):
     model = WellsEfw
     inlines = [WellsWaterDepthDrilledInline, WellsDepressionInline]
     extra = 1
-    # max_num = 1
+
+    def get_extra(self, request, obj=None, **kwargs):
+        count = self.model.objects.filter(well=obj).count()
+        if count >= 1:
+            return 0
+        return self.extra
 
 
 class WellsChemInline(nested_admin.NestedGenericTabularInline):
@@ -194,7 +199,16 @@ class WellsSampleInline(nested_admin.NestedStackedInline):
     model = WellsSample
     inlines = [WellsChemInline, AttachmentsInline]
     extra = 1
-    max_num = 1
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.filter(doc__isnull=False)
+
+    def get_extra(self, request, obj=None, **kwargs):
+        count = self.model.objects.filter(well=obj, doc__isnull=False).count()
+        if count >= 1:
+            return 0
+        return self.extra
 
 
 class WellsGeophysicsInline(nested_admin.NestedStackedInline):
