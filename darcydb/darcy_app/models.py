@@ -944,7 +944,7 @@ class Attachments(BaseModel):
 
     def get_base64_image(self):
         image_content = []
-        if self.img.url.endswith(".pdf"):
+        if self.img.path.endswith(".pdf"):
             images = convert_from_bytes(self.img.read())
             for image in images:
                 buffered = io.BytesIO()
