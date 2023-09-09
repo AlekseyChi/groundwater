@@ -370,6 +370,8 @@ class WellsDrilledData(BaseModel):
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
     date_start = models.DateField(verbose_name="Дата начала бурения")
     date_end = models.DateField(verbose_name="Дата окончания бурения")
+    drill_type = models.CharField(max_length=50, blank=True, null=True, verbose_name="Тип бурения")
+    drill_rig = models.CharField(max_length=50, blank=True, null=True, verbose_name="Буровая установка")
     organization = models.CharField(max_length=100, blank=True, null=True, verbose_name="Буровая организация")
     doc = models.ForeignKey("Documents", models.CASCADE, blank=True, null=True, verbose_name="Документ")
     waterdepths = GenericRelation("WellsWaterDepth")

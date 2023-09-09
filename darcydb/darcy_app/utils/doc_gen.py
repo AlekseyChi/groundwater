@@ -67,6 +67,16 @@ class PDF:
         img = "file://" + os.path.join(this_folder, "static", "Darcy monogram.png")
         return img
 
+    @staticmethod
+    def decimal_to_dms(decimal_deg):
+        degrees = int(decimal_deg)
+        remainder_after_degrees = abs(decimal_deg - degrees) * 60
+        minutes = int(remainder_after_degrees)
+        remainder_after_minutes = (remainder_after_degrees - minutes) * 60
+        seconds = round(remainder_after_minutes, 4)
+
+        return f"{degrees}°{minutes}'{seconds}\""
+
     def __init__(self, instance, doc_instance):
         self.instance = instance
         self.doc_instance = doc_instance
@@ -151,6 +161,4 @@ class PDF:
         if construction.exists():
             for qs in construction:
                 qs.date = qs.date if qs.date else "Нет сведений"
-            return construction
-        else:
-            return []
+        return construction
