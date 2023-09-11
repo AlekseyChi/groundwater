@@ -138,7 +138,7 @@ class WellsWaterDepthPumpInline(nested_admin.NestedGenericTabularInline):
     form = WellsWaterDepthPumpForm
     extra = 1
     max_num = 1000
-    min_num = 1
+    # min_num = 1
 
 
 class WellsWaterDepthDrilledInline(WellsWaterDepthPumpInline):
