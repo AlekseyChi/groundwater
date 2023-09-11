@@ -30,7 +30,7 @@ class Passports(PDF):
             "Адрес (почтовый) владельца скважины": water_user.position if water_user else "",
             "Координаты скважины": f"{self.decimal_to_dms(self.instance.geom.y)} С.Ш., "
             f"{self.decimal_to_dms(self.instance.geom.x)} В.Д.",
-            "Абсолютная отметка устья скважины": f"{self.instance.head} м",
+            "Абсолютная отметка устья скважины": f"{self.instance.head} м" if self.instance.head else "",
             "Назначение скважины": f"{self.instance.typo.name[:-2]}ая",
             "Сведения о использовании": licenses.gw_purpose if licenses else "",
             "Лицензия на право пользования недрами": f"{licenses.name} от "
