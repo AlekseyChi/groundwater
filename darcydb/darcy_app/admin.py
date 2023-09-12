@@ -3,6 +3,7 @@ import datetime
 import nested_admin
 from django.contrib.admin import DateFieldListFilter
 from django.contrib.gis import admin
+from django.http import HttpResponseRedirect
 from django.utils.safestring import mark_safe
 from import_export.admin import ImportExportModelAdmin
 from jet.admin import CompactInline
@@ -268,6 +269,11 @@ class WellsAdmin(nested_admin.NestedModelAdmin):
             doc_file = DocumentsPath.objects.filter(doc=doc_instance).last()
             self.message_user(request, mark_safe(f'Паспорт создан. <a href="{doc_file.path.url}">Скачать паспорт</a>'))
 
+    def response_change(self, request, obj):
+        if "_generate_doc" in request.POST:
+            return HttpResponseRedirect(request.path)
+        return super().response_change(request, obj)
+
 
 darcy_admin.register(Wells, WellsAdmin)
 
@@ -357,6 +363,11 @@ class WellsEfwAdmin(nested_admin.NestedModelAdmin):
             generate_pump_journal(form.instance, doc_instance)
             doc_file = DocumentsPath.objects.filter(doc=doc_instance).last()
             self.message_user(request, mark_safe(f'Журнал создан.<a href="{doc_file.path.url}">Скачать журнал</a>'))
+
+    def response_change(self, request, obj):
+        if "_generate_doc" in request.POST:
+            return HttpResponseRedirect(request.path)
+        return super().response_change(request, obj)
 
 
 darcy_admin.register(WellsEfw, WellsEfwAdmin)
