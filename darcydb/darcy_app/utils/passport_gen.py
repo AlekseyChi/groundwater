@@ -213,9 +213,17 @@ class Passports(PDF):
         u_construction = self.construction_define(archive=archive)
         cnstr_html = ""
         if u_construction:
-            cnstr_unit = " х ".join(
-                [f"\\frac{{{qs.diameter}}}{{{str(qs.depth_from)+ '-' + str(qs.depth_till)}}}" for qs in u_construction]
-            )
+            eq_data = []
+            depth_from = u_construction[0].depth_from
+            for i, qs in enumerate(u_construction):
+                # cs_type = "".join(map(lambda x: x[0], qs.construction_type.name.split()))
+                if i == len(u_construction) - 1 or qs.diameter != u_construction[i + 1].diameter:
+                    eq_data.append(f"\\frac{{{qs.diameter}}}{{{str(depth_from)+ '-' + str(qs.depth_till)}}}")
+                else:
+                    continue
+                if i != len(u_construction) - 1:
+                    depth_from = u_construction[i + 1].depth_from
+            cnstr_unit = " х ".join(eq_data)
             cnstr_html = markdown.markdown(
                 f"$`{cnstr_unit}`$",
                 extensions=[
@@ -237,6 +245,7 @@ class Passports(PDF):
         construction_formula_new = self.get_construction_formula(archive=False)
         rate_old, depression_old, specific_rate_old, _ = self.get_pump_data()
         rate_new, depression_new, specific_rate_new, watdepth_new = self.get_pump_data(archive=False)
+        nd = "нет сведений"
         depth_archive = ""
         depth_fact = ""
         watdepth_archive = ""
@@ -258,33 +267,33 @@ class Passports(PDF):
         archive_data = (
             (
                 "Глубина, м",
-                depth_archive,
-                depth_fact,
+                depth_archive or nd,
+                depth_fact or nd,
             ),
             (
                 "Конструкция, мм/м",
-                construction_formula_old,
-                construction_formula_new,
+                construction_formula_old or nd,
+                construction_formula_new or nd,
             ),
             (
                 "Статический уровень, м",
-                watdepth_archive,
-                watdepth_new,
+                watdepth_archive or nd,
+                watdepth_new or nd,
             ),
             (
                 "Дебит, л/сек",
-                rate_old,
-                rate_new,
+                rate_old or nd,
+                rate_new or nd,
             ),
             (
                 "Удельный дебит, л/(сек*м)",
-                specific_rate_old,
-                specific_rate_new,
+                specific_rate_old or nd,
+                specific_rate_new or nd,
             ),
             (
                 "Понижение, м",
-                depression_old,
-                depression_new,
+                depression_old or nd,
+                depression_new or nd,
             ),
         )
         return archive_data
