@@ -20,12 +20,14 @@ from .doc_gen import PDF
 class Passports(PDF):
     def create_position(self):
         licenses = self.get_license()
+        intake = self.get_intakes()
         water_user = self.get_water_user()
         address = self.get_address()
         position_info = {
             "Республика": address.get("country", ""),
             "Область": address.get("state", ""),
-            "Район": address.get("county", ""),
+            # "Район": address.get("county", ""),
+            "Участок работ": intake.intake_name if intake else "",
             "Владелец скважины": water_user.name if water_user else "",
             "Адрес (почтовый) владельца скважины": water_user.position if water_user else "",
             "Координаты скважины": f"{self.decimal_to_dms(self.instance.geom.y)} С.Ш., "
