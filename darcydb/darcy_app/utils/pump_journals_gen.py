@@ -18,7 +18,7 @@ class PumpJournal(PDF):
     def create_info_data(self):
         field = self.get_fields()
         intake = self.get_intakes()
-        # address = self.get_address()
+        address = self.get_address()
         water_user = self.get_water_user()
         aq_data = self.create_aquifer_data()
         top = min([aq[0] for aq in aq_data])
@@ -32,7 +32,7 @@ class PumpJournal(PDF):
         info = {
             "Месторождение": field.field_name if field else "",
             "Участок работ": intake.intake_name if intake else "",
-            # "Местоположение": f"{address['country']}, {address['state']}, {address['county']}",
+            "Местоположение": f"{address['country']}, {address['state']}",
             "Недропользователь": water_user.name if water_user else "",
             "Адрес (почтовый) владельца скважины": water_user.position if water_user else "",
             "Целевой водоносный горизонт": "-".join([self.insert_tags(aq[-1], "sub") for aq in aq_data]),
