@@ -249,6 +249,10 @@ class Passports(PDF):
                 watdepth_archive = watdepth_instance_old.water_depth
         if geophysics:
             depth_instance_new = geophysics.depths.first()
+            if not watdepth_new:
+                watdepth_instance_new = geophysics.waterdepths.first()
+                if watdepth_instance_new:
+                    watdepth_new = watdepth_instance_new.water_depth
             if depth_instance_new:
                 depth_fact = depth_instance_new.depth
         archive_data = (
