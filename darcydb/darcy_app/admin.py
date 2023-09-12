@@ -61,25 +61,6 @@ from .resources import WellsRegimeResource
 from .utils.passport_gen import generate_passport
 from .utils.pump_journals_gen import generate_pump_journal
 
-ADMIN_ORDERING = [
-    (
-        "darcy_app",
-        [
-            "Wells",
-            "WellsEfw",
-            "WellsRegime",
-            "WellsSample",
-            "Intakes",
-            "Fields",
-            "Documents",
-            "DictPump",
-            "License",
-            # "ChemCodes",
-            # "AquiferCodes",
-        ],
-    ),
-]
-
 admin.site.register(DictEntities)
 admin.site.register(Entities)
 
@@ -235,7 +216,6 @@ class WellsAdmin(nested_admin.NestedModelAdmin):
     form = WellsForm
     model = Wells
     inlines = [
-        DocumentsInline,
         LicenseToWellsInline,
         WellsAquifersInline,
         WellsLithologyInline,
@@ -244,6 +224,7 @@ class WellsAdmin(nested_admin.NestedModelAdmin):
         WellsEfwInlines,
         WellsGeophysicsInline,
         WellsSampleInline,
+        DocumentsInline,
         AttachmentsInline,
     ]
     fields = (
