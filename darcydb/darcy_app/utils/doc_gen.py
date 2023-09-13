@@ -122,7 +122,7 @@ class PDF:
         title_info = {
             "company": "Общество с ограниченной ответственностью «Дарси» (ООО «Дарси»)",
             "company_info": "Адрес: 117105, город Москва, Варшавское шоссе, "
-            "дом 37 а строение 2, офис 0411.<br>Телефон: +7(495)968-04-82",
+            "дом 37 а строение 2, офис 0411.<br>Телефон: +7 (926) 359-76-53",
             "type_well": f"{self.instance.typo.name[:-2]}ой скважины<br> № {self.instance.name}/"
             f"{'ГВК - ' + str(self.instance.extra['name_gwk']) if self.instance.extra.get('name_gwk') else ''}",
             "water_user": water_user.name if water_user else "",

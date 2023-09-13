@@ -20,7 +20,9 @@
       <div class="construction">
         {% include 'passports/construction.html' %}
       </div>
-      <div class="geophysics">{% include 'passports/geophysics.html' %}</div>
+      <div class="geophysics" style="page-break-inside: avoid">
+        {% include 'passports/geophysics.html' %}
+      </div>
     </div>
     {% if efr %}
     <div class="chapter">
