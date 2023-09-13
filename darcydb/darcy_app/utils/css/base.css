@@ -57,6 +57,7 @@ body {
 
 .container-watermark {
   position: relative;
+  margin-bottom: 4rem;
 }
 
 .watermark {
@@ -64,7 +65,7 @@ body {
   top: 35%;
   left: 25%;
   opacity: 0.4; /* 0 to 1 (0 is fully transparent and 1 is fully opaque) */
-  z-index: 0; /* Ensure it sits on top of other content */
+  z-index: -1; /* Ensure it sits on top of other content */
 }
 
 .stamp {
@@ -151,6 +152,13 @@ td {
   border: 1px solid;
   text-align: center;
   padding: 10px;
+}
+
+.table-journal tr th,
+.table-journal td {
+  border: 1px solid;
+  text-align: center;
+  padding: 1px;
 }
 
 .table-span {

@@ -35,7 +35,7 @@ class PumpJournal(PDF):
             "Местоположение": f"{address['country']}, {address['state']}",
             "Недропользователь": water_user.name if water_user else "",
             "Адрес (почтовый) владельца скважины": water_user.position if water_user else "",
-            "Целевой водоносный горизонт": "-".join([self.insert_tags(aq[-1], "sub") for aq in aq_data]),
+            "Целевой водоносный горизонт": "-".join([self.insert_tags(aq[-1], "sub") for aq in aq_data[::-1]]),
             "Отметка устья скважины": f"{self.instance.head} м" if self.instance.head else "",
             "Глубина скважины": f"{depth_fact} м" if depth_fact else "",
             "Водовмещающие породы": " и ".join([aq[2] for aq in aq_data]).capitalize(),
@@ -107,6 +107,7 @@ class PumpJournal(PDF):
                         int(qs.time_measure.total_seconds() % 3600 // 60),
                         qs.water_depth,
                         recovery,
+                        "",
                     )
                 )
         return wat_start, recovery_data

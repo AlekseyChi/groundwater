@@ -363,7 +363,7 @@ class Passports(PDF):
                 for qs in chem:
                     chem_str = (
                         f"{qs.parameter.chem_name} "
-                        f"{round(qs.chem_value, 2) if qs.chem_value >= 1 else qs.chem_value} "
+                        f"{round(qs.chem_value, 2) if qs.chem_value >= 1 else float(qs.chem_value)} "
                         f"{qs.parameter.chem_measure} "
                     )
                     row = (
