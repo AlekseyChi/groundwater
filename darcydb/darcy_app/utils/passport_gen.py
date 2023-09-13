@@ -24,7 +24,7 @@ class Passports(PDF):
         water_user = self.get_water_user()
         address = self.get_address()
         position_info = {
-            "Республика": address.get("country", ""),
+            "Страна": address.get("country", ""),
             "Область": address.get("state", ""),
             # "Район": address.get("county", ""),
             "Участок работ": intake.intake_name if intake else "",
@@ -125,7 +125,7 @@ class Passports(PDF):
                 "Тип и марка насоса": efw.pump_type or "",
                 "Глубина установки насоса": f"{efw.pump_depth} м" if efw.pump_depth else "",
                 "Дебит": f"{rate} л/сек; {rate_hour} м<sup>3</sup>/час; {rate_day} м<sup>3</sup>/сут",
-                "Удельный дебит": f"{specific_rate} л/сек; "
+                "Удельный дебит": f"{specific_rate} л/(сек*м); "
                 f"{round(specific_rate * Decimal(3.6), 2)} м<sup>3</sup>/(час*м)",
             }
             levels = (
@@ -302,7 +302,7 @@ class Passports(PDF):
         geophysics = self.get_geophysics_instance()
         if geophysics:
             geophysics_data = {
-                "Наименование организации": geophysics.organization,
+                "Наименование организации-Исполнителя": geophysics.organization,
                 "Дата производства работ": geophysics.date.strftime("%d.%m.%Y"),
                 "В скважине произведены следующие геофизические исследования": geophysics.researches,
                 "Результаты геофизических исследований": geophysics.conclusion,

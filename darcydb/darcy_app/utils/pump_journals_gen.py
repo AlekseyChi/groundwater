@@ -185,7 +185,7 @@ def generate_pump_journal(efw, document):
     output = io.BytesIO()
     html = HTML(string=rendered_html).render(stylesheets=[CSS("darcydb/darcy_app/utils/css/base.css")])
     html.write_pdf(target=output)
-    name_pdf = f"Журнал_опытной_откачки_{efw.well}-{efw.date.date()}.pdf"
+    name_pdf = f"Журнал_опытной_откачки_{efw.well.name}-{efw.date.date()}.pdf"
     document_path = DocumentsPath.objects.filter(doc=document).first()
     if document_path:
         document_path.delete()
