@@ -42,6 +42,7 @@ class PumpJournal(PDF):
             "Глубина кровли водоносного горизонта": f"{top} м" if top is not None else "",
             "Глубина подошвы водоносного горизонта": f"{bot} м" if bot else "",
             "Даты проведения опыта": self.efw.date.date().strftime("%d.%m.%Y"),
+            "Высота оголовка скважины": f"{self.efw.lugs.first().lug_height} м" if self.efw.lugs.first() else "",
             "Статический уровень воды на начало откачки": "",
             "Динамический уровень воды на конец откачки": "",
         }

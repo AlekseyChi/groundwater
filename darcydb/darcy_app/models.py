@@ -543,6 +543,25 @@ class WellsCondition(BaseModel):
         return ""
 
 
+class WellsLugHeight(BaseModel):
+    lug_height = models.DecimalField(
+        max_digits=6, decimal_places=2, verbose_name="Высота оголовка, м", help_text="до двух знаков после запятой"
+    )
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey()
+    history = HistoricalRecords(table_name="wells_lug_height_history")
+
+    class Meta:
+        verbose_name = "Высота оголовка скважины"
+        verbose_name_plural = "Высоты оголовков скважин"
+        db_table = "wells_lug_height"
+        unique_together = (("object_id", "content_type"),)
+
+    def __str__(self):
+        return ""
+
+
 class WellsAquifers(BaseModel):
     """
     Модель гидрогеологического описание скважин.
@@ -738,6 +757,7 @@ class WellsEfw(BaseModel):
     vessel_time = models.TimeField(blank=True, null=True, verbose_name="Время наполнения ёмкости, сек")
     doc = models.ForeignKey("Documents", models.CASCADE, blank=True, null=True, verbose_name="Документ")
     waterdepths = GenericRelation("WellsWaterDepth")
+    lugs = GenericRelation("WellsLugHeight")
     history = HistoricalRecords(table_name="wells_efw_history")
 
     class Meta:
