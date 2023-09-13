@@ -35,13 +35,14 @@ class PumpJournal(PDF):
             "Местоположение": f"{address['country']}, {address['state']}",
             "Недропользователь": water_user.name if water_user else "",
             "Адрес (почтовый) владельца скважины": water_user.position if water_user else "",
-            "Целевой водоносный горизонт": "-".join([self.insert_tags(aq[-1], "sub") for aq in aq_data]),
+            "Целевой водоносный горизонт": "-".join([self.insert_tags(aq[-1], "sub") for aq in aq_data[::-1]]),
             "Отметка устья скважины": f"{self.instance.head} м" if self.instance.head else "",
             "Глубина скважины": f"{depth_fact} м" if depth_fact else "",
             "Водовмещающие породы": " и ".join([aq[2] for aq in aq_data]).capitalize(),
             "Глубина кровли водоносного горизонта": f"{top} м" if top is not None else "",
             "Глубина подошвы водоносного горизонта": f"{bot} м" if bot else "",
             "Даты проведения опыта": self.efw.date.date().strftime("%d.%m.%Y"),
+            "Высота оголовка скважины": f"{self.efw.lugs.first().lug_height} м" if self.efw.lugs.first() else "",
             "Статический уровень воды на начало откачки": "",
             "Динамический уровень воды на конец откачки": "",
         }
@@ -107,6 +108,7 @@ class PumpJournal(PDF):
                         int(qs.time_measure.total_seconds() % 3600 // 60),
                         qs.water_depth,
                         recovery,
+                        "",
                     )
                 )
         return wat_start, recovery_data
@@ -185,7 +187,7 @@ def generate_pump_journal(efw, document):
     output = io.BytesIO()
     html = HTML(string=rendered_html).render(stylesheets=[CSS("darcydb/darcy_app/utils/css/base.css")])
     html.write_pdf(target=output)
-    name_pdf = f"Журнал_опытной_откачки_{efw.well}-{efw.date.date()}.pdf"
+    name_pdf = f"Журнал_опытной_откачки_{efw.well.name}-{efw.date.date()}.pdf"
     document_path = DocumentsPath.objects.filter(doc=document).first()
     if document_path:
         document_path.delete()

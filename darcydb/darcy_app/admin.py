@@ -52,6 +52,7 @@ from .models import (
     WellsEfw,
     WellsGeophysics,
     WellsLithology,
+    WellsLugHeight,
     WellsRate,
     WellsRegime,
     WellsSample,
@@ -134,6 +135,12 @@ class WellsDepthInline(nested_admin.NestedGenericTabularInline):
     max_num = 1
 
 
+class WellsLugHeightInline(nested_admin.NestedGenericTabularInline):
+    model = WellsLugHeight
+    extra = 1
+    max_num = 1
+
+
 class WellsDrilledDataInline(nested_admin.NestedTabularInline):
     model = WellsDrilledData
     inlines = [WellsWaterDepthDrilledInline, WellsDepthInline]
@@ -163,7 +170,7 @@ class WellsDepressionInline(nested_admin.NestedTabularInline):
 class WellsEfwInlines(nested_admin.NestedStackedInline):
     form = WellsEfwForm
     model = WellsEfw
-    inlines = [WellsWaterDepthDrilledInline, WellsDepressionInline]
+    inlines = [WellsLugHeightInline, WellsWaterDepthDrilledInline, WellsDepressionInline]
     extra = 1
 
     def get_extra(self, request, obj=None, **kwargs):
@@ -342,7 +349,7 @@ class WellsEfwAdmin(nested_admin.NestedModelAdmin):
     change_form_template = "darcy_app/doc_change_form.html"
     form = WellsEfwForm
     model = WellsEfw
-    inlines = [WellsWaterDepthDrilledInline, WellsDepressionInline]
+    inlines = [WellsLugHeightInline, WellsWaterDepthDrilledInline, WellsDepressionInline]
     list_display = ("well", "date", "type_efw")
     list_filter = ("date", "well", TypeEfwFilter)
 
