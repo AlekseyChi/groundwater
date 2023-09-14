@@ -1,85 +1,20 @@
+import datetime
+
 from django.contrib.auth import get_user_model
+from django.db import transaction
 from django.test import TestCase
 
-from ..models import DictDocOrganizations, DictEntities, DictEquipment, Entities
-
-# class BaseModelTestCase(TestCase):
-#     """
-#     test: BaseModel
-#     """
-#     def setUp(self):
-#         # Создаем тестовые данные для модели Entities
-#         self.user = get_user_model().objects.create(username='testuser')
-
-#     def test_base_model_creation_with_default_values(self):
-#         """
-#         Tests that a BaseModel object can be created with default values for all fields
-#         """
-#         base_model = BaseModel(last_user=self.user)
-#         self.assertIsNone(base_model.created)
-#         self.assertIsNone(base_model.modified)
-#         self.assertEqual(base_model.author, "ufo")
-#         self.assertIsNotNone(base_model.last_user)
-#         self.assertIsNone(base_model.remote_addr)
-#         self.assertIsNone(base_model.extra)
-#         self.assertIsNotNone(base_model.uuid)
-
-#     def test_base_model_creation_with_non_default_values(self):
-#         """
-#         Tests that a BaseModel object can be created with non-default values for all fields
-#         """
-#         base_model = BaseModel(created=timezone.now(), modified=timezone.now(), author="test_author",
-# last_user=self.user, remote_addr="127.0.0.1", extra={"key": "value"}, uuid=uuid.uuid4())
-#         self.assertIsNotNone(base_model.created)
-#         self.assertIsNotNone(base_model.modified)
-#         self.assertEqual(base_model.author, "test_author")
-#         self.assertIsNotNone(base_model.last_user)
-#         self.assertEqual(base_model.remote_addr, "127.0.0.1")
-#         self.assertEqual(base_model.extra, {"key": "value"})
-#         self.assertIsNotNone(base_model.uuid)
-
-#     def test_base_model_save_successfully(self):
-#         """
-#         Tests that a BaseModel object can be saved successfully
-#         """
-#         base_model = BaseModel()
-#         base_model.save()
-#         self.assertIsNotNone(base_model.pk)
-
-#     def test_base_model_update_successfully(self):
-#         """
-#         Tests that a BaseModel object can be updated successfully
-#         """
-#         base_model = BaseModel()
-#         base_model.save()
-#         base_model.author = "updated_author"
-#         base_model.save()
-#         self.assertEqual(base_model.author, "updated_author")
-
-#     def test_base_model_delete_successfully(self):
-#         """
-#         Tests that a BaseModel object can be deleted successfully
-#         """
-#         base_model = BaseModel()
-#         base_model.save()
-#         base_model.delete()
-#         with self.assertRaises(BaseModel.DoesNotExist):
-#             BaseModel.objects.get(pk=base_model.pk)
-
-#     def test_base_model_creation_with_null_values(self):
-#         """
-#         Tests that a BaseModel object cannot be created with null values for all fields
-#         """
-#         with self.assertRaises(IntegrityError):
-#             BaseModel.objects.create(
-#                 created=None,
-#                 modified=None,
-#                 author=None,
-#                 last_user=None,
-#                 remote_addr=None,
-#                 extra=None,
-#                 uuid=None
-#             )
+from ..models import (
+    ChemCodes,
+    DictDocOrganizations,
+    DictEntities,
+    DictEquipment,
+    Documents,
+    Entities,
+    Wells,
+    WellsChem,
+    WellsSample,
+)
 
 
 class EntitiesTestCase(TestCase):
@@ -254,8 +189,6 @@ class DictDocOrganizationsTestCase(TestCase):
 
     def setUp(self):
         self.user = get_user_model().objects.create(username="testuser")
-        # self.entity = Entities.objects.create(name="entity")
-        # self.dict_entity = DictEntities.objects.create(name="dict entity", entity=self.entity)
 
     def test_instance_creation(self):
         """
@@ -301,3 +234,118 @@ class DictDocOrganizationsTestCase(TestCase):
         Tests that correct name of the table in the database.
         """
         self.assertEqual(DictDocOrganizations._meta.db_table, "dict_doc_organization")
+
+
+class DocumentsTestCase(TestCase):
+    """test: Documents"""
+
+    def setUp(self):
+        self.user = get_user_model().objects.create(username="testuser")
+        self.entity = Entities.objects.create(name="entity")
+        self.dict_entity = DictEntities.objects.create(name="dict entity", entity=self.entity)
+        self.creation_date = datetime.date(1960, 1, 1)
+
+    def test_create_new_document_with_required_fields(self):
+        """
+        Tests that the name attribute of an instance of Documents can be create with required filds.
+        """
+        name = "Test Document"
+        typo = self.dict_entity
+        time = self.creation_date
+
+        # Create the document
+        document = Documents.objects.create(
+            name=name,
+            typo=typo,
+            creation_date=time,
+        )
+
+        # Assert that the document was created successfully
+        self.assertEqual(document.name, name)
+        self.assertEqual(document.typo, typo)
+        self.assertEqual(document.creation_date, time)
+
+    def test_documents_db_table(self):
+        """
+        Tests that correct name of the table in the database.
+        """
+        self.assertEqual(Documents._meta.db_table, "documents")
+
+
+# WellsSample создание без/с WellsChem (может быть несколько)
+# сделать тест через транзакции
+class WellsSampleTestCase(TestCase):
+    """test: WellsSample"""
+
+    def setUp(self):
+        self.user = get_user_model().objects.create(username="testuser")
+        self.entity = Entities.objects.create(name="entity")
+        self.dict_entity = DictEntities.objects.create(name="dict entity", entity=self.entity)
+        self.well = Wells.objects.create(typo=self.dict_entity)
+
+    def test_create_new_wellssample_with_one_wellschem(self):
+        """
+        Tests that the create WellsSample with one WellsChem
+        """
+        well = self.well
+        date = datetime.date(1960, 1, 1)
+        name = "Test name"
+
+        # Create the document
+        wellssample = WellsSample.objects.create(
+            well=well,
+            date=date,
+            name=name,
+        )
+
+        parameter_1 = ChemCodes.objects.create(chem_id=1, chem_name="1")
+        wellschem_1 = WellsChem.objects.create(parameter=parameter_1, content_object=wellssample)
+        print(wellschem_1)
+
+        # Assert that the document was created successfully
+        self.assertEqual(wellssample.well, well)
+        self.assertEqual(wellssample.date, date)
+        self.assertEqual(wellssample.name, name)
+        self.assertEqual(wellssample.chemvalues.count(), 1)
+
+    def test_create_new_wellssample_with_any_wellschem(self):
+        """
+        Tests that the create WellsSample with any WellsChem
+        """
+        well = self.well
+        date = datetime.date(1960, 1, 1)
+        name = "Test name"
+
+        # Create the document
+        wellssample = WellsSample(
+            well=well,
+            date=date,
+            name=name,
+        )
+
+        with transaction.atomic():
+            wellssample.save()
+
+        parameter_1 = ChemCodes(chem_id=1, chem_name="схема 1")
+        wellschem_1 = WellsChem(parameter=parameter_1, content_object=wellssample)
+
+        parameter_2 = ChemCodes(chem_id=2, chem_name="схема 2")
+        wellschem_2 = WellsChem(parameter=parameter_2, content_object=wellssample)
+
+        with transaction.atomic():
+            parameter_1.save()
+            parameter_2.save()
+            wellschem_1.save()
+            wellschem_2.save()
+
+        # Assert that the document was created successfully
+        self.assertEqual(wellssample.well, well)
+        self.assertEqual(wellssample.date, date)
+        self.assertEqual(wellssample.name, name)
+        self.assertEqual(wellssample.chemvalues.count(), 2)
+
+    def test_wellssample_db_table(self):
+        """
+        Tests that correct name of the table in the database.
+        """
+        self.assertEqual(WellsSample._meta.db_table, "wells_sample")
