@@ -89,7 +89,14 @@ class PumpJournal(PDF):
                     )
                 )
                 dyn_level = qs.water_depth
-        return dyn_level, stat_level, rate_fin, round(rate_fin / depression, 2), depression, pump_data
+        return (
+            dyn_level,
+            stat_level,
+            rate_fin,
+            round(rate_fin / depression, 2) if rate_fin else "",
+            depression,
+            pump_data,
+        )
 
     def get_recovery_data(self):
         recovery_data = []
