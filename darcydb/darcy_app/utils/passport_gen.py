@@ -115,13 +115,13 @@ class Passports(PDF):
         depression = ""
         if efw:
             stat_level_inst = efw.waterdepths.first()
-            if stat_level:
+            if stat_level_inst:
                 stat_level = stat_level_inst.water_depth
             dpr_instance = WellsDepression.objects.filter(efw=efw).first()
             if dpr_instance:
                 dyn_level = dpr_instance.waterdepths.all().order_by("-time_measure").first().water_depth
                 rate = dpr_instance.rates.first().rate
-                depression = dyn_level - stat_level
+                depression = dyn_level - stat_level if stat_level and dyn_level else 0
                 specific_rate = round(rate / depression, 2)
                 rate_hour = round(rate * Decimal(3.6), 2)
                 rate_day = round(rate * Decimal(86.4), 2)
