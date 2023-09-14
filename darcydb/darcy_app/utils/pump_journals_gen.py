@@ -53,9 +53,7 @@ class PumpJournal(PDF):
             "Тип, марка насоса": self.efw.pump_type or "",
             "Глубина установки насоса": self.efw.pump_depth or "",
             "Ёмкость мерного сосуда, м<sup>3</sup>": self.efw.vessel_capacity or "",
-            "Время наполнения ёмкости, сек": self.time_to_seconds(self.efw.vessel_time)
-            if self.efw.vessel_time
-            else "",
+            "Метод замера дебита": self.efw.method_measure if self.efw.method_measure else "",
             "Водомерное устройство": self.efw.rate_measure or "",
             "Наименование и марка уровнемера": self.efw.level_meter or "",
         }
@@ -63,31 +61,42 @@ class PumpJournal(PDF):
 
     def get_pump_data(self):
         pump_data = []
-        stat_level = self.efw.waterdepths.first().water_depth
-        depr_qs = WellsDepression.objects.get(efw=self.efw)
-        wat_depths = depr_qs.waterdepths.all()
+        stat_level = ""
         dyn_level = ""
         rate_fin = ""
         depression = ""
-        for i, qs in enumerate(wat_depths):
-            rate_inst = depr_qs.rates.filter(time_measure=qs.time_measure).first()
-            depression = qs.water_depth - stat_level
-            rate = ""
-            if rate_inst:
-                rate = rate_fin = round(rate_inst.rate * Decimal(3.6), 2)
-            pump_data.append(
-                (
-                    (self.efw.date + qs.time_measure).date(),
-                    int(qs.time_measure.total_seconds() // 3600),
-                    int(qs.time_measure.total_seconds() % 3600 // 60),
-                    qs.water_depth,
-                    depression,
-                    rate,
-                    "",
+        stat_level_inst = self.efw.waterdepths.first()
+        if stat_level_inst:
+            stat_level = stat_level_inst.water_depth
+        depr_qs = WellsDepression.objects.filter(efw=self.efw).first()
+        if depr_qs:
+            wat_depths = depr_qs.waterdepths.all()
+            for i, qs in enumerate(wat_depths):
+                rate_inst = depr_qs.rates.filter(time_measure=qs.time_measure).first()
+                depression = qs.water_depth - stat_level
+                rate = ""
+                if rate_inst:
+                    rate = rate_fin = round(rate_inst.rate * Decimal(3.6), 2)
+                pump_data.append(
+                    (
+                        (self.efw.date + qs.time_measure).date(),
+                        int(qs.time_measure.total_seconds() // 3600),
+                        int(qs.time_measure.total_seconds() % 3600 // 60),
+                        qs.water_depth,
+                        depression,
+                        rate,
+                        "",
+                    )
                 )
-            )
-            dyn_level = qs.water_depth
-        return dyn_level, stat_level, rate_fin, round(rate_fin / depression, 2), depression, pump_data
+                dyn_level = qs.water_depth
+        return (
+            dyn_level,
+            stat_level,
+            rate_fin,
+            round(rate_fin / depression, 2) if rate_fin else "",
+            depression,
+            pump_data,
+        )
 
     def get_recovery_data(self):
         recovery_data = []

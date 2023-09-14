@@ -299,7 +299,7 @@ class WellsDepressionForm(forms.ModelForm):
                     data["time_measure"] = pd.to_timedelta(data["time_measure"], unit="m")
                 else:
                     data = data.iloc[:, 0].str.split(";", expand=True)
-                    data.columns = ["time_measure", "water_depth", "rate"]
+                    data.columns = ["time_measure", "water_depth", "rate", *data.columns[3:]]
                     data["time_measure"] = pd.to_timedelta(data["time_measure"].astype(float), unit="m")
                 data = data.replace(np.nan, None)
                 for index, row in data.iterrows():

@@ -73,7 +73,7 @@ class PDF:
         remainder_after_degrees = abs(decimal_deg - degrees) * 60
         minutes = int(remainder_after_degrees)
         remainder_after_minutes = (remainder_after_degrees - minutes) * 60
-        seconds = round(remainder_after_minutes, 4)
+        seconds = round(remainder_after_minutes, 2)
 
         return f"{degrees}°{minutes}'{seconds}\""
 
@@ -96,7 +96,7 @@ class PDF:
         ]
         if lit.extra:
             if lit.extra.get("description"):
-                string_desc.append(lit.extra["description"])
+                string_desc[0] += f' {lit.extra["description"]}'
         return ", ".join([el for el in string_desc if el]).strip().capitalize()
 
     def get_fields(self):
