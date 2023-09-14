@@ -30,11 +30,13 @@ class Passports(PDF):
             "Участок работ": intake.intake_name if intake else "",
             "Владелец скважины": water_user.name if water_user else "",
             "Адрес (почтовый) владельца скважины": water_user.position if water_user else "",
-            "Координаты скважины": f"{self.decimal_to_dms(self.instance.geom.y)} С.Ш., "
+            "Координаты скважины (система координат - ГСК-2011)": f"{self.decimal_to_dms(self.instance.geom.y)} С.Ш., "
             f"{self.decimal_to_dms(self.instance.geom.x)} В.Д.",
-            "Абсолютная отметка устья скважины": f"{self.instance.head} м" if self.instance.head else "",
+            "Абсолютная отметка устья скважины (Балтийская система высот)": f"{self.instance.head} м"
+            if self.instance.head
+            else "",
             "Назначение скважины": f"{self.instance.typo.name[:-2]}ая",
-            "Сведения о использовании": licenses.gw_purpose if licenses else "",
+            "Сведения об использовании": licenses.gw_purpose if licenses else "",
             "Лицензия на право пользования недрами": f"{licenses.name} от "
             f"{licenses.date_start.strftime('%d.%m.%Y')}"
             if licenses
@@ -108,26 +110,33 @@ class Passports(PDF):
         )
         efw_data = {}
         levels = recommendations = ""
+        stat_level = ""
+        dyn_level = ""
+        depression = ""
         if efw:
-            stat_level = efw.waterdepths.first().water_depth
-            dpr_instance = WellsDepression.objects.get(efw=efw)
-            dyn_level = dpr_instance.waterdepths.all().order_by("-time_measure").first().water_depth
-            rate = dpr_instance.rates.first().rate
-            depression = dyn_level - stat_level
-            specific_rate = round(rate / depression, 2)
-            rate_hour = round(rate * Decimal(3.6), 2)
-            rate_day = round(rate * Decimal(86.4), 2)
-            efw_data = {
-                "Дата производства откачки": efw.date.strftime("%d.%m.%Y"),
-                "Продолжительность откачки": f"{efw.pump_time.total_seconds() // 3600} час.",
-                "Водомерное устройство": efw.rate_measure or "",
-                "Уровнемер, марка": efw.level_meter or "",
-                "Тип и марка насоса": efw.pump_type or "",
-                "Глубина установки насоса": f"{efw.pump_depth} м" if efw.pump_depth else "",
-                "Дебит": f"{rate} л/сек; {rate_hour} м<sup>3</sup>/час; {rate_day} м<sup>3</sup>/сут",
-                "Удельный дебит": f"{specific_rate} л/(сек*м); "
-                f"{round(specific_rate * Decimal(3.6), 2)} м<sup>3</sup>/(час*м)",
-            }
+            stat_level_inst = efw.waterdepths.first()
+            if stat_level:
+                stat_level = stat_level_inst.water_depth
+            dpr_instance = WellsDepression.objects.filter(efw=efw).first()
+            if dpr_instance:
+                dyn_level = dpr_instance.waterdepths.all().order_by("-time_measure").first().water_depth
+                rate = dpr_instance.rates.first().rate
+                depression = dyn_level - stat_level
+                specific_rate = round(rate / depression, 2)
+                rate_hour = round(rate * Decimal(3.6), 2)
+                rate_day = round(rate * Decimal(86.4), 2)
+                efw_data = {
+                    "Дата производства откачки": efw.date.strftime("%d.%m.%Y"),
+                    "Продолжительность откачки": f"{efw.pump_time.total_seconds() // 3600} час.",
+                    "Метод замера дебита": efw.method_measure if efw.method_measure else "",
+                    "Водомерное устройство": efw.rate_measure or "",
+                    "Уровнемер, марка": efw.level_meter or "",
+                    "Тип и марка насоса": efw.pump_type or "",
+                    "Глубина установки насоса": f"{efw.pump_depth} м" if efw.pump_depth else "",
+                    "Дебит": f"{rate} л/сек; {rate_hour} м<sup>3</sup>/час; {rate_day} м<sup>3</sup>/сут",
+                    "Удельный дебит": f"{specific_rate} л/(сек*м); "
+                    f"{round(specific_rate * Decimal(3.6), 2)} м<sup>3</sup>/(час*м)",
+                }
             levels = (
                 f"<strong>Статический уровень, м:</strong> {stat_level}; "
                 f"<strong>Динамический уровень, м:</strong> {dyn_level}; "
@@ -302,10 +311,10 @@ class Passports(PDF):
         geophysics = self.get_geophysics_instance()
         if geophysics:
             geophysics_data = {
-                "Наименование организации-Исполнителя": geophysics.organization,
-                "Дата производства работ": geophysics.date.strftime("%d.%m.%Y"),
-                "В скважине произведены следующие геофизические исследования": geophysics.researches,
-                "Результаты геофизических исследований": geophysics.conclusion,
+                "Наименование организации-исполнителя:": geophysics.organization,
+                "Дата производства работ:": geophysics.date.strftime("%d.%m.%Y"),
+                "Сведения о проведенных геофизических исследованиях в скважине (ГИС).<br/>": geophysics.researches,
+                "Cведения о результатах проведенных работ.<br/>": geophysics.conclusion,
             }
             return geophysics_data
 
@@ -357,7 +366,7 @@ class Passports(PDF):
     def create_chem_conclusion(self):
         sample = self.get_sample_instance()
         if sample:
-            chem = sample.chemvalues.filter(Q(chem_value__gte=F("parameter__chem_pdk")))
+            chem = sample.chemvalues.filter(Q(chem_value__gt=F("parameter__chem_pdk")))
             if chem.exists():
                 data = []
                 for qs in chem:
@@ -387,12 +396,23 @@ class Passports(PDF):
         margin = 3810  # meters
         extent = tilemapbase.Extent.from_3857(x - margin, x + margin, y + margin, y - margin)
         dpi = 100
-        fig, ax = plt.subplots(figsize=(12, 12))
+        fig, ax = plt.subplots(figsize=(12, 10))
         plotter = tilemapbase.Plotter(extent, tilemapbase.tiles.build_OSM(), width=600)
         plotter.plot(ax)
         ax.set_xlim(x - margin, x + margin)
         ax.set_ylim(y - margin, y + margin)
-        ax.axis("off")
+        ax.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
+        # ax.axis("off")
+        scale_len = 1000  # scale length in meters
+        x0, y0 = x - margin + 100, y - margin + 400  # bottom-left position
+        x1, y1 = x0 + scale_len, y0
+        ax.plot([x0, x1], [y0, y1], color="black", linewidth=2)
+        tick_len = 50  # tick length is 50 meters
+        ax.plot([x0, x0], [y0, y0 + tick_len], color="black", linewidth=2)
+        ax.plot([x1, x1], [y0, y0 + tick_len], color="black", linewidth=2)
+        ax.annotate(
+            f"{scale_len} м", (x0 + scale_len / 2, y0 - 150), textcoords="data", ha="center", va="center", fontsize=14
+        )
         gdf.plot(ax=ax, color="red", markersize=(80, 80))
         schema_pic = io.BytesIO()
         ax.figure.savefig(schema_pic, dpi=dpi, format="png")
