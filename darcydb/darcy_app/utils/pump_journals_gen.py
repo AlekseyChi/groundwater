@@ -73,7 +73,7 @@ class PumpJournal(PDF):
             wat_depths = depr_qs.waterdepths.all()
             for i, qs in enumerate(wat_depths):
                 rate_inst = depr_qs.rates.filter(time_measure=qs.time_measure).first()
-                depression = qs.water_depth - stat_level
+                depression = qs.water_depth - stat_level if stat_level != "" and qs.water_depth else 0
                 rate = ""
                 if rate_inst:
                     rate = rate_fin = round(rate_inst.rate * Decimal(3.6), 2)
