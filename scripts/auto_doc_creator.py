@@ -6,7 +6,7 @@ from darcydb.darcy_app.utils.pump_journals_gen import generate_pump_journal
 
 def run():
     code = DictEntities.objects.get(entity__name="тип документа", name="Журнал опытно-фильтрационных работ")
-    efws = WellsEfw.objects.filter(well__intake__id=738)
+    efws = WellsEfw.objects.filter(well__intake__id=738, type_efw__name="откачки одиночные опытные")
     for qs in efws:
         doc_instance = qs.doc
         if not doc_instance:

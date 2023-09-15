@@ -89,7 +89,7 @@ def run():
             date = date.strftime("%Y-%m-%d")
             date_doc = datetime.strptime(date_doc, "%d.%m.%Y")
             date_doc = date_doc.strftime("%Y-%m-%d")
-            name_gwk = wells[wells["№"] == well.replace("x", "")]["№ГВК"]
+            name_gwk = wells[wells["№"] == int(well.replace("x", ""))]["№ГВК"]
 
             if not name_gwk.empty:
                 name_gwk = name_gwk.iloc[0]
