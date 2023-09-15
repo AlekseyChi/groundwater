@@ -164,6 +164,9 @@ def generate_pump_journal(efw, document):
     title = pdf.create_title()
     info = pdf.create_info_data()
     construction_data = pdf.create_construction_data()
+    construction_data = pdf.construction_define(archive=False)
+    if not construction_data.exists():
+        construction_data = pdf.construction_define(archive=True)
     instrumental_data = pdf.get_instrumental_data()
     dyn_wat, stat_wat, rate, specific_rate, depression, pump_data = pdf.get_pump_data()
     recovery_wat, recovery_data = pdf.get_recovery_data()

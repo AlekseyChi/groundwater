@@ -1,3 +1,4 @@
+import datetime
 import os
 import re
 
@@ -161,4 +162,35 @@ class PDF:
         if construction.exists():
             for qs in construction:
                 qs.date = qs.date if qs.date else "Нет сведений"
+        return construction
+
+    def get_construction_archive(self, archive_date):
+        construction = self.create_construction_data()
+        if archive_date:
+            u_construction = construction.filter(date=archive_date.date)
+        else:
+            u_construction = construction.filter(date__isnull=False).exclude(date__year=datetime.datetime.now().year)
+        return u_construction
+
+    def get_construction_new(self, archive_date):
+        construction = self.create_construction_data()
+        if archive_date:
+            u_construction = construction.exclude(date=archive_date.date)
+        else:
+            u_construction = construction
+        return u_construction
+
+    def construction_define(self, archive):
+        construction = self.create_construction_data()
+        if construction.exists():
+            archive_date = (
+                construction.filter(date__isnull=False).exclude(date__year=datetime.datetime.now().year).first()
+            )
+            if archive:
+                u_construction = self.get_construction_archive(archive_date)
+            else:
+                u_construction = self.get_construction_new(archive_date)
+            for qs in u_construction:
+                qs.date = qs.date if qs.date else "Нет сведений"
+            return u_construction
         return construction
