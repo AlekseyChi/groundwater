@@ -28,6 +28,7 @@ from .forms import (
     WellsWaterDepthPumpForm,
 )
 from .models import (
+    AquiferCodes,
     Attachments,
     Balance,
     DictDocOrganizations,
@@ -464,3 +465,4 @@ class DictEquipmentAdmin(nested_admin.NestedModelAdmin):
 
 darcy_admin.register(DictEquipment, DictEquipmentAdmin)
 darcy_admin.register(DictDocOrganizations)
+darcy_admin.register(AquiferCodes)
