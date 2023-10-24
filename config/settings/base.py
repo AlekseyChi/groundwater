@@ -352,6 +352,7 @@ JET_SIDE_MENU_ITEMS = {  # A list of application or custom item dicts
                 {"name": "documents"},
                 {"name": "license"},
                 {"name": "waterusers"},
+                {"name": "aquifercodes"},
             ],
         },
     ]
