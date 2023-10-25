@@ -6,31 +6,32 @@
 #
 amqp==5.1.1
     # via kombu
-argon2-cffi==21.3.0
+argon2-cffi==23.1.0
     # via -r base.in
 argon2-cffi-bindings==21.2.0
     # via argon2-cffi
 asgiref==3.7.2
     # via django
-async-timeout==4.0.2
+async-timeout==4.0.3
     # via redis
 attrs==23.1.0
     # via
     #   fiona
     #   jsonschema
+    #   referencing
 billiard==4.1.0
     # via celery
-boto3==1.27.0
+boto3==1.28.70
     # via
     #   -r base.in
     #   django-storages
-botocore==1.30.0
+botocore==1.31.70
     # via
     #   boto3
     #   s3transfer
-brotli==1.0.9
+brotli==1.1.0
     # via fonttools
-celery==5.3.1
+celery==5.3.4
     # via
     #   -r base.in
     #   django-celery-beat
@@ -40,14 +41,14 @@ certifi==2023.7.22
     #   fiona
     #   pyproj
     #   requests
-cffi==1.15.1
+cffi==1.16.0
     # via
     #   argon2-cffi-bindings
     #   cryptography
     #   weasyprint
-charset-normalizer==3.1.0
+charset-normalizer==3.3.1
     # via requests
-click==8.1.3
+click==8.1.7
     # via
     #   celery
     #   click-didyoumean
@@ -65,17 +66,17 @@ click-repl==0.3.0
     # via celery
 cligj==0.7.2
     # via fiona
-contourpy==1.1.0
+contourpy==1.1.1
     # via matplotlib
 crispy-bootstrap5==0.7
     # via -r base.in
 cron-descriptor==1.4.0
     # via django-celery-beat
-cryptography==41.0.3
+cryptography==41.0.5
     # via pyjwt
 cssselect2==0.7.0
     # via weasyprint
-cycler==0.11.0
+cycler==0.12.1
     # via matplotlib
 defusedxml==0.7.1
     # via
@@ -83,7 +84,7 @@ defusedxml==0.7.1
     #   python3-openid
 diff-match-patch==20230430
     # via django-import-export
-django==4.1.10
+django==4.1.12
     # via
     #   -r base.in
     #   crispy-bootstrap5
@@ -102,11 +103,11 @@ django==4.1.10
     #   django-timezone-field
     #   djangorestframework
     #   drf-spectacular
-django-allauth==0.54.0
+django-allauth==0.57.0
     # via -r base.in
 django-celery-beat==2.5.0
     # via -r base.in
-django-cors-headers==4.1.0
+django-cors-headers==4.3.0
     # via -r base.in
 django-crispy-forms==2.0
     # via
@@ -114,13 +115,13 @@ django-crispy-forms==2.0
     #   crispy-bootstrap5
 django-crum==0.7.9
     # via -r base.in
-django-environ==0.10.0
+django-environ==0.11.2
     # via -r base.in
 django-extensions==3.2.3
     # via -r base.in
-django-filter==23.2
+django-filter==23.3
     # via -r base.in
-django-import-export==3.2.0
+django-import-export==3.3.1
     # via -r base.in
 django-jet-reboot==1.3.3
     # via -r base.in
@@ -128,37 +129,37 @@ django-model-utils==4.3.1
     # via -r base.in
 django-nested-admin==4.0.2
     # via -r base.in
-django-redis==5.3.0
+django-redis==5.4.0
     # via -r base.in
-django-simple-history==3.3.0
+django-simple-history==3.4.0
     # via -r base.in
-django-storages[boto3]==1.13.2
+django-storages[boto3]==1.14.2
     # via -r base.in
-django-timezone-field==5.1
+django-timezone-field==6.0.1
     # via django-celery-beat
 djangorestframework==3.14.0
     # via
     #   -r base.in
     #   drf-spectacular
-drf-spectacular==0.26.2
+drf-spectacular==0.26.5
     # via -r base.in
 et-xmlfile==1.1.0
     # via openpyxl
-fiona==1.9.4.post1
+fiona==1.9.5
     # via geopandas
-flower==2.0.0
+flower==2.0.1
     # via -r base.in
-fonttools[woff]==4.42.1
+fonttools[woff]==4.43.1
     # via
     #   matplotlib
     #   weasyprint
-geopandas==0.13.2
+geopandas==0.14.0
     # via -r base.in
 hiredis==2.2.3
     # via -r base.in
 html5lib==1.1
     # via weasyprint
-humanize==4.6.0
+humanize==4.8.0
     # via flower
 idna==3.4
     # via requests
@@ -170,15 +171,17 @@ jmespath==1.0.1
     # via
     #   boto3
     #   botocore
-jsonschema==4.17.3
+jsonschema==4.19.1
     # via drf-spectacular
+jsonschema-specifications==2023.7.1
+    # via jsonschema
 kiwisolver==1.4.5
     # via matplotlib
-kombu==5.3.1
+kombu==5.3.2
     # via celery
 lxml==4.9.3
     # via python-docx
-markdown==3.4.4
+markdown==3.5
     # via
     #   -r base.in
     #   markdown-katex
@@ -188,9 +191,9 @@ markuppy==1.14
     # via tablib
 markupsafe==2.1.3
     # via jinja2
-matplotlib==3.7.2
+matplotlib==3.8.0
     # via -r base.in
-numpy==1.25.2
+numpy==1.26.1
     # via
     #   contourpy
     #   matplotlib
@@ -202,11 +205,11 @@ odfpy==1.4.1
     # via tablib
 openpyxl==3.1.2
     # via tablib
-packaging==23.1
+packaging==23.2
     # via
     #   geopandas
     #   matplotlib
-pandas==2.0.3
+pandas==2.1.1
     # via
     #   -r base.in
     #   geopandas
@@ -214,32 +217,32 @@ pathlib2==2.3.7.post1
     # via markdown-katex
 pdf2image==1.16.3
     # via -r base.in
-pillow==9.5.0
+pillow==10.1.0
     # via
     #   -r base.in
     #   matplotlib
     #   pdf2image
     #   tilemapbase
     #   weasyprint
-prometheus-client==0.17.0
+prometheus-client==0.17.1
     # via flower
-prompt-toolkit==3.0.38
+prompt-toolkit==3.0.39
     # via click-repl
 pycparser==2.21
     # via cffi
-pydyf==0.7.0
+pydyf==0.8.0
     # via weasyprint
-pyjwt[crypto]==2.7.0
-    # via django-allauth
-pyparsing==3.0.9
+pyjwt[crypto]==2.8.0
+    # via
+    #   django-allauth
+    #   pyjwt
+pyparsing==3.1.1
     # via matplotlib
 pyphen==0.14.0
     # via weasyprint
-pyproj==3.6.0
+pyproj==3.6.1
     # via geopandas
-pyrsistent==0.19.3
-    # via jsonschema
-python-crontab==2.7.1
+python-crontab==3.0.0
     # via django-celery-beat
 python-dateutil==2.8.2
     # via
@@ -248,7 +251,7 @@ python-dateutil==2.8.2
     #   matplotlib
     #   pandas
     #   python-crontab
-python-docx==0.8.11
+python-docx==1.0.1
     # via -r base.in
 python-monkey-business==1.0.0
     # via django-nested-admin
@@ -256,20 +259,23 @@ python-slugify==8.0.1
     # via -r base.in
 python3-openid==3.2.0
     # via django-allauth
-pytz==2023.3
+pytz==2023.3.post1
     # via
-    #   django-timezone-field
     #   djangorestframework
     #   flower
     #   pandas
-pyyaml==6.0
+pyyaml==6.0.1
     # via
     #   drf-spectacular
     #   tablib
-redis==4.5.5
+redis==5.0.1
     # via
     #   -r base.in
     #   django-redis
+referencing==0.30.2
+    # via
+    #   jsonschema
+    #   jsonschema-specifications
 requests==2.31.0
     # via
     #   django-allauth
@@ -277,12 +283,17 @@ requests==2.31.0
     #   tilemapbase
 requests-oauthlib==1.3.1
     # via django-allauth
-s3transfer==0.6.1
+rpds-py==0.10.6
+    # via
+    #   jsonschema
+    #   referencing
+s3transfer==0.7.0
     # via boto3
-shapely==2.0.1
+shapely==2.0.2
     # via geopandas
 six==1.16.0
     # via
+    #   django-jet-reboot
     #   fiona
     #   html5lib
     #   pathlib2
@@ -291,7 +302,9 @@ six==1.16.0
 sqlparse==0.4.4
     # via django
 tablib[html,ods,xls,xlsx,yaml]==3.5.0
-    # via django-import-export
+    # via
+    #   django-import-export
+    #   tablib
 text-unidecode==1.3
     # via python-slugify
 tilemapbase==0.4.7
@@ -300,10 +313,12 @@ tinycss2==1.2.1
     # via
     #   cssselect2
     #   weasyprint
-tornado==6.3.2
+tornado==6.3.3
     # via flower
-typing-extensions==4.6.3
-    # via asgiref
+typing-extensions==4.8.0
+    # via
+    #   asgiref
+    #   python-docx
 tzdata==2023.3
     # via
     #   celery
@@ -311,7 +326,7 @@ tzdata==2023.3
     #   pandas
 uritemplate==4.1.1
     # via drf-spectacular
-urllib3==1.26.16
+urllib3==2.0.7
     # via
     #   botocore
     #   requests
@@ -320,22 +335,22 @@ vine==5.0.0
     #   amqp
     #   celery
     #   kombu
-wcwidth==0.2.6
+wcwidth==0.2.8
     # via prompt-toolkit
-weasyprint==59.0
+weasyprint==60.1
     # via -r base.in
 webencodings==0.5.1
     # via
     #   cssselect2
     #   html5lib
     #   tinycss2
-whitenoise==6.5.0
+whitenoise==6.6.0
     # via -r base.in
 xlrd==2.0.1
     # via tablib
 xlwt==1.3.0
     # via tablib
-zopfli==0.2.2
+zopfli==0.2.3
     # via fonttools
 
 # The following packages are considered to be unsafe in a requirements file:
