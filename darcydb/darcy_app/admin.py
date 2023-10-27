@@ -4,6 +4,7 @@ import nested_admin
 from django.contrib.admin import DateFieldListFilter
 from django.contrib.gis import admin
 from django.http import HttpResponseRedirect
+from django.urls import path, reverse
 from django.utils.safestring import mark_safe
 from import_export.admin import ImportExportModelAdmin
 from jet.admin import CompactInline
@@ -72,6 +73,50 @@ class DarcyAdminArea(admin.AdminSite):
     site_header = "Админпанель Дарси"
     site_title = "Dарси"
     index_title = "Админпанель Дарси"
+
+    def get_urls(self):
+        urls = super().get_urls()
+        my_urls = [path("create_doc_auto/<int:intake>/", self.admin_view(self.create_doc_auto))]
+        return my_urls + urls
+
+    def create_doc_auto(self, request, intake):
+        code = DictEntities.objects.get(entity__name="тип документа", name="Журнал опытно-фильтрационных работ")
+        efws = WellsEfw.objects.filter(well__intake__id=intake, type_efw__name="откачки одиночные опытные")
+        for qs in efws:
+            doc_instance = qs.doc
+            if not doc_instance:
+                doc_instance = Documents.objects.create(
+                    name=f"Журнал опытной откачки из скважины №{qs.well.name} от {qs.date}",
+                    typo=code,
+                    creation_date=datetime.datetime.now().date(),
+                    object_id=qs.pk,
+                )
+                qs.doc = doc_instance
+                qs.save()
+            rest_efw = WellsEfw.objects.filter(
+                well=qs.well,
+                type_efw__name="восстановление уровня",
+                date__lte=qs.date + datetime.timedelta(days=4),
+                date__gte=qs.date - datetime.timedelta(days=4),
+            ).first()
+            if rest_efw:
+                rest_efw.doc = doc_instance
+                rest_efw.save()
+            generate_pump_journal(qs, doc_instance)
+
+        code = DictEntities.objects.get(entity__name="тип документа", name="Паспорт скважины")
+        pswds = Wells.objects.filter(intake__id=intake)
+        for qs in pswds:
+            doc_instance = qs.docs.filter(typo=code).first()
+            if not doc_instance:
+                doc_instance = qs.docs.create(
+                    name=f"Паспорт скважины №{qs.name}",
+                    typo=code,
+                    creation_date=datetime.datetime.now().date(),
+                    object_id=qs.pk,
+                )
+            generate_passport(qs, doc_instance)
+        return HttpResponseRedirect(reverse("admin:index"))
 
 
 darcy_admin = DarcyAdminArea(name="darcy_admin")
@@ -466,3 +511,4 @@ class DictEquipmentAdmin(nested_admin.NestedModelAdmin):
 darcy_admin.register(DictEquipment, DictEquipmentAdmin)
 darcy_admin.register(DictDocOrganizations)
 darcy_admin.register(AquiferCodes)
+# darcy_admin.register(DocumentsCreatorAdmin)
