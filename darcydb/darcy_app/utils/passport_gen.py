@@ -92,13 +92,15 @@ class Passports(PDF):
         stat_wat = ""
         specific_rate = ""
         if efw:
-            stat_wat = efw.waterdepths.first().water_depth
+            stat_wat_inst = efw.waterdepths.first()
+            if stat_wat_inst:
+                stat_wat = stat_wat_inst.water_depth
             depression_instance = WellsDepression.objects.get(efw=efw)
             rates = depression_instance.rates.first()
             dyn_wat = depression_instance.waterdepths.order_by("-time_measure").first()
-            depression = dyn_wat.water_depth - stat_wat
+            depression = dyn_wat.water_depth - stat_wat if stat_wat != "" and dyn_wat else ""
             rate = rates.rate
-            specific_rate = round(rate / depression, 2)
+            specific_rate = round(rate / depression, 2) if depression != "" else ""
         return rate, depression, specific_rate, stat_wat
 
     def get_pump_complex(self):
@@ -121,8 +123,8 @@ class Passports(PDF):
             if dpr_instance:
                 dyn_level = dpr_instance.waterdepths.all().order_by("-time_measure").first().water_depth
                 rate = dpr_instance.rates.first().rate
-                depression = dyn_level - stat_level if stat_level != "" and dyn_level else 0
-                specific_rate = round(rate / depression, 2)
+                depression = dyn_level - stat_level if stat_level != "" and dyn_level else ""
+                specific_rate = round(rate / depression, 2) if depression != "" else ""
                 rate_hour = round(rate * Decimal(3.6), 2)
                 rate_day = round(rate * Decimal(86.4), 2)
                 efw_data = {
@@ -135,7 +137,9 @@ class Passports(PDF):
                     "Глубина установки насоса": f"{efw.pump_depth} м" if efw.pump_depth else "",
                     "Дебит": f"{rate} л/сек; {rate_hour} м<sup>3</sup>/час; {rate_day} м<sup>3</sup>/сут",
                     "Удельный дебит": f"{specific_rate} л/(сек*м); "
-                    f"{round(specific_rate * Decimal(3.6), 2)} м<sup>3</sup>/(час*м)",
+                    f"{round(specific_rate * Decimal(3.6), 2)} м<sup>3</sup>/(час*м)"
+                    if specific_rate
+                    else "",
                 }
             levels = (
                 f"<strong>Статический уровень, м:</strong> {stat_level}; "
