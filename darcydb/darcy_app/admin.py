@@ -81,7 +81,11 @@ class DarcyAdminArea(admin.AdminSite):
 
     def create_doc_auto(self, request, intake):
         code = DictEntities.objects.get(entity__name="тип документа", name="Журнал опытно-фильтрационных работ")
-        efws = WellsEfw.objects.filter(well__intake__id=intake, type_efw__name="откачки одиночные опытные")
+        wells = WellsAquifers.objects.all().values("well")
+        efws = WellsEfw.objects.filter(
+            well__intake__id=intake, type_efw__name="откачки одиночные опытные", well__in=wells
+        )
+        print(efws)
         for qs in efws:
             doc_instance = qs.doc
             if not doc_instance:
@@ -105,7 +109,7 @@ class DarcyAdminArea(admin.AdminSite):
             generate_pump_journal(qs, doc_instance)
 
         code = DictEntities.objects.get(entity__name="тип документа", name="Паспорт скважины")
-        pswds = Wells.objects.filter(intake__id=intake)
+        pswds = Wells.objects.filter(intake__id=intake, id__in=wells)
         for qs in pswds:
             doc_instance = qs.docs.filter(typo=code).first()
             if not doc_instance:
