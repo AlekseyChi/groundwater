@@ -114,7 +114,7 @@ class DarcyAdminArea(admin.AdminSite):
             doc_instance = qs.docs.filter(typo=code).first()
             if not doc_instance:
                 doc_instance = qs.docs.create(
-                    name=f"Паспорт скважины №{qs.name}",
+                    name=f"Паспорт скважины №{qs.name}({qs.pk})",
                     typo=code,
                     creation_date=datetime.datetime.now().date(),
                     object_id=qs.pk,
