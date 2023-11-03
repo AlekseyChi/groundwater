@@ -20,16 +20,21 @@
       <div class="construction">
         {% include 'passports/construction.html' %}
       </div>
-      <div class="geophysics">{% include 'passports/geophysics.html' %}</div>
+      <div class="geophysics" style="page-break-inside: avoid">
+        {% include 'passports/geophysics.html' %}
+      </div>
     </div>
+    {% if efr %}
     <div class="chapter">
-      <div class="test-pump">{% include 'passports/test_pump.html' %}</div>
       <div class="pump-complex">
         {% include 'passports/pump_complex.html' %}
       </div>
     </div>
+    {% endif %} {% if sample_data %}
     <div class="chem chapter">{% include 'passports/chem.html' %}</div>
+    {% endif %} {% if extra_data %}
     <div class="extra">{% include 'passports/extra_data.html' %}</div>
+    {% endif %}
     <div class="chapter">{% include 'passports/appendix.html' %}</div>
     <div class="chapter">{% include 'passports/attachments.html' %}</div>
     <div class="chapter">{% include 'passports/brief_remind.html' %}</div>

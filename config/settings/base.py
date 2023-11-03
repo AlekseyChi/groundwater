@@ -144,6 +144,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 # STATIC
@@ -352,6 +353,7 @@ JET_SIDE_MENU_ITEMS = {  # A list of application or custom item dicts
                 {"name": "documents"},
                 {"name": "license"},
                 {"name": "waterusers"},
+                {"name": "aquifercodes"},
             ],
         },
     ]

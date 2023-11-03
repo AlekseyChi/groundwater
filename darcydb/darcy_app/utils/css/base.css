@@ -57,6 +57,7 @@ body {
 
 .container-watermark {
   position: relative;
+  margin-bottom: 4rem;
 }
 
 .watermark {
@@ -64,15 +65,24 @@ body {
   top: 35%;
   left: 25%;
   opacity: 0.4; /* 0 to 1 (0 is fully transparent and 1 is fully opaque) */
-  z-index: 0; /* Ensure it sits on top of other content */
+  z-index: -1; /* Ensure it sits on top of other content */
 }
 
 .stamp {
   position: absolute;
-  top: 70%;
-  left: 35%;
+  top: 64%;
+  left: 40%;
   height: 200px;
   opacity: 0.8; /* 0 to 1 (0 is fully transparent and 1 is fully opaque) */
+  z-index: 0; /* Ensure it sits on top of other content */
+}
+
+.stamp-sign {
+  position: absolute;
+  top: 64%;
+  left: 38%;
+  width: 250px;
+  opacity: 0.9; /* 0 to 1 (0 is fully transparent and 1 is fully opaque) */
   z-index: 0; /* Ensure it sits on top of other content */
 }
 .company-info {
@@ -144,6 +154,13 @@ td {
   padding: 10px;
 }
 
+.table-journal tr th,
+.table-journal td {
+  border: 1px solid;
+  text-align: center;
+  padding: 1px;
+}
+
 .table-span {
   table-layout: fixed;
   font-size: 10pt;
@@ -178,4 +195,17 @@ td {
 .brief {
   margin: 0.2rem;
   font-size: 11pt;
+}
+
+.no-border {
+  width: 60%;
+  border-collapse: collapse;
+  border: none;
+}
+
+.no-border tr,
+.no-border td {
+  text-align: left;
+  border: none;
+  font-weight: bold;
 }

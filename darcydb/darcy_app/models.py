@@ -1,3 +1,5 @@
+import base64
+import io
 import uuid
 
 import boto3
@@ -9,6 +11,7 @@ from django.contrib.gis.db import models
 from django.core.files.storage import FileSystemStorage
 from django.utils import timezone
 from django.utils.safestring import mark_safe
+from pdf2image import convert_from_bytes
 from simple_history.models import HistoricalRecords
 
 from .storage_backends import YandexObjectStorage
@@ -93,6 +96,7 @@ class DictEquipment(BaseModel):
         verbose_name = "Словарь оборудования"
         verbose_name_plural = "Словарь обородувания"
         db_table = "dict_equipment"
+        unique_together = (("brand", "typo"),)
 
     def __str__(self):
         return self.brand
@@ -156,9 +160,7 @@ class Documents(BaseModel):
     authors = models.TextField(
         blank=True, null=True, verbose_name="Авторы", help_text="Перечислите авторов через запятую"
     )
-    links = models.ManyToManyField(
-        "self", symmetrical=False, blank=True, null=True, verbose_name="Связанные документы"
-    )
+    links = models.ManyToManyField("self", symmetrical=False, blank=True, verbose_name="Связанные документы")
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, blank=True, null=True)
     object_id = models.PositiveIntegerField(blank=True, null=True)
     content_object = GenericForeignKey()
@@ -168,7 +170,12 @@ class Documents(BaseModel):
         verbose_name = "Документ"
         verbose_name_plural = "Документация"
         db_table = "documents"
-        unique_together = (("content_type", "object_id"),)
+        unique_together = (
+            (
+                "name",
+                "typo",
+            ),
+        )
         ordering = ("-creation_date",)
 
     def __str__(self):
@@ -201,9 +208,12 @@ class DocumentsPath(BaseModel):
     #         save_file_to_media_directory.delay(self.pk, file.read(), file_path)
 
     def delete(self, *args, **kwargs):
-        storage, path = self.path.storage, self.path.path
-        super().delete(*args, **kwargs)
-        storage.delete(path)
+        if settings.DEBUG:
+            storage, path = self.path.storage, self.path.path
+            super().delete(*args, **kwargs)
+            storage.delete(path)
+        else:
+            super().delete(*args, **kwargs)
 
     def generate_presigned_url(self):
         s3_client = boto3.client(
@@ -238,7 +248,7 @@ class AquiferCodes(models.Model):
         db_table = "aquifer_codes"
 
     def __str__(self):
-        return self.aquifer_name
+        return f"{self.aquifer_name} ({self.aquifer_index})" if self.aquifer_index else self.aquifer_name
 
 
 class Wells(BaseModel):
@@ -358,6 +368,8 @@ class WellsDrilledData(BaseModel):
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
     date_start = models.DateField(verbose_name="Дата начала бурения")
     date_end = models.DateField(verbose_name="Дата окончания бурения")
+    drill_type = models.CharField(max_length=50, blank=True, null=True, verbose_name="Тип бурения")
+    drill_rig = models.CharField(max_length=50, blank=True, null=True, verbose_name="Буровая установка")
     organization = models.CharField(max_length=100, blank=True, null=True, verbose_name="Буровая организация")
     doc = models.ForeignKey("Documents", models.CASCADE, blank=True, null=True, verbose_name="Документ")
     waterdepths = GenericRelation("WellsWaterDepth")
@@ -387,6 +399,7 @@ class WellsGeophysics(BaseModel):
     researches = models.TextField(verbose_name="Геофизические исследования")
     conclusion = models.TextField(verbose_name="Результаты исследований")
     depths = GenericRelation("WellsDepth")
+    waterdepths = GenericRelation("WellsWaterDepth")
     attachments = GenericRelation("Attachments")
     doc = models.ForeignKey("Documents", models.CASCADE, blank=True, null=True, verbose_name="Документ")
     history = HistoricalRecords(table_name="wells_geophysics_history")
@@ -412,7 +425,7 @@ class WellsWaterDepth(BaseModel):
     """
 
     type_level = models.BooleanField(verbose_name="Статический", blank=True, null=True, default=False)
-    time_measure = models.TimeField(verbose_name="Время замера")
+    time_measure = models.DurationField(verbose_name="Время замера")
     water_depth = models.DecimalField(
         max_digits=6,
         decimal_places=2,
@@ -440,7 +453,7 @@ class WellsRate(BaseModel):
     и обобщенные связи с другими возможными моделями.
     """
 
-    time_measure = models.TimeField(verbose_name="Время замера")
+    time_measure = models.DurationField(verbose_name="Время замера")
     rate = models.DecimalField(
         max_digits=7, decimal_places=3, verbose_name="Дебит л/с", help_text="до трех знаков после запятой"
     )
@@ -465,7 +478,7 @@ class WellsTemperature(BaseModel):
     и обобщенные связи с другими возможными моделями.
     """
 
-    time_measure = models.TimeField(verbose_name="Время замера")
+    time_measure = models.DurationField(verbose_name="Время замера")
     temperature = models.DecimalField(
         max_digits=6, decimal_places=2, verbose_name="Температура, ℃", help_text="до двух знаков после запятой"
     )
@@ -482,20 +495,6 @@ class WellsTemperature(BaseModel):
 
     def __str__(self):
         return ""
-
-    @classmethod
-    def get_all_related_objects(cls):
-        distinct_content_types = cls.objects.values_list("content_type", flat=True).distinct()
-        all_related_objects = []
-        for content_type_id in distinct_content_types:
-            content_type = ContentType.objects.get_for_id(content_type_id)
-            model_class = content_type.model_class()
-            object_ids = cls.objects.filter(content_type=content_type).values_list("object_id", flat=True)
-
-            related_objects = model_class.objects.filter(id__in=object_ids)
-            all_related_objects.extend(related_objects)
-
-        return all_related_objects
 
 
 class WellsDepth(BaseModel):
@@ -538,6 +537,25 @@ class WellsCondition(BaseModel):
         verbose_name = "Тех.состояние скважины"
         verbose_name_plural = "Тех.состояние скважин"
         db_table = "wells_condition"
+        unique_together = (("object_id", "content_type"),)
+
+    def __str__(self):
+        return ""
+
+
+class WellsLugHeight(BaseModel):
+    lug_height = models.DecimalField(
+        max_digits=6, decimal_places=2, verbose_name="Высота оголовка, м", help_text="до двух знаков после запятой"
+    )
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey()
+    history = HistoricalRecords(table_name="wells_lug_height_history")
+
+    class Meta:
+        verbose_name = "Высота оголовка скважины"
+        verbose_name_plural = "Высоты оголовков скважин"
+        db_table = "wells_lug_height"
         unique_together = (("object_id", "content_type"),)
 
     def __str__(self):
@@ -656,7 +674,7 @@ class WellsLithology(BaseModel):
 
 class WellsConstruction(BaseModel):
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
-    date = models.DateField(verbose_name="Дата установки")
+    date = models.DateField(verbose_name="Дата установки", blank=True, null=True)
     construction_type = models.ForeignKey(
         "DictEntities", models.DO_NOTHING, db_column="construction_type", verbose_name="Тип конструкции"
     )
@@ -670,7 +688,7 @@ class WellsConstruction(BaseModel):
         verbose_name = "Конструкция скважины"
         verbose_name_plural = "Конструкция скважины"
         db_table = "wells_construction"
-        unique_together = (("well", "depth_from", "construction_type", "depth_till", "diameter"),)
+        unique_together = (("well", "date", "depth_from", "construction_type", "depth_till", "diameter"),)
         ordering = ("depth_from",)
 
     def __str__(self):
@@ -725,11 +743,21 @@ class WellsEfw(BaseModel):
         blank=True,
         null=True,
     )
-    pump_time = models.TimeField(verbose_name="Продолжительность опыта")
+    rate_measure = models.ForeignKey(
+        "DictEquipment",
+        models.DO_NOTHING,
+        db_column="rate_measure",
+        related_name="rate_measure",
+        verbose_name="Расходомер",
+        blank=True,
+        null=True,
+    )
+    pump_time = models.DurationField(verbose_name="Продолжительность опыта")
     vessel_capacity = models.IntegerField(blank=True, null=True, verbose_name="Ёмкость мерного сосуда, м3")
     vessel_time = models.TimeField(blank=True, null=True, verbose_name="Время наполнения ёмкости, сек")
     doc = models.ForeignKey("Documents", models.CASCADE, blank=True, null=True, verbose_name="Документ")
     waterdepths = GenericRelation("WellsWaterDepth")
+    lugs = GenericRelation("WellsLugHeight")
     history = HistoricalRecords(table_name="wells_efw_history")
 
     class Meta:
@@ -907,7 +935,7 @@ class Balance(BaseModel):
 
 
 class Attachments(BaseModel):
-    img = models.ImageField(
+    img = models.FileField(
         upload_to="images/",
         storage=YandexObjectStorage() if not settings.DEBUG else FileSystemStorage(location=settings.MEDIA_ROOT),
         verbose_name="Вложение",
@@ -926,9 +954,32 @@ class Attachments(BaseModel):
         return mark_safe("<img src='/media/%s' width='150' height='150' />" % (self.img))
 
     def delete(self, *args, **kwargs):
-        storage, path = self.path.storage, self.path.path
-        super().delete(*args, **kwargs)
-        storage.delete(path)
+        if settings.DEBUG:
+            storage, path = self.path.storage, self.path.path
+            super().delete(*args, **kwargs)
+            storage.delete(path)
+        else:
+            super().delete(*args, **kwargs)
+
+    def get_base64_image(self):
+        image_content = []
+        if self.img.name.endswith(".pdf"):
+            images = convert_from_bytes(self.img.read())
+            for image in images:
+                buffered = io.BytesIO()
+                image.save(buffered, format="PNG")
+                image_content.append(buffered.getvalue())
+        else:
+            if isinstance(self.img.storage, FileSystemStorage):
+                # If the image is stored locally
+                with open(self.img.path, "rb") as f:
+                    image_content.append(f.read())
+            else:
+                # If the image is stored in Yandex Object Storage
+                image_content.append(self.img.read())
+
+        base64_images = [base64.b64encode(image).decode("utf-8") for image in image_content]
+        return base64_images
 
     def __str__(self):
         return self.img.name

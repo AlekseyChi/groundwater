@@ -7,15 +7,16 @@ hiredis # https://github.com/redis/hiredis-py
 celery  # pyup: < 6.0  # https://github.com/celery/celery
 django-celery-beat  # https://github.com/celery/django-celery-beat
 flower  # https://github.com/mher/flower
-geopandas
-pandas
-matplotlib
-tilemapbase
-weasyprint
-Jinja2
-geopy
-Markdown
-markdown-katex
+geopandas # https://github.com/geopandas/geopandas
+pandas # https://github.com/pandas-dev/pandas
+matplotlib # https://github.com/matplotlib/matplotlib
+tilemapbase # https://github.com/MatthewDaws/TileMapBase
+weasyprint # https://github.com/Kozea/WeasyPrint
+Jinja2 # https://github.com/pallets/jinja
+Markdown # https://github.com/younghz/Markdown
+markdown-katex # https://github.com/mbarkhau/markdown-katex
+python-docx # https://github.com/python-openxml/python-docx
+pdf2image # https://github.com/Belval/pdf2image
 
 # Django
 # ------------------------------------------------------------------------------
@@ -37,6 +38,6 @@ django-jet-reboot # https://github.com/assem-ch/django-jet-reboot
 django-simple-history # https://github.com/jazzband/django-simple-history
 django-filter # https://github.com/carltongibson/django-filter
 django-crum # https://github.com/ninemoreminutes/django-crum
-django-nested-admin
-boto3
-django-storages[boto3]
+django-nested-admin # https://github.com/theatlantic/django-nested-admin
+boto3 # https://github.com/boto/boto3
+django-storages[boto3] # https://github.com/jschneier/django-storages

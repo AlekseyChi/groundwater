@@ -3,24 +3,33 @@ import datetime
 import nested_admin
 from django.contrib.admin import DateFieldListFilter
 from django.contrib.gis import admin
+from django.http import HttpResponseRedirect
+from django.urls import path, reverse
+from django.utils.safestring import mark_safe
 from import_export.admin import ImportExportModelAdmin
 from jet.admin import CompactInline
 
 from .filters import DocSourceFilter, DocTypeFilter, TypeEfwFilter, WellsTypeFilter
 from .forms import (
     BalanceForm,
+    DictEquipmentForm,
     DocumentsForm,
     FieldsForm,
     IntakesForm,
     WellsAquifersForm,
+    WellsConstructionForm,
+    WellsDepressionForm,
     WellsEfwForm,
     WellsForm,
     WellsLithologyForm,
+    WellsRateForm,
     WellsRegimeForm,
+    WellsTemperatureForm,
     WellsWaterDepthForm,
     WellsWaterDepthPumpForm,
 )
 from .models import (
+    AquiferCodes,
     Attachments,
     Balance,
     DictDocOrganizations,
@@ -45,6 +54,7 @@ from .models import (
     WellsEfw,
     WellsGeophysics,
     WellsLithology,
+    WellsLugHeight,
     WellsRate,
     WellsRegime,
     WellsSample,
@@ -55,25 +65,6 @@ from .resources import WellsRegimeResource
 from .utils.passport_gen import generate_passport
 from .utils.pump_journals_gen import generate_pump_journal
 
-ADMIN_ORDERING = [
-    (
-        "darcy_app",
-        [
-            "Wells",
-            "WellsEfw",
-            "WellsRegime",
-            "WellsSample",
-            "Intakes",
-            "Fields",
-            "Documents",
-            "DictPump",
-            "License",
-            # "ChemCodes",
-            # "AquiferCodes",
-        ],
-    ),
-]
-
 admin.site.register(DictEntities)
 admin.site.register(Entities)
 
@@ -82,6 +73,54 @@ class DarcyAdminArea(admin.AdminSite):
     site_header = "Админпанель Дарси"
     site_title = "Dарси"
     index_title = "Админпанель Дарси"
+
+    def get_urls(self):
+        urls = super().get_urls()
+        my_urls = [path("create_doc_auto/<int:intake>/", self.admin_view(self.create_doc_auto))]
+        return my_urls + urls
+
+    def create_doc_auto(self, request, intake):
+        code = DictEntities.objects.get(entity__name="тип документа", name="Журнал опытно-фильтрационных работ")
+        wells = WellsAquifers.objects.all().values("well")
+        efws = WellsEfw.objects.filter(
+            well__intake__id=intake, type_efw__name="откачки одиночные опытные", well__in=wells
+        )
+        print(efws)
+        for qs in efws:
+            doc_instance = qs.doc
+            if not doc_instance:
+                doc_instance = Documents.objects.create(
+                    name=f"Журнал опытной откачки из скважины №{qs.well.name} от {qs.date}",
+                    typo=code,
+                    creation_date=datetime.datetime.now().date(),
+                    object_id=qs.pk,
+                )
+                qs.doc = doc_instance
+                qs.save()
+            rest_efw = WellsEfw.objects.filter(
+                well=qs.well,
+                type_efw__name="восстановление уровня",
+                date__lte=qs.date + datetime.timedelta(days=4),
+                date__gte=qs.date - datetime.timedelta(days=4),
+            ).first()
+            if rest_efw:
+                rest_efw.doc = doc_instance
+                rest_efw.save()
+            generate_pump_journal(qs, doc_instance)
+
+        code = DictEntities.objects.get(entity__name="тип документа", name="Паспорт скважины")
+        pswds = Wells.objects.filter(intake__id=intake, id__in=wells)
+        for qs in pswds:
+            doc_instance = qs.docs.filter(typo=code).first()
+            if not doc_instance:
+                doc_instance = qs.docs.create(
+                    name=f"Паспорт скважины №{qs.name}({qs.pk})",
+                    typo=code,
+                    creation_date=datetime.datetime.now().date(),
+                    object_id=qs.pk,
+                )
+            generate_passport(qs, doc_instance)
+        return HttpResponseRedirect(reverse("admin:index"))
 
 
 darcy_admin = DarcyAdminArea(name="darcy_admin")
@@ -121,20 +160,33 @@ class WellsAquifersInline(nested_admin.NestedTabularInline):
 
 
 class WellsConstructionInline(nested_admin.NestedTabularInline):
+    form = WellsConstructionForm
     model = WellsConstruction
     # classes = ("collapse",)
     extra = 1
 
 
-class WellsWaterDepthDrilledInline(nested_admin.NestedGenericTabularInline):
-    form = WellsWaterDepthForm
+class WellsWaterDepthPumpInline(nested_admin.NestedGenericTabularInline):
     model = WellsWaterDepth
+    form = WellsWaterDepthPumpForm
     extra = 1
+    max_num = 1000
+    # min_num = 1
+
+
+class WellsWaterDepthDrilledInline(WellsWaterDepthPumpInline):
+    form = WellsWaterDepthForm
     max_num = 1
 
 
 class WellsDepthInline(nested_admin.NestedGenericTabularInline):
     model = WellsDepth
+    extra = 1
+    max_num = 1
+
+
+class WellsLugHeightInline(nested_admin.NestedGenericTabularInline):
+    model = WellsLugHeight
     extra = 1
     max_num = 1
 
@@ -146,19 +198,21 @@ class WellsDrilledDataInline(nested_admin.NestedTabularInline):
     max_num = 1
 
 
-class WellsRateInline(nested_admin.NestedGenericTabularInline):
+class WellsRatePumpInline(nested_admin.NestedGenericTabularInline):
     model = WellsRate
     extra = 1
 
 
-class WellsWaterDepthPumpInline(WellsWaterDepthDrilledInline):
-    form = WellsWaterDepthPumpForm
-    max_num = 1000
+class WellsRateInline(WellsRatePumpInline):
+    model = WellsRate
+    form = WellsRateForm
+    extra = 1
 
 
 class WellsDepressionInline(nested_admin.NestedTabularInline):
     model = WellsDepression
-    inlines = [WellsWaterDepthPumpInline, WellsRateInline]
+    form = WellsDepressionForm
+    inlines = [WellsWaterDepthPumpInline, WellsRatePumpInline]
     extra = 1
     max_num = 1
 
@@ -166,9 +220,14 @@ class WellsDepressionInline(nested_admin.NestedTabularInline):
 class WellsEfwInlines(nested_admin.NestedStackedInline):
     form = WellsEfwForm
     model = WellsEfw
-    inlines = [WellsWaterDepthDrilledInline, WellsDepressionInline]
+    inlines = [WellsLugHeightInline, WellsWaterDepthDrilledInline, WellsDepressionInline]
     extra = 1
-    # max_num = 1
+
+    def get_extra(self, request, obj=None, **kwargs):
+        count = self.model.objects.filter(well=obj).count()
+        if count >= 1:
+            return 0
+        return self.extra
 
 
 class WellsChemInline(nested_admin.NestedGenericTabularInline):
@@ -180,12 +239,21 @@ class WellsSampleInline(nested_admin.NestedStackedInline):
     model = WellsSample
     inlines = [WellsChemInline, AttachmentsInline]
     extra = 1
-    max_num = 1
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.filter(doc__isnull=False)
+
+    def get_extra(self, request, obj=None, **kwargs):
+        count = self.model.objects.filter(well=obj, doc__isnull=False).count()
+        if count >= 1:
+            return 0
+        return self.extra
 
 
 class WellsGeophysicsInline(nested_admin.NestedStackedInline):
     model = WellsGeophysics
-    inlines = [WellsDepthInline, AttachmentsInline]
+    inlines = [WellsDepthInline, WellsWaterDepthDrilledInline, AttachmentsInline]
     extra = 1
     max_num = 1
 
@@ -206,7 +274,6 @@ class WellsAdmin(nested_admin.NestedModelAdmin):
     form = WellsForm
     model = Wells
     inlines = [
-        DocumentsInline,
         LicenseToWellsInline,
         WellsAquifersInline,
         WellsLithologyInline,
@@ -215,6 +282,7 @@ class WellsAdmin(nested_admin.NestedModelAdmin):
         WellsEfwInlines,
         WellsGeophysicsInline,
         WellsSampleInline,
+        DocumentsInline,
         AttachmentsInline,
     ]
     fields = (
@@ -255,7 +323,13 @@ class WellsAdmin(nested_admin.NestedModelAdmin):
                     object_id=form.instance.pk,
                 )
             generate_passport(form.instance, doc_instance)
-            self.message_user(request, "Паспорт создан.")
+            doc_file = DocumentsPath.objects.filter(doc=doc_instance).last()
+            self.message_user(request, mark_safe(f'Паспорт создан. <a href="{doc_file.path.url}">Скачать паспорт</a>'))
+
+    def response_change(self, request, obj):
+        if "_generate_doc" in request.POST:
+            return HttpResponseRedirect(request.path)
+        return super().response_change(request, obj)
 
 
 darcy_admin.register(Wells, WellsAdmin)
@@ -325,7 +399,7 @@ class WellsEfwAdmin(nested_admin.NestedModelAdmin):
     change_form_template = "darcy_app/doc_change_form.html"
     form = WellsEfwForm
     model = WellsEfw
-    inlines = [WellsDepressionInline]
+    inlines = [WellsLugHeightInline, WellsWaterDepthDrilledInline, WellsDepressionInline]
     list_display = ("well", "date", "type_efw")
     list_filter = ("date", "well", TypeEfwFilter)
 
@@ -344,7 +418,13 @@ class WellsEfwAdmin(nested_admin.NestedModelAdmin):
                 form.instance.doc = doc_instance
                 form.instance.save()
             generate_pump_journal(form.instance, doc_instance)
-            self.message_user(request, "Журнал создан.")
+            doc_file = DocumentsPath.objects.filter(doc=doc_instance).last()
+            self.message_user(request, mark_safe(f'Журнал создан.<a href="{doc_file.path.url}">Скачать журнал</a>'))
+
+    def response_change(self, request, obj):
+        if "_generate_doc" in request.POST:
+            return HttpResponseRedirect(request.path)
+        return super().response_change(request, obj)
 
 
 darcy_admin.register(WellsEfw, WellsEfwAdmin)
@@ -358,6 +438,7 @@ class WellsWaterDepthInline(WellsWaterDepthDrilledInline):
 
 class WellsTemperatureInline(nested_admin.NestedGenericTabularInline):
     model = WellsTemperature
+    form = WellsTemperatureForm
     extra = 1
 
 
@@ -424,5 +505,14 @@ darcy_admin.register(License, LicenseAdmin)
 
 # Others
 # -------------------------------------------------------------------------------
-darcy_admin.register(DictEquipment)
+
+
+class DictEquipmentAdmin(nested_admin.NestedModelAdmin):
+    model = DictEquipment
+    form = DictEquipmentForm
+
+
+darcy_admin.register(DictEquipment, DictEquipmentAdmin)
 darcy_admin.register(DictDocOrganizations)
+darcy_admin.register(AquiferCodes)
+# darcy_admin.register(DocumentsCreatorAdmin)

@@ -1,6 +1,8 @@
+import datetime
 import os
+import re
 
-from geopy.geocoders import Photon
+import requests
 
 from ..models import (
     LicenseToWells,
@@ -15,6 +17,23 @@ from ..models import (
 
 class PDF:
     @staticmethod
+    def insert_tags(s, tag):
+        tag_span = '<span style="font-size: 9pt">'
+
+        def replacer(match):
+            text = match.group(0)
+            # Check if it's a lowercase character
+            if text.islower():
+                return f"{tag_span}{text}</span>"
+            # Check if it's a hyphenated number
+            elif "-" in text:
+                return f"{tag_span}<{tag}>{text}</{tag}></span>"
+            else:
+                return f"{tag_span}<{tag}>{text}</{tag}></span>"
+
+        return re.sub(r"\d+-\d+|\d+|[a-z]", replacer, s)
+
+    @staticmethod
     def time_to_seconds(t):
         return (t.hour * 3600) + (t.minute * 60) + t.second
 
@@ -26,9 +45,9 @@ class PDF:
             return ""
 
     @staticmethod
-    def get_sign():
+    def get_sign(name="Заманов Р.М..png"):
         this_folder = os.path.dirname(os.path.abspath(__file__))
-        img = "file://" + os.path.join(this_folder, "static", "sign.png")
+        img = "file://" + os.path.join(this_folder, "static", "signatures", name)
         return img
 
     @staticmethod
@@ -49,13 +68,45 @@ class PDF:
         img = "file://" + os.path.join(this_folder, "static", "Darcy monogram.png")
         return img
 
+    @staticmethod
+    def decimal_to_dms(decimal_deg):
+        degrees = int(decimal_deg)
+        remainder_after_degrees = abs(decimal_deg - degrees) * 60
+        minutes = int(remainder_after_degrees)
+        remainder_after_minutes = (remainder_after_degrees - minutes) * 60
+        seconds = round(remainder_after_minutes, 2)
+
+        return f"{degrees}°{minutes}'{seconds}\""
+
     def __init__(self, instance, doc_instance):
         self.instance = instance
         self.doc_instance = doc_instance
 
+    def form_lithology_description(self, lit):
+        string_desc = [
+            f"{self.check_none(lit.color)} {lit.rock}",
+            self.check_none(lit.composition),
+            self.check_none(lit.structure),
+            self.check_none(lit.mineral),
+            self.check_none(lit.secondary_change),
+            self.check_none(lit.cement),
+            self.check_none(lit.fracture),
+            self.check_none(lit.weathering),
+            self.check_none(lit.caverns),
+            self.check_none(lit.inclusions),
+        ]
+        if lit.extra:
+            if lit.extra.get("description"):
+                string_desc[0] += f' {lit.extra["description"]}'
+        return ", ".join([el for el in string_desc if el]).strip().capitalize()
+
     def get_fields(self):
         fields = self.instance.field
-        return fields if fields else None
+        return fields if fields else ""
+
+    def get_intakes(self):
+        intakes = self.instance.intake
+        return intakes if intakes else ""
 
     def get_license(self):
         license_to_wells = LicenseToWells.objects.filter(well=self.instance).first()
@@ -72,8 +123,8 @@ class PDF:
         title_info = {
             "company": "Общество с ограниченной ответственностью «Дарси» (ООО «Дарси»)",
             "company_info": "Адрес: 117105, город Москва, Варшавское шоссе, "
-            "дом 37 а строение 2, офис 0411.<br>Телефон: +7(495)968-04-82",
-            "type_well": f"{self.instance.typo.name[:-2]}ой скважины<br> № {self.instance.pk}/"
+            "дом 37 а строение 2, офис 0411.<br>Телефон: +7 (926) 359-76-53",
+            "type_well": f"{self.instance.typo.name[:-2]}ой скважины<br> № {self.instance.name}/"
             f"{'ГВК - ' + str(self.instance.extra['name_gwk']) if self.instance.extra.get('name_gwk') else ''}",
             "water_user": water_user.name if water_user else "",
             "user_info": water_user.position if water_user else "",
@@ -84,15 +135,20 @@ class PDF:
         return title_info
 
     def get_address(self):
-        geolocator = Photon(user_agent="myGeocoder")
-        address = geolocator.reverse(f"{self.instance.geom.y}, {self.instance.geom.x}").raw["properties"]
-        return address
+        lat, lon = self.instance.geom.y, self.instance.geom.x
+        url = f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=json&accept-language=ru&zoom=15"
+        try:
+            result = requests.get(url=url)
+            address = result.json()
+            return address["address"]
+        except Exception as e:
+            return e
 
     def get_drilled_instance(self):
         return WellsDrilledData.objects.filter(well=self.instance).first()
 
     def get_geophysics_instance(self):
-        return WellsGeophysics.objects.filter(well=self.instance, doc=self.doc_instance).first()
+        return WellsGeophysics.objects.filter(well=self.instance).order_by("-date").first()
 
     def get_sample_instance(self):
         return WellsSample.objects.filter(well=self.instance).order_by("-date").first()
@@ -104,6 +160,37 @@ class PDF:
     def create_construction_data(self):
         construction = WellsConstruction.objects.filter(well=self.instance)
         if construction.exists():
-            return construction
+            for qs in construction:
+                qs.date = qs.date if qs.date else "Нет сведений"
+        return construction
+
+    def get_construction_archive(self, archive_date):
+        construction = self.create_construction_data()
+        if archive_date:
+            u_construction = construction.filter(date=archive_date.date)
         else:
-            return []
+            u_construction = construction.filter(date__isnull=False).exclude(date__year=datetime.datetime.now().year)
+        return u_construction
+
+    def get_construction_new(self, archive_date):
+        construction = self.create_construction_data()
+        if archive_date:
+            u_construction = construction.exclude(date=archive_date.date)
+        else:
+            u_construction = construction
+        return u_construction
+
+    def construction_define(self, archive):
+        construction = self.create_construction_data()
+        if construction.exists():
+            archive_date = (
+                construction.filter(date__isnull=False).exclude(date__year=datetime.datetime.now().year).first()
+            )
+            if archive:
+                u_construction = self.get_construction_archive(archive_date)
+            else:
+                u_construction = self.get_construction_new(archive_date)
+            for qs in u_construction:
+                qs.date = qs.date if qs.date else "Нет сведений"
+            return u_construction
+        return construction
