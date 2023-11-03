@@ -16,6 +16,43 @@ from simple_history.models import HistoricalRecords
 
 from .storage_backends import YandexObjectStorage
 
+__all__ = [
+    "Entities",
+    "DictEntities",
+    "DictEquipment",
+    "DictDocOrganizations",
+    "Documents",
+    "DocumentsPath",
+    "AquiferCodes",
+    "Wells",
+    "WellsAquiferUsage",
+    "Intakes",
+    "WellsRegime",
+    "WellsDrilledData",
+    "WellsGeophysics",
+    "WellsWaterDepth",
+    "WellsRate",
+    "WellsTemperature",
+    "WellsDepth",
+    "WellsCondition",
+    "WellsLugHeight",
+    "WellsAquifers",
+    "WellsLithology",
+    "WellsConstruction",
+    "WellsEfw",
+    "WellsDepression",
+    "WellsSample",
+    "ChemCodes",
+    "WellsChem",
+    "Fields",
+    "Balance",
+    "Attachments",
+    "License",
+    "LicenseToWells",
+    "WaterUsers",
+    "WaterUsersChange",
+]
+
 
 def user_directory_path(instance, filename):
     if instance.__dict__.get("doc_id"):
@@ -57,11 +94,15 @@ class BaseModel(models.Model):
             self.author = "ufo"
 
         self.modified = timezone.now()
-        self.last_user = get_user_model().objects.first()
+        self.last_user = get_user_model().objects.first()  # WTF ?
         super().save(*args, **kwargs)
 
 
 class Entities(BaseModel):
+    """
+    Сущности
+    """
+
     name = models.CharField(max_length=150, unique=True)
 
     class Meta:
@@ -74,12 +115,16 @@ class Entities(BaseModel):
 
 
 class DictEntities(BaseModel):
+    """
+    Справочник Сущностей
+    """
+
     name = models.CharField(max_length=250, verbose_name="Значение")
     entity = models.ForeignKey("Entities", on_delete=models.CASCADE, verbose_name="Справочник")
 
     class Meta:
-        verbose_name = "Словарь сущностей"
-        verbose_name_plural = "Словарь сущностей"
+        verbose_name = "Справочник сущностей"
+        verbose_name_plural = "Справочник сущностей"
         db_table = "dict_entities"
         unique_together = (("name", "entity"),)
 
@@ -88,13 +133,18 @@ class DictEntities(BaseModel):
 
 
 class DictEquipment(BaseModel):
+    """
+    Справочник оборудования
+    fields = ["id", "typo", "name", "brand"]
+    """
+
     typo = models.ForeignKey("DictEntities", models.CASCADE, verbose_name="Тип оборудования")
     name = models.CharField(max_length=50, verbose_name="Название", blank=True, null=True)
     brand = models.CharField(max_length=50, verbose_name="Марка")
 
     class Meta:
-        verbose_name = "Словарь оборудования"
-        verbose_name_plural = "Словарь обородувания"
+        verbose_name = "Справочник оборудования"
+        verbose_name_plural = "Справочник обородувания"
         db_table = "dict_equipment"
         unique_together = (("brand", "typo"),)
 
@@ -122,6 +172,7 @@ class Documents(BaseModel):
     Модель также предоставляет связь "многие ко многим" для связанных
     документов, а также универсальный внешний ключ для связи с различными
     типами связанных объектов.
+    fields = ["id", "name", "typo", "source", "org_executor", "org_customer", "creation_date", "creation_place", "number_rgf", "number_tfgi", "authors", "links", "content_type", "object_id"]
     """
 
     name = models.CharField(max_length=1200, verbose_name="Название документа")
@@ -183,6 +234,11 @@ class Documents(BaseModel):
 
 
 class DocumentsPath(BaseModel):
+    """
+    Путь к документу
+    fields = ["id", "doc", "path"]
+    """
+
     doc = models.ForeignKey("Documents", on_delete=models.CASCADE)
     path = models.FileField(
         upload_to=user_directory_path,
@@ -234,7 +290,12 @@ class DocumentsPath(BaseModel):
 
 
 class AquiferCodes(models.Model):
-    aquifer_id = models.IntegerField(primary_key=True)
+    """
+    Гидрогеологическое подразделение
+    fields = ["aquifer_id", "aquifer_name", "aquifer_index"]
+    """
+
+    aquifer_id = models.IntegerField(primary_key=True)  # WTF?
     aquifer_name = models.CharField(
         max_length=150, unique=True, verbose_name="Название гидрогеологического подразделения"
     )
@@ -244,7 +305,7 @@ class AquiferCodes(models.Model):
 
     class Meta:
         verbose_name = "Гидрогеологическое подразделение"
-        verbose_name_plural = "Словарь гидрогеологических подразделений"
+        verbose_name_plural = "Справочник гидрогеологических подразделений"
         db_table = "aquifer_codes"
 
     def __str__(self):
@@ -257,6 +318,7 @@ class Wells(BaseModel):
     такую как их номер скважины (ГВК), название,
     тип, абсолютная отметка, водоносный горизонт, название водозабора и
     геометрическое представление.
+    fields = ["id", "name", "typo", "head", "moved", "intake", "field", "geom", "docs", "attachments"]
     """
 
     name = models.CharField(max_length=50, blank=True, null=True, verbose_name="Название скважины")
@@ -298,6 +360,11 @@ class Wells(BaseModel):
 
 
 class WellsAquiferUsage(BaseModel):
+    """
+    Целевой водоносный горизонт скважины
+    fields = ["id", "well", "aquifer"]
+    """
+
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Скважина")
     aquifer = models.ForeignKey(
         "AquiferCodes", models.DO_NOTHING, blank=True, null=True, verbose_name="Водоносный горизонт"
@@ -314,6 +381,7 @@ class Intakes(BaseModel):
     """
     Модель для представления водозаборов. Содержит
     название и геометрию водозабора.
+    fields = ["id", "intake_name", "geom"]
     """
 
     intake_name = models.CharField(max_length=100, blank=True, null=True, verbose_name="Название водозабора")
@@ -335,6 +403,7 @@ class WellsRegime(BaseModel):
     Модель для представления режимных наблюдений скважин. Содержит внешний
     ключ для скважины, дату замера, связь с документацией и обобщенные связи
     с глубиной УГВ и дебитом (или другими возможными режимными измерениями).
+    fields = ["id", "well", "date", "doc", "waterdepths", "rates"]
     """
 
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
@@ -363,6 +432,7 @@ class WellsDrilledData(BaseModel):
     Модель для представления режимных наблюдений скважин. Содержит внешний
     ключ для скважины, дату замера, связь с документацией и обобщенные связи
     с глубиной УГВ и дебитом (или другими возможными режимными измерениями).
+    fields = ["id", "well", "date_start", "date_end", "drill_type", "drill_rig", "organization", "doc", "waterdepths", "rates", "depths", "conditions"]
     """
 
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
@@ -393,6 +463,11 @@ class WellsDrilledData(BaseModel):
 
 
 class WellsGeophysics(BaseModel):
+    """
+    Геофизические исследования
+    fields = ["id", "well", "date", "organization", "researches", "conclusion", "depths", "waterdepths", "attachments", "doc"]
+    """
+
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
     date = models.DateField(verbose_name="Дата производства работ")
     organization = models.CharField(max_length=100, blank=True, null=True, verbose_name="Наименование организации")
@@ -422,6 +497,7 @@ class WellsWaterDepth(BaseModel):
     """
     Модель для представления замеров глубины УГВ. Содержит значения
     глубины УГВ и обобщенные связи с другими возможными моделями.
+    fields = ["id", "type_level", "time_measure", "water_depth"]
     """
 
     type_level = models.BooleanField(verbose_name="Статический", blank=True, null=True, default=False)
@@ -451,6 +527,7 @@ class WellsRate(BaseModel):
     """
     Модель для представления замеров дебита скважин. Содержит значения дебита
     и обобщенные связи с другими возможными моделями.
+    fields = ["id", "time_measure", "rate", "content_type", "object_id"]
     """
 
     time_measure = models.DurationField(verbose_name="Время замера")
@@ -476,6 +553,7 @@ class WellsTemperature(BaseModel):
     """
     Модель для представления замеров температур подземных вод. Содержит значения температур
     и обобщенные связи с другими возможными моделями.
+    fields = ["id", "time_measure", "temperature", "content_type", "object_id"]
     """
 
     time_measure = models.DurationField(verbose_name="Время замера")
@@ -544,6 +622,11 @@ class WellsCondition(BaseModel):
 
 
 class WellsLugHeight(BaseModel):
+    """
+    Высота оголовка скважины
+    fields = ["id", "lug_height", "content_type", "object_id"]
+    """
+
     lug_height = models.DecimalField(
         max_digits=6, decimal_places=2, verbose_name="Высота оголовка, м", help_text="до двух знаков после запятой"
     )
@@ -595,6 +678,11 @@ class WellsAquifers(BaseModel):
 
 
 class WellsLithology(BaseModel):
+    """
+    Литологическая колонка
+    fields = ["id", "well", "rock", "color", "composition", "structure", "mineral", "secondary_change", "cement", "fracture", "weathering", "caverns", "inclusions", "bot_elev", "doc"]
+    """
+
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
     rock = models.ForeignKey("DictEntities", models.DO_NOTHING, verbose_name="Порода", related_name="rock")
     color = models.ForeignKey(
@@ -702,6 +790,7 @@ class WellsEfw(BaseModel):
     глубине загрузки оборудования, продолжительности опыта и дебите.
     Через внешний ключ с Documents осуществляется связь ОФР с
     актами ОФР и другой документацией, связанной с проведением ОФР
+    fields = ["id", "well", "date", "type_efw", "pump_type", "level_meter", "pump_depth", "method_measure", "rate_measure", "pump_time", "vessel_capacity", "vessel_time", "doc", "waterdepths", "lugs"]
     """
 
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
@@ -779,6 +868,7 @@ class WellsDepression(BaseModel):
     Модель журнала опытно-фильтрационных работ (ОФР).
     Содержит информацию о времени замера динамического уровня и
     значениях динамического уровня.
+    fields = ["id", "efw", "waterdepths", "rates"]
     """
 
     efw = models.ForeignKey("WellsEfw", models.CASCADE)
@@ -790,7 +880,7 @@ class WellsDepression(BaseModel):
         verbose_name = "Журнал ОФР"
         verbose_name_plural = "Журнал ОФР"
         db_table = "wells_depression"
-        unique_together = (("efw",),)
+        unique_together = (("efw",),) # WTF ?
 
     def __str__(self):
         return str(self.pk)
@@ -802,6 +892,7 @@ class WellsSample(BaseModel):
     Содержит информацию о дате отбора пробы и номере пробы.
     Через внешний ключ с Documents осуществляется связь опробований скважин
     с химическими протоколами (исследованиями этой пробы)
+    fields = ["id", "well", "date", "name", "doc", "chemvalues", "attachments"]
     """
 
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
@@ -828,10 +919,11 @@ class WellsSample(BaseModel):
 
 class ChemCodes(models.Model):
     """
-    Словарь показателей химического состава подземных вод
+    Справочник показателей химического состава подземных вод
+    fields = ["chem_id", "chem_name", "chem_formula", "chem_pdk", "chem_measure"]
     """
 
-    chem_id = models.IntegerField(primary_key=True)
+    chem_id = models.IntegerField(primary_key=True)  # WTF?
     chem_name = models.CharField(unique=True, max_length=100, verbose_name="Наименование показателя")
     chem_formula = models.CharField(max_length=25, blank=True, null=True, verbose_name="Химическая формула показателя")
     chem_pdk = models.DecimalField(max_digits=10, decimal_places=6, blank=True, null=True, verbose_name="ПДК")
@@ -839,7 +931,7 @@ class ChemCodes(models.Model):
 
     class Meta:
         verbose_name = "Показатель хим. состава"
-        verbose_name_plural = "Словарь показателей хим. состава"
+        verbose_name_plural = "Справочник показателей хим. состава"
         db_table = "chem_codes"
         ordering = ("chem_name",)
 
@@ -850,6 +942,7 @@ class ChemCodes(models.Model):
 class WellsChem(BaseModel):
     """
     Сведения о хим. показателях пробы, полученных в результате ее анализа
+    fields = ["id", "parameter", "chem_value", "content_type", "object_id"]
     """
 
     parameter = models.ForeignKey(
@@ -882,6 +975,7 @@ class WellsChem(BaseModel):
 class Fields(BaseModel):
     """
     Месторождения подземных вод
+    fields = ["id", "field_name", "geom", "docs", "balances"]
     --------
     Полигон
     """
@@ -912,6 +1006,7 @@ class Balance(BaseModel):
     """
     Утвержденные запасы  на определенный
     водоносный горизонт и на определенный тип подземных вод (ПВ), м3
+    fields = ["id", "aquifer", "typo", "a", "b", "c1", "c2", "content_type", "object_id"]
     """
 
     aquifer = models.ForeignKey("AquiferCodes", models.CASCADE, verbose_name="Водоносный горизонт")
@@ -955,7 +1050,10 @@ class Attachments(BaseModel):
 
     def delete(self, *args, **kwargs):
         if settings.DEBUG:
-            storage, path = self.path.storage, self.path.path
+            storage, path = (
+                self.path.storage,
+                self.path.path, # ERROR? # E1101: Instance of 'Attachments' has no 'path' member (no-member)
+            )  
             super().delete(*args, **kwargs)
             storage.delete(path)
         else:
@@ -989,6 +1087,10 @@ class Attachments(BaseModel):
 
 
 class License(BaseModel):
+    """
+    Лицензии
+    fields = ["id", "name", "department", "date_start", "date_end", "comments", "gw_purpose", "docs"]
+    """
     name = models.CharField(unique=True, max_length=11, verbose_name="Номер лицензии")
     department = models.ForeignKey(
         "DictDocOrganizations", models.DO_NOTHING, db_column="department", verbose_name="Орган, выдавший лицензию"
@@ -1010,6 +1112,11 @@ class License(BaseModel):
 
 
 class LicenseToWells(BaseModel):
+    """
+    Связь скважины с лицензией
+    fields = ["id", "well", "license"]
+    """
+
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
     license = models.ForeignKey("License", models.CASCADE, verbose_name="Лицензия")
     history = HistoricalRecords(table_name="license_to_wells_history")
@@ -1025,6 +1132,11 @@ class LicenseToWells(BaseModel):
 
 
 class WaterUsers(BaseModel):
+    """
+    Водопользователи
+    fields = ["id", "name", "position"]
+    """
+
     name = models.CharField(max_length=150, unique=True, verbose_name="Водопользователь")
     position = models.TextField(blank=True, null=True, verbose_name="Адрес")
     history = HistoricalRecords(table_name="water_users_history")
@@ -1039,6 +1151,11 @@ class WaterUsers(BaseModel):
 
 
 class WaterUsersChange(BaseModel):
+    """
+    История водопользователя
+    fields = ["id", "water_user", "date", "license"]
+    """
+
     water_user = models.ForeignKey("WaterUsers", models.CASCADE, verbose_name="Водопользователь")
     date = models.DateField(verbose_name="Дата присвоения")
     license = models.ForeignKey("License", models.CASCADE, verbose_name="Номер лицензии")

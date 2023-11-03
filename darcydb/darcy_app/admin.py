@@ -1,10 +1,10 @@
 import datetime
 
 import nested_admin
-from django.contrib.admin import DateFieldListFilter
+from django.contrib.admin import DateFieldListFilter, register
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis import admin
 from django.http import HttpResponseRedirect
-from django.urls import path, reverse
 from django.utils.safestring import mark_safe
 from import_export.admin import ImportExportModelAdmin
 from jet.admin import CompactInline
@@ -28,45 +28,10 @@ from .forms import (
     WellsWaterDepthForm,
     WellsWaterDepthPumpForm,
 )
-from .models import (
-    AquiferCodes,
-    Attachments,
-    Balance,
-    DictDocOrganizations,
-    DictEntities,
-    DictEquipment,
-    Documents,
-    DocumentsPath,
-    Entities,
-    Fields,
-    Intakes,
-    License,
-    LicenseToWells,
-    WaterUsers,
-    WaterUsersChange,
-    Wells,
-    WellsAquifers,
-    WellsChem,
-    WellsConstruction,
-    WellsDepression,
-    WellsDepth,
-    WellsDrilledData,
-    WellsEfw,
-    WellsGeophysics,
-    WellsLithology,
-    WellsLugHeight,
-    WellsRate,
-    WellsRegime,
-    WellsSample,
-    WellsTemperature,
-    WellsWaterDepth,
-)
-from .resources import WellsRegimeResource
+from .models import *
+from .resources import *
 from .utils.passport_gen import generate_passport
 from .utils.pump_journals_gen import generate_pump_journal
-
-admin.site.register(DictEntities)
-admin.site.register(Entities)
 
 
 class DarcyAdminArea(admin.AdminSite):
@@ -74,61 +39,41 @@ class DarcyAdminArea(admin.AdminSite):
     site_title = "Dарси"
     index_title = "Админпанель Дарси"
 
-    def get_urls(self):
-        urls = super().get_urls()
-        my_urls = [path("create_doc_auto/<int:intake>/", self.admin_view(self.create_doc_auto))]
-        return my_urls + urls
-
-    def create_doc_auto(self, request, intake):
-        code = DictEntities.objects.get(entity__name="тип документа", name="Журнал опытно-фильтрационных работ")
-        wells = WellsAquifers.objects.all().values("well")
-        efws = WellsEfw.objects.filter(
-            well__intake__id=intake, type_efw__name="откачки одиночные опытные", well__in=wells
-        )
-        print(efws)
-        for qs in efws:
-            doc_instance = qs.doc
-            if not doc_instance:
-                doc_instance = Documents.objects.create(
-                    name=f"Журнал опытной откачки из скважины №{qs.well.name} от {qs.date}",
-                    typo=code,
-                    creation_date=datetime.datetime.now().date(),
-                    object_id=qs.pk,
-                )
-                qs.doc = doc_instance
-                qs.save()
-            rest_efw = WellsEfw.objects.filter(
-                well=qs.well,
-                type_efw__name="восстановление уровня",
-                date__lte=qs.date + datetime.timedelta(days=4),
-                date__gte=qs.date - datetime.timedelta(days=4),
-            ).first()
-            if rest_efw:
-                rest_efw.doc = doc_instance
-                rest_efw.save()
-            generate_pump_journal(qs, doc_instance)
-
-        code = DictEntities.objects.get(entity__name="тип документа", name="Паспорт скважины")
-        pswds = Wells.objects.filter(intake__id=intake, id__in=wells)
-        for qs in pswds:
-            doc_instance = qs.docs.filter(typo=code).first()
-            if not doc_instance:
-                doc_instance = qs.docs.create(
-                    name=f"Паспорт скважины №{qs.name}({qs.pk})",
-                    typo=code,
-                    creation_date=datetime.datetime.now().date(),
-                    object_id=qs.pk,
-                )
-            generate_passport(qs, doc_instance)
-        return HttpResponseRedirect(reverse("admin:index"))
-
 
 darcy_admin = DarcyAdminArea(name="darcy_admin")
 
 
+@register(ContentType)
+class ContentTypeAdmin(admin.ModelAdmin):
+    list_filter = ("model", "app_label")
+    list_display = ("id", "app_label", "model")
+
+    # Remove the delete Admin Action for this Model
+    actions = None
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def save_model(self, request, obj, form, change):
+        # Return nothing to make sure user can't update any data
+        pass
+
+
 # Wells
 # -------------------------------------------------------------------------------
+
+
 class AttachmentsInline(nested_admin.NestedGenericTabularInline):
+    """
+    Inline tab for Attachments  model
+    """
+
     model = Attachments
     fields = (
         "img",
@@ -139,6 +84,10 @@ class AttachmentsInline(nested_admin.NestedGenericTabularInline):
 
 
 class DocumentsPathInline(nested_admin.NestedTabularInline):
+    """
+    Inline tab for DocumentsPath  model
+    """
+
     model = DocumentsPath
     extra = 1
 
@@ -147,6 +96,10 @@ class DocumentsPathInline(nested_admin.NestedTabularInline):
 
 
 class DocumentsInline(nested_admin.NestedGenericStackedInline):
+    """
+    Inline tab for DocumentsForm  model
+    """
+
     form = DocumentsForm
     model = Documents
     inlines = [DocumentsPathInline]
@@ -154,12 +107,20 @@ class DocumentsInline(nested_admin.NestedGenericStackedInline):
 
 
 class WellsAquifersInline(nested_admin.NestedTabularInline):
+    """
+    Inline tab for WellsAquifers  model
+    """
+
     model = WellsAquifers
     form = WellsAquifersForm
     extra = 1
 
 
 class WellsConstructionInline(nested_admin.NestedTabularInline):
+    """
+    Inline tab for WellsConstruction  model
+    """
+
     form = WellsConstructionForm
     model = WellsConstruction
     # classes = ("collapse",)
@@ -167,6 +128,10 @@ class WellsConstructionInline(nested_admin.NestedTabularInline):
 
 
 class WellsWaterDepthPumpInline(nested_admin.NestedGenericTabularInline):
+    """
+    Inline tab for WellsWaterDepth  model
+    """
+
     model = WellsWaterDepth
     form = WellsWaterDepthPumpForm
     extra = 1
@@ -175,23 +140,46 @@ class WellsWaterDepthPumpInline(nested_admin.NestedGenericTabularInline):
 
 
 class WellsWaterDepthDrilledInline(WellsWaterDepthPumpInline):
+    """
+    Inline tab for WellsWaterDepth  model
+    """
+
     form = WellsWaterDepthForm
     max_num = 1
 
 
 class WellsDepthInline(nested_admin.NestedGenericTabularInline):
+    """
+    Inline tab for WellsDepth  model
+    """
+
+    form = WellsWaterDepthForm
+    max_num = 1
     model = WellsDepth
     extra = 1
     max_num = 1
 
 
 class WellsLugHeightInline(nested_admin.NestedGenericTabularInline):
+    """
+    Inline tab for WellsLugHeight  model
+    """
+
     model = WellsLugHeight
     extra = 1
     max_num = 1
 
 
+@register(WellsLugHeight)
+class WellsLugHeightAdmin(ImportExportModelAdmin):
+    resource_class = WellsLugHeightResource
+
+
 class WellsDrilledDataInline(nested_admin.NestedTabularInline):
+    """
+    Inline tab for WellsDrilledData  model
+    """
+
     model = WellsDrilledData
     inlines = [WellsWaterDepthDrilledInline, WellsDepthInline]
     extra = 1
@@ -199,6 +187,10 @@ class WellsDrilledDataInline(nested_admin.NestedTabularInline):
 
 
 class WellsRatePumpInline(nested_admin.NestedGenericTabularInline):
+    """
+    Inline tab for WellsRate  model
+    """
+
     model = WellsRate
     extra = 1
 
@@ -210,6 +202,9 @@ class WellsRateInline(WellsRatePumpInline):
 
 
 class WellsDepressionInline(nested_admin.NestedTabularInline):
+    """
+    Inline tab for WellsDepression  model
+    """    
     model = WellsDepression
     form = WellsDepressionForm
     inlines = [WellsWaterDepthPumpInline, WellsRatePumpInline]
@@ -218,6 +213,10 @@ class WellsDepressionInline(nested_admin.NestedTabularInline):
 
 
 class WellsEfwInlines(nested_admin.NestedStackedInline):
+    """
+    Inline tab for WellsEfw  model
+    """
+
     form = WellsEfwForm
     model = WellsEfw
     inlines = [WellsLugHeightInline, WellsWaterDepthDrilledInline, WellsDepressionInline]
@@ -231,11 +230,24 @@ class WellsEfwInlines(nested_admin.NestedStackedInline):
 
 
 class WellsChemInline(nested_admin.NestedGenericTabularInline):
+    """
+    Inline tab for WellsChem  model
+    """
+
     model = WellsChem
     extra = 1
 
 
+@register(WellsChem)
+class WellsChemResourceAdmin(ImportExportModelAdmin):
+    resource_class = WellsChemResource
+
+
 class WellsSampleInline(nested_admin.NestedStackedInline):
+    """
+    Inline tab for WellsSample  model
+    """
+
     model = WellsSample
     inlines = [WellsChemInline, AttachmentsInline]
     extra = 1
@@ -251,25 +263,49 @@ class WellsSampleInline(nested_admin.NestedStackedInline):
         return self.extra
 
 
+@register(WellsGeophysics)
+class WellsGeophysicsAdmin(ImportExportModelAdmin):
+    resource_class = WellsGeophysicsResource
+
+
 class WellsGeophysicsInline(nested_admin.NestedStackedInline):
+    """
+    Inline tab for WellsGeophysics  model
+    """
+
     model = WellsGeophysics
     inlines = [WellsDepthInline, WellsWaterDepthDrilledInline, AttachmentsInline]
     extra = 1
     max_num = 1
 
 
+@register(WellsLithology)
+class WellsLithologyAdmin(ImportExportModelAdmin):
+    resource_class = WellsLithologyResource
+
+
 class WellsLithologyInline(nested_admin.NestedTabularInline):
+    """
+    Inline tab for WellsLithology  model
+    """
+
     model = WellsLithology
     form = WellsLithologyForm
     extra = 1
 
 
 class LicenseToWellsInline(nested_admin.NestedTabularInline):
+    """
+    Inline tab for LicenseToWells  model
+    """
+
     model = LicenseToWells
     extra = 1
 
 
-class WellsAdmin(nested_admin.NestedModelAdmin):
+@register(Wells)
+class WellsAdmin(nested_admin.NestedModelAdmin, ImportExportModelAdmin):
+    resource_class = WellResource
     change_form_template = "darcy_app/doc_change_form.html"
     form = WellsForm
     model = Wells
@@ -310,6 +346,27 @@ class WellsAdmin(nested_admin.NestedModelAdmin):
         "uuid",
     )
 
+    list_select_related = ("typo", "moved", "intake", "field")
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("typo", "typo__entity", "moved", "moved__entity", "intake", "field").prefetch_related(
+            "docs",
+            "docs__typo",
+            "docs__source",
+            "docs__org_executor",
+            "docs__org_customer",
+            "docs__links",
+            "attachments",
+            "field__docs",
+            "field__docs__typo",
+            "field__docs__source",
+            "field__docs__org_executor",
+            "field__docs__org_customer",
+            "field__docs__links",
+            "field__balances",
+        )
+
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)
         if "_generate_doc" in request.POST:
@@ -332,12 +389,11 @@ class WellsAdmin(nested_admin.NestedModelAdmin):
         return super().response_change(request, obj)
 
 
-darcy_admin.register(Wells, WellsAdmin)
-
-
 # Documents
 # -------------------------------------------------------------------------------
-class DocumentsAdmin(nested_admin.NestedModelAdmin):
+@register(Documents)
+class DocumentsAdmin(nested_admin.NestedModelAdmin, ImportExportModelAdmin):
+    resource_class = DocumentsResource
     form = DocumentsForm
     model = Documents
     inlines = [DocumentsPathInline]
@@ -351,9 +407,6 @@ class DocumentsAdmin(nested_admin.NestedModelAdmin):
         return super().has_delete_permission(request, obj=obj)
 
 
-darcy_admin.register(Documents, DocumentsAdmin)
-
-
 # Intakes
 # -------------------------------------------------------------------------------
 class WellsInline(CompactInline):
@@ -363,15 +416,14 @@ class WellsInline(CompactInline):
     extra = 1
 
 
-class IntakesAdmin(admin.ModelAdmin):
+@register(Intakes)
+class IntakesAdmin(ImportExportModelAdmin):
+    resource_class = IntakesResource
     form = IntakesForm
     model = Intakes
     inlines = [WellsInline]
     list_display = ("intake_name",)
     search_fields = ("intake_name",)
-
-
-darcy_admin.register(Intakes, IntakesAdmin)
 
 
 # Fields
@@ -382,7 +434,14 @@ class BalanceInline(nested_admin.NestedGenericTabularInline):
     extra = 1
 
 
-class FieldsAdmin(nested_admin.NestedModelAdmin):
+@register(Balance)
+class BalanceAdmin(ImportExportModelAdmin):
+    resource_class = BalanceResource
+
+
+@register(Fields)
+class FieldsAdmin(nested_admin.NestedModelAdmin, ImportExportModelAdmin):
+    resource_class = FieldsResource
     form = FieldsForm
     model = Fields
     inlines = [DocumentsInline, BalanceInline]
@@ -390,12 +449,11 @@ class FieldsAdmin(nested_admin.NestedModelAdmin):
     search_fields = ("field_name",)
 
 
-darcy_admin.register(Fields, FieldsAdmin)
-
-
 # WellsEfw
 # -------------------------------------------------------------------------------
-class WellsEfwAdmin(nested_admin.NestedModelAdmin):
+@register(WellsEfw)
+class WellsEfwAdmin(nested_admin.NestedModelAdmin, ImportExportModelAdmin):
+    resource_class = WellsEfwResource
     change_form_template = "darcy_app/doc_change_form.html"
     form = WellsEfwForm
     model = WellsEfw
@@ -427,21 +485,32 @@ class WellsEfwAdmin(nested_admin.NestedModelAdmin):
         return super().response_change(request, obj)
 
 
-darcy_admin.register(WellsEfw, WellsEfwAdmin)
-
-
 # WellsRegime
 # -------------------------------------------------------------------------------
 class WellsWaterDepthInline(WellsWaterDepthDrilledInline):
+    """
+    Inline tab for WellsTemperature model
+    """
+
     max_num = 1000
 
 
+@register(WellsTemperature)
+class WellsTemperatureAdmin(ImportExportModelAdmin):
+    resource_class = WellsTemperatureResource
+
+
 class WellsTemperatureInline(nested_admin.NestedGenericTabularInline):
+    """
+    Inline tab for WellsTemperature model
+    """
+
     model = WellsTemperature
     form = WellsTemperatureForm
     extra = 1
 
 
+@register(WellsRegime)
 class WellsRegimeAdmin(ImportExportModelAdmin, nested_admin.NestedModelAdmin):
     form = WellsRegimeForm
     model = WellsRegime
@@ -454,12 +523,11 @@ class WellsRegimeAdmin(ImportExportModelAdmin, nested_admin.NestedModelAdmin):
     resource_class = WellsRegimeResource
 
 
-darcy_admin.register(WellsRegime, WellsRegimeAdmin)
-
-
 # WellsSample
 # -------------------------------------------------------------------------------
-class WellsSampleAdmin(nested_admin.NestedModelAdmin):
+@register(WellsSample)
+class WellsSampleAdmin(nested_admin.NestedModelAdmin, ImportExportModelAdmin):
+    resource_class = WellsSampleResource
     model = WellsSample
     inlines = [WellsChemInline]
     list_display = ("well", "date", "name")
@@ -467,52 +535,107 @@ class WellsSampleAdmin(nested_admin.NestedModelAdmin):
     list_filter = ("date", "well")
 
 
-darcy_admin.register(WellsSample, WellsSampleAdmin)
-
-
 # WaterUsers
 # -------------------------------------------------------------------------------
 
 
+@register(WaterUsersChange)
+class WaterUsersChangeAdmin(ImportExportModelAdmin):
+    resource_class = WaterUsersChangeResource
+
+
 class WaterUsersChangeInline(nested_admin.NestedTabularInline):
+    """
+    Inline tab for WaterUsersChange model
+    """
+
     model = WaterUsersChange
     extra = 1
 
 
-class WaterUsersAdmin(nested_admin.NestedModelAdmin):
+@register(WaterUsers)
+class WaterUsersAdmin(nested_admin.NestedModelAdmin, ImportExportModelAdmin):
+    resource_class = WaterUsersResouce
     model = WaterUsers
     inlines = [WaterUsersChangeInline]
     list_display = search_fields = list_filter = ("name",)
-
-
-darcy_admin.register(WaterUsers, WaterUsersAdmin)
 
 
 # License
 # -------------------------------------------------------------------------------
 
 
-class LicenseAdmin(nested_admin.NestedModelAdmin):
+@register(License)
+class LicenseAdmin(nested_admin.NestedModelAdmin, ImportExportModelAdmin):
+    resource_class = LicenseResource
     model = License
     inlines = [LicenseToWellsInline, WaterUsersChangeInline]
-    list_display = ("name",)
+    list_display = ("name", "date_start", "date_end",)
     search_fields = ("name", "date_start", "date_end", "department")
     list_filter = ("name", "date_start", "date_end")
 
 
-darcy_admin.register(License, LicenseAdmin)
+@register(LicenseToWells)
+class LicenseToWellsAdmin(ImportExportModelAdmin):
+    resource_class = LicenseToWellsResource
+    list_display = ("id", "well", "license")
 
 
 # Others
 # -------------------------------------------------------------------------------
 
 
-class DictEquipmentAdmin(nested_admin.NestedModelAdmin):
+@register(DictEquipment)
+class DictEquipmentAdmin(nested_admin.NestedModelAdmin, ImportExportModelAdmin):
+    resource_class = DictEquipmentResource
     model = DictEquipment
     form = DictEquipmentForm
 
 
+@register(DictEntities)
+class DictEntitiesAdmin(ImportExportModelAdmin):
+    resource_class = DictEntitiesResource
+    search_fields = (
+        "name",
+        "entity__name",
+    )
+    list_display = ("id", "name", "entity")
+
+
+@register(Entities)
+class EntitiesAdmin(ImportExportModelAdmin):
+    resource_class = EntitiesResource
+    search_fields = ("name",)
+    list_display = ("id", "name")
+
+
+@register(AquiferCodes)
+class AquiferCodesAdmin(ImportExportModelAdmin):
+    resource_class = AquiferCodesResource
+    list_display = ("aquifer_id", "aquifer_name", "aquifer_index")
+
+
+@register(ChemCodes)
+class ChemCodesAdmin(ImportExportModelAdmin):
+    resource_class = ChemCodesResource
+    list_display = ("chem_id", "chem_name", "chem_formula", "chem_pdk", "chem_measure")
+
+
+@register(WellsAquiferUsage)
+class WellsAquiferUsageAdmin(ImportExportModelAdmin):
+    resource_class = WellsAquiferUsageResource
+    list_display = ("id", "well", "aquifer")
+
+
+darcy_admin.register(Wells, WellsAdmin)
+darcy_admin.register(Documents, DocumentsAdmin)
+darcy_admin.register(Intakes, IntakesAdmin)
+darcy_admin.register(Fields, FieldsAdmin)
+darcy_admin.register(WellsEfw, WellsEfwAdmin)
+darcy_admin.register(WellsRegime, WellsRegimeAdmin)
+darcy_admin.register(WellsSample, WellsSampleAdmin)
+darcy_admin.register(WaterUsers, WaterUsersAdmin)
+darcy_admin.register(License, LicenseAdmin)
 darcy_admin.register(DictEquipment, DictEquipmentAdmin)
 darcy_admin.register(DictDocOrganizations)
 darcy_admin.register(AquiferCodes)
-# darcy_admin.register(DocumentsCreatorAdmin)

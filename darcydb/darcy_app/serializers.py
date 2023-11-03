@@ -40,11 +40,12 @@ class WellsRegimeSerializer(serializers.ModelSerializer):
 
 
 class WellsDepressionSerializer(serializers.ModelSerializer):
+
     water_depth = WellsWaterDepthSerializer(many=False, required=True, write_only=True)
 
     class Meta:
         model = WellsDepression
-        fields = ["time_measure", "water_depth"]
+        fields = ["efw", "water_depth"] # WTF  time_measure in WellsWaterDepth not in WellsDepression
 
 
 class WellsEfwSerializer(serializers.ModelSerializer):
