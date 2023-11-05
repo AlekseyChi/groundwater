@@ -1,0 +1,26 @@
+<h4>КОНСТРУКЦИЯ СКВАЖИНЫ</h4>
+<table class="table-base">
+  <tr>
+    <th>Дата установки</th>
+    <th>Тип конструкции</th>
+    <th>Диаметр, мм</th>
+    <th>Глубина от, м</th>
+    <th>Глубина до, м</th>
+  </tr>
+  {% for row in construction_data %}
+  <tr>
+    <td>{{ row.date }}</td>
+    <td>{{ row.construction_type }}</td>
+    <td>{{ row.diameter }}</td>
+    <td>{{ row.depth_from }}</td>
+    <td>{{ row.depth_till }}</td>
+  </tr>
+  {% endfor %}
+</table>
+<h4>ИСПОЛЬЗУЕМОЕ ОБОРУДОВАНИЕ ПРИ ПРОВЕДЕНИИ ОФР</h4>
+{% for key, value in instrumental_data.items() %}
+<p>
+  <span class="content"><strong>{{ key }}:</strong></span>
+  <span class="underline">{{ value }}</span>
+</p>
+{% endfor %}

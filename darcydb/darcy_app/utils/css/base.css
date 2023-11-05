@@ -1,0 +1,211 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Times New Roman';
+  font-size: 12pt;
+  line-height: 1.4;
+  text-align: justify;
+}
+
+@page {
+  margin: 23mm 15mm 15mm 13mm;
+  @top-center {
+    content: element(header);
+    width: 100%;
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+  @top-right {
+    content: counter(page);
+    font-size: 8pt;
+  }
+}
+
+@page: first {
+  margin: 20mm 15mm 15mm 10mm;
+  border-style: double;
+  border-width: 10px;
+  @top-center {
+    content: none;
+  }
+  @top-right {
+    content: none;
+  }
+}
+
+#header {
+  position: running(header);
+  padding-bottom: 5px;
+  border-bottom: 1px solid black;
+}
+
+#footer {
+  position: running(footer);
+}
+
+.title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 14pt;
+}
+
+.company {
+  font-size: 15pt;
+  padding-bottom: 15px;
+}
+
+.container-watermark {
+  position: relative;
+  margin-bottom: 4rem;
+}
+
+.watermark {
+  position: absolute;
+  top: 35%;
+  left: 25%;
+  opacity: 0.4; /* 0 to 1 (0 is fully transparent and 1 is fully opaque) */
+  z-index: -1; /* Ensure it sits on top of other content */
+}
+
+.stamp {
+  position: absolute;
+  top: 64%;
+  left: 40%;
+  height: 200px;
+  opacity: 0.8; /* 0 to 1 (0 is fully transparent and 1 is fully opaque) */
+  z-index: 0; /* Ensure it sits on top of other content */
+}
+
+.stamp-sign {
+  position: absolute;
+  top: 64%;
+  left: 38%;
+  width: 250px;
+  opacity: 0.9; /* 0 to 1 (0 is fully transparent and 1 is fully opaque) */
+  z-index: 0; /* Ensure it sits on top of other content */
+}
+.company-info {
+  margin-left: -11px;
+  margin-right: -11px;
+  border: 3px solid;
+  border-style: double;
+  font-size: 11pt;
+}
+
+.pass-body {
+  padding-top: 150px;
+}
+
+.intake-info {
+  padding: 15px;
+}
+.header-table {
+  width: 100%;
+  padding-top: 20px;
+  font-size: 11pt;
+  border-collapse: collapse;
+  border: none;
+}
+
+.header-table td,
+.header-table th {
+  border: none;
+}
+.signature {
+  margin-top: 10rem;
+  width: 100%;
+  border-collapse: collapse;
+  border: none;
+}
+
+.signature td,
+.signature th {
+  border: none;
+}
+
+.info {
+  counter-reset: paragraph;
+}
+
+.info p::before {
+  counter-increment: paragraph;
+  content: counter(paragraph) '. ';
+}
+
+.content {
+  font-weight: bold;
+  text-align: left !important;
+}
+h4 {
+  font-size: 12pt;
+  text-align: center;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-base tr th,
+td {
+  border: 1px solid;
+  text-align: center;
+  padding: 10px;
+}
+
+.table-journal tr th,
+.table-journal td {
+  border: 1px solid;
+  text-align: center;
+  padding: 1px;
+}
+
+.table-span {
+  table-layout: fixed;
+  font-size: 10pt;
+}
+
+.journal {
+  font-size: 11pt;
+  padding: 2px;
+}
+.chapter {
+  margin-bottom: 2rem;
+  page-break-inside: avoid;
+  page-break-before: always;
+}
+.rotate {
+  transform: rotate(270deg);
+  white-space: pre-wrap;
+  font-size: 9pt;
+  line-height: 1;
+}
+
+.inside-rotate-td {
+  width: 7%;
+  height: 70px;
+}
+
+.pump-complex td {
+  text-align: left;
+  border: none;
+}
+
+.brief {
+  margin: 0.2rem;
+  font-size: 11pt;
+}
+
+.no-border {
+  width: 60%;
+  border-collapse: collapse;
+  border: none;
+}
+
+.no-border tr,
+.no-border td {
+  text-align: left;
+  border: none;
+  font-weight: bold;
+}

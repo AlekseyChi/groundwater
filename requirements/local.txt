@@ -8,63 +8,88 @@ alabaster==0.7.13
     # via sphinx
 amqp==5.1.1
     # via kombu
-anyio==3.7.0
+anyio==4.0.0
     # via watchfiles
-argon2-cffi==21.3.0
+argon2-cffi==23.1.0
     # via -r base.in
 argon2-cffi-bindings==21.2.0
     # via argon2-cffi
 asgiref==3.7.2
     # via django
-astroid==2.15.5
+astroid==3.0.1
     # via
     #   pylint
     #   pylint-celery
-asttokens==2.2.1
+asttokens==2.4.0
     # via stack-data
-async-timeout==4.0.2
+async-timeout==4.0.3
     # via redis
 attrs==23.1.0
-    # via jsonschema
-babel==2.12.1
+    # via
+    #   fiona
+    #   jsonschema
+    #   referencing
+babel==2.13.1
     # via sphinx
 backcall==0.2.0
     # via ipython
 billiard==4.1.0
     # via celery
-black==23.3.0
+black==23.10.1
     # via -r local.in
-celery==5.3.1
+boto3==1.28.70
+    # via
+    #   -r base.in
+    #   django-storages
+botocore==1.31.70
+    # via
+    #   boto3
+    #   s3transfer
+brotli==1.1.0
+    # via fonttools
+celery==5.3.4
     # via
     #   -r base.in
     #   django-celery-beat
     #   flower
-certifi==2023.5.7
-    # via requests
-cffi==1.15.1
+certifi==2023.7.22
+    # via
+    #   fiona
+    #   pyproj
+    #   requests
+cffi==1.16.0
     # via
     #   argon2-cffi-bindings
     #   cryptography
-cfgv==3.3.1
+    #   weasyprint
+cfgv==3.4.0
     # via pre-commit
-charset-normalizer==3.1.0
+charset-normalizer==3.3.1
     # via requests
-click==8.1.3
+click==8.1.7
     # via
     #   black
     #   celery
     #   click-didyoumean
     #   click-plugins
     #   click-repl
+    #   cligj
+    #   fiona
 click-didyoumean==0.3.0
     # via celery
 click-plugins==1.1.1
-    # via celery
+    # via
+    #   celery
+    #   fiona
 click-repl==0.3.0
     # via celery
+cligj==0.7.2
+    # via fiona
 colorama==0.4.6
     # via sphinx-autobuild
-coverage==7.2.7
+contourpy==1.1.1
+    # via matplotlib
+coverage==7.3.2
     # via
     #   -r local.in
     #   django-coverage-plugin
@@ -72,8 +97,12 @@ crispy-bootstrap5==0.7
     # via -r base.in
 cron-descriptor==1.4.0
     # via django-celery-beat
-cryptography==41.0.1
+cryptography==41.0.5
     # via pyjwt
+cssselect2==0.7.0
+    # via weasyprint
+cycler==0.12.1
+    # via matplotlib
 decorator==5.1.1
     # via
     #   ipdb
@@ -84,11 +113,11 @@ defusedxml==0.7.1
     #   python3-openid
 diff-match-patch==20230430
     # via django-import-export
-dill==0.3.6
+dill==0.3.7
     # via pylint
-distlib==0.3.6
+distlib==0.3.7
     # via virtualenv
-django==4.1.9
+django==4.1.12
     # via
     #   -r base.in
     #   crispy-bootstrap5
@@ -104,18 +133,19 @@ django==4.1.9
     #   django-jet-reboot
     #   django-model-utils
     #   django-redis
+    #   django-storages
     #   django-stubs
     #   django-stubs-ext
     #   django-timezone-field
     #   djangorestframework
     #   drf-spectacular
-django-allauth==0.54.0
+django-allauth==0.57.0
     # via -r base.in
 django-celery-beat==2.5.0
     # via -r base.in
-django-cors-headers==4.1.0
+django-cors-headers==4.3.0
     # via -r base.in
-django-coverage-plugin==3.0.0
+django-coverage-plugin==3.1.0
     # via -r local.in
 django-crispy-forms==2.0
     # via
@@ -123,69 +153,84 @@ django-crispy-forms==2.0
     #   crispy-bootstrap5
 django-crum==0.7.9
     # via -r base.in
-django-debug-toolbar==4.1.0
+django-debug-toolbar==4.2.0
     # via -r local.in
-django-environ==0.10.0
+django-environ==0.11.2
     # via -r base.in
 django-extensions==3.2.3
-    # via -r local.in
-django-filter==23.2
     # via -r base.in
-django-import-export==3.2.0
+django-filter==23.3
+    # via -r base.in
+django-import-export==3.3.1
     # via -r base.in
 django-jet-reboot==1.3.3
     # via -r base.in
 django-model-utils==4.3.1
     # via -r base.in
-django-redis==5.3.0
+django-nested-admin==4.0.2
     # via -r base.in
-django-simple-history==3.3.0
+django-redis==5.4.0
     # via -r base.in
-django-stubs==4.2.1
+django-simple-history==3.4.0
+    # via -r base.in
+django-storages[boto3]==1.14.2
+    # via -r base.in
+django-stubs==4.2.6
     # via
     #   -r local.in
     #   djangorestframework-stubs
-django-stubs-ext==4.2.1
+django-stubs-ext==4.2.5
     # via django-stubs
-django-timezone-field==5.1
+django-timezone-field==6.0.1
     # via django-celery-beat
 djangorestframework==3.14.0
     # via
     #   -r base.in
     #   drf-spectacular
-djangorestframework-stubs==3.14.1
+djangorestframework-stubs==3.14.4
     # via -r local.in
 docutils==0.20.1
     # via sphinx
-drf-spectacular==0.26.2
+drf-spectacular==0.26.5
     # via -r base.in
 et-xmlfile==1.1.0
     # via openpyxl
-exceptiongroup==1.1.1
+exceptiongroup==1.1.3
     # via
     #   anyio
+    #   ipython
     #   pytest
-executing==1.2.0
+executing==2.0.0
     # via stack-data
-factory-boy==3.2.1
+factory-boy==3.3.0
     # via -r local.in
-faker==18.10.1
+faker==19.12.0
     # via factory-boy
-filelock==3.12.2
+filelock==3.12.4
     # via virtualenv
-flake8==6.0.0
+fiona==1.9.5
+    # via geopandas
+flake8==6.1.0
     # via
     #   -r local.in
     #   flake8-isort
-flake8-isort==6.0.0
+flake8-isort==6.1.0
     # via -r local.in
-flower==2.0.0
+flower==2.0.1
+    # via -r base.in
+fonttools[woff]==4.43.1
+    # via
+    #   matplotlib
+    #   weasyprint
+geopandas==0.14.0
     # via -r base.in
 hiredis==2.2.3
     # via -r base.in
-humanize==4.6.0
+html5lib==1.1
+    # via weasyprint
+humanize==4.8.0
     # via flower
-identify==2.5.24
+identify==2.5.30
     # via pre-commit
 idna==3.4
     # via
@@ -199,40 +244,57 @@ iniconfig==2.0.0
     # via pytest
 ipdb==0.13.13
     # via -r local.in
-ipython==8.14.0
+ipython==8.16.1
     # via ipdb
 isort==5.12.0
     # via
     #   flake8-isort
     #   pylint
-jedi==0.18.2
+jedi==0.19.1
     # via ipython
 jinja2==3.1.2
-    # via sphinx
-jsonschema==4.17.3
+    # via
+    #   -r base.in
+    #   sphinx
+jmespath==1.0.1
+    # via
+    #   boto3
+    #   botocore
+jsonschema==4.19.1
     # via drf-spectacular
-kombu==5.3.1
+jsonschema-specifications==2023.7.1
+    # via jsonschema
+kiwisolver==1.4.5
+    # via matplotlib
+kombu==5.3.2
     # via celery
-lazy-object-proxy==1.9.0
-    # via astroid
 livereload==2.6.3
     # via sphinx-autobuild
+lxml==4.9.3
+    # via python-docx
+markdown==3.5
+    # via
+    #   -r base.in
+    #   markdown-katex
+markdown-katex==202112.1034
+    # via -r base.in
 markuppy==1.14
     # via tablib
 markupsafe==2.1.3
     # via
     #   jinja2
     #   werkzeug
+matplotlib==3.8.0
+    # via -r base.in
 matplotlib-inline==0.1.6
     # via ipython
 mccabe==0.7.0
     # via
     #   flake8
     #   pylint
-mypy==1.3.0
+mypy==1.6.1
     # via
     #   -r local.in
-    #   django-stubs
     #   djangorestframework-stubs
 mypy-extensions==1.0.0
     # via
@@ -240,77 +302,106 @@ mypy-extensions==1.0.0
     #   mypy
 nodeenv==1.8.0
     # via pre-commit
+numpy==1.26.1
+    # via
+    #   contourpy
+    #   matplotlib
+    #   pandas
+    #   shapely
 oauthlib==3.2.2
     # via requests-oauthlib
 odfpy==1.4.1
     # via tablib
 openpyxl==3.1.2
     # via tablib
-packaging==23.1
+packaging==23.2
     # via
     #   black
+    #   geopandas
+    #   matplotlib
     #   pytest
     #   pytest-sugar
     #   sphinx
+pandas==2.1.1
+    # via
+    #   -r base.in
+    #   geopandas
 parso==0.8.3
     # via jedi
-pathspec==0.11.1
+pathlib2==2.3.7.post1
+    # via markdown-katex
+pathspec==0.11.2
     # via black
+pdf2image==1.16.3
+    # via -r base.in
 pexpect==4.8.0
     # via ipython
 pickleshare==0.7.5
     # via ipython
-pillow==9.5.0
-    # via -r base.in
-platformdirs==3.6.0
+pillow==10.1.0
+    # via
+    #   -r base.in
+    #   matplotlib
+    #   pdf2image
+    #   tilemapbase
+    #   weasyprint
+platformdirs==3.11.0
     # via
     #   black
     #   pylint
     #   virtualenv
-pluggy==1.0.0
+pluggy==1.3.0
     # via pytest
-pre-commit==3.3.3
+pre-commit==3.5.0
     # via -r local.in
-prometheus-client==0.17.0
+prometheus-client==0.17.1
     # via flower
-prompt-toolkit==3.0.38
+prompt-toolkit==3.0.39
     # via
     #   click-repl
     #   ipython
-psycopg2-binary==2.9.6
+psycopg2-binary==2.9.9
     # via -r local.in
 ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.2
     # via stack-data
-pycodestyle==2.10.0
+pycodestyle==2.11.1
     # via flake8
 pycparser==2.21
     # via cffi
-pyflakes==3.0.1
+pydyf==0.8.0
+    # via weasyprint
+pyflakes==3.1.0
     # via flake8
-pygments==2.15.1
+pygments==2.16.1
     # via
     #   ipython
     #   sphinx
-pyjwt[crypto]==2.7.0
-    # via django-allauth
-pylint==2.17.4
+pyjwt[crypto]==2.8.0
+    # via
+    #   django-allauth
+    #   pyjwt
+pylint==3.0.2
     # via
     #   pylint-celery
     #   pylint-django
     #   pylint-plugin-utils
 pylint-celery==0.3
     # via -r local.in
-pylint-django==2.5.3
+pylint-django==2.5.5
     # via -r local.in
 pylint-plugin-utils==0.8.2
     # via
     #   pylint-celery
     #   pylint-django
-pyrsistent==0.19.3
-    # via jsonschema
-pytest==7.3.2
+pyparsing==3.1.1
+    # via matplotlib
+pyphen==0.14.0
+    # via weasyprint
+pyproj==3.6.1
+    # via geopandas
+pytest==7.4.3
     # via
     #   -r local.in
     #   pytest-django
@@ -319,77 +410,115 @@ pytest-django==4.5.2
     # via -r local.in
 pytest-sugar==0.9.7
     # via -r local.in
-python-crontab==2.7.1
+python-crontab==3.0.0
     # via django-celery-beat
 python-dateutil==2.8.2
     # via
+    #   botocore
     #   celery
     #   faker
+    #   matplotlib
+    #   pandas
     #   python-crontab
+python-docx==1.0.1
+    # via -r base.in
+python-monkey-business==1.0.0
+    # via django-nested-admin
 python-slugify==8.0.1
     # via -r base.in
 python3-openid==3.2.0
     # via django-allauth
-pytz==2023.3
+pytz==2023.3.post1
     # via
-    #   django-timezone-field
     #   djangorestframework
     #   flower
-pyyaml==6.0
+    #   pandas
+pyyaml==6.0.1
     # via
     #   drf-spectacular
     #   pre-commit
     #   tablib
-redis==4.5.5
+redis==5.0.1
     # via
     #   -r base.in
     #   django-redis
+referencing==0.30.2
+    # via
+    #   jsonschema
+    #   jsonschema-specifications
 requests==2.31.0
     # via
     #   django-allauth
     #   djangorestframework-stubs
     #   requests-oauthlib
     #   sphinx
+    #   tilemapbase
 requests-oauthlib==1.3.1
     # via django-allauth
+rpds-py==0.10.6
+    # via
+    #   jsonschema
+    #   referencing
+s3transfer==0.7.0
+    # via boto3
+shapely==2.0.2
+    # via geopandas
 six==1.16.0
     # via
+    #   asttokens
+    #   fiona
+    #   html5lib
     #   livereload
+    #   pathlib2
     #   python-dateutil
+    #   python-monkey-business
 sniffio==1.3.0
     # via anyio
 snowballstemmer==2.2.0
     # via sphinx
-sphinx==7.0.1
+sphinx==7.2.6
     # via
     #   -r local.in
     #   sphinx-autobuild
+    #   sphinxcontrib-applehelp
+    #   sphinxcontrib-devhelp
+    #   sphinxcontrib-htmlhelp
+    #   sphinxcontrib-qthelp
+    #   sphinxcontrib-serializinghtml
 sphinx-autobuild==2021.3.14
     # via -r local.in
-sphinxcontrib-applehelp==1.0.4
+sphinxcontrib-applehelp==1.0.7
     # via sphinx
-sphinxcontrib-devhelp==1.0.2
+sphinxcontrib-devhelp==1.0.5
     # via sphinx
-sphinxcontrib-htmlhelp==2.0.1
+sphinxcontrib-htmlhelp==2.0.4
     # via sphinx
 sphinxcontrib-jsmath==1.0.1
     # via sphinx
-sphinxcontrib-qthelp==1.0.3
+sphinxcontrib-qthelp==1.0.6
     # via sphinx
-sphinxcontrib-serializinghtml==1.1.5
+sphinxcontrib-serializinghtml==1.1.9
     # via sphinx
 sqlparse==0.4.4
     # via
     #   django
     #   django-debug-toolbar
-stack-data==0.6.2
+stack-data==0.6.3
     # via ipython
 tablib[html,ods,xls,xlsx,yaml]==3.5.0
-    # via django-import-export
+    # via
+    #   django-import-export
+    #   tablib
 termcolor==2.3.0
     # via pytest-sugar
 text-unidecode==1.3
     # via python-slugify
+tilemapbase==0.4.7
+    # via -r base.in
+tinycss2==1.2.1
+    # via
+    #   cssselect2
+    #   weasyprint
 tomli==2.0.1
     # via
     #   black
@@ -398,65 +527,76 @@ tomli==2.0.1
     #   mypy
     #   pylint
     #   pytest
-tomlkit==0.11.8
+tomlkit==0.12.1
     # via pylint
-tornado==6.3.2
+tornado==6.3.3
     # via
     #   flower
     #   livereload
-traitlets==5.9.0
+traitlets==5.12.0
     # via
     #   ipython
     #   matplotlib-inline
-types-pytz==2023.3.0.0
+types-pytz==2023.3.1.1
     # via django-stubs
-types-pyyaml==6.0.12.10
+types-pyyaml==6.0.12.12
     # via
     #   django-stubs
     #   djangorestframework-stubs
-types-requests==2.31.0.1
+types-requests==2.31.0.10
     # via djangorestframework-stubs
-types-urllib3==1.26.25.13
-    # via types-requests
-typing-extensions==4.6.3
+typing-extensions==4.8.0
     # via
     #   asgiref
     #   astroid
+    #   black
     #   django-stubs
     #   django-stubs-ext
     #   djangorestframework-stubs
     #   mypy
+    #   python-docx
 tzdata==2023.3
     # via
     #   celery
     #   django-celery-beat
+    #   pandas
 uritemplate==4.1.1
     # via drf-spectacular
-urllib3==2.0.3
-    # via requests
+urllib3==2.0.7
+    # via
+    #   botocore
+    #   requests
+    #   types-requests
 vine==5.0.0
     # via
     #   amqp
     #   celery
     #   kombu
-virtualenv==20.23.1
+virtualenv==20.24.6
     # via pre-commit
 watchdog==3.0.0
     # via werkzeug
-watchfiles==0.19.0
+watchfiles==0.21.0
     # via -r local.in
-wcwidth==0.2.6
+wcwidth==0.2.8
     # via prompt-toolkit
-werkzeug[watchdog]==2.3.6
-    # via -r local.in
-whitenoise==6.5.0
+weasyprint==60.1
     # via -r base.in
-wrapt==1.15.0
-    # via astroid
+webencodings==0.5.1
+    # via
+    #   cssselect2
+    #   html5lib
+    #   tinycss2
+werkzeug[watchdog]==3.0.1
+    # via -r local.in
+whitenoise==6.6.0
+    # via -r base.in
 xlrd==2.0.1
     # via tablib
 xlwt==1.3.0
     # via tablib
+zopfli==0.2.3
+    # via fonttools
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

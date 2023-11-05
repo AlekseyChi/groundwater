@@ -1,0 +1,21 @@
+<h4>РЕЗУЛЬТАТЫ ПРОБНОЙ ОТКАЧКИ</h4>
+<table class="journal">
+  <tr>
+    <td>№ понижения</td>
+    <td>Время замера, час:мин</td>
+    <td>Динам. уровень воды, м</td>
+    <td>Понижение уровня, м</td>
+    <td>Дебит, м<sup>3</sup>/час</td>
+    <td>Удельный дебит, м<sup>3</sup>/(час*м)</td>
+  </tr>
+  {% for row in test_pump %}
+  <tr>
+    {% for value in row %}
+    <td>{{ value }}</td>
+    {% endfor %}
+  </tr>
+  {% endfor %}
+</table>
+{% for key, value in test_pump_info.items() %}
+<p><strong>{{key}}:</strong> {{value}}</p>
+{% endfor %}

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Pump Journal</title>
+  </head>
+  <body>
+    <div style="margin-bottom: 1.5rem" id="header">
+      {% include 'pump_journals/header.html' %}
+    </div>
+    <div class="title">{% include 'pump_journals/title.html' %}</div>
+    <div class="info chapter">{% include 'pump_journals/info.html' %}</div>
+    <div class="chapter">{% include 'pump_journals/tech_data.html' %}</div>
+    <div class="chapter">{% include 'pump_journals/pump_data.html' %}</div>
+    {% if recovery_data %}
+    <div class="chapter">{% include 'pump_journals/recovery_data.html' %}</div>
+    {% endif %} {% if conclusions %}
+    <div class="chapter">{% include 'pump_journals/conclusions.html' %}</div>
+    {% endif %}
+    <p><strong>Откачку провели гидрогеологи:</strong></p>
+    <div>
+      <table class="no-border">
+        <tbody>
+          {% for sign in sign_list %}
+          <tr>
+            <td>{{ sign.worker }}</td>
+            <td>
+              <img src="{{ sign.sign }}" style="height: 100px" />
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

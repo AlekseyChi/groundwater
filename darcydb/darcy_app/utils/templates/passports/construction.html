@@ -1,0 +1,19 @@
+<h4>ФАКТИЧЕСКАЯ КОНСТРУКЦИЯ СКВАЖИНЫ</h4>
+<table class="table table-base">
+  <tr>
+    <th>Дата установки</th>
+    <th>Тип конструкции</th>
+    <th>Диаметр, мм</th>
+    <th>Глубина от, м</th>
+    <th>Глубина до, м</th>
+  </tr>
+  {% for row in construction_data %}
+  <tr>
+    <td>{{ row.date }}</td>
+    <td>{{ row.construction_type }}</td>
+    <td>{{ row.diameter }}</td>
+    <td>{{ row.depth_from }}</td>
+    <td>{{ row.depth_till }}</td>
+  </tr>
+  {% endfor %}
+</table>

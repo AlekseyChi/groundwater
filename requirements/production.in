@@ -2,6 +2,7 @@
 
 -r base.in
 
+gevent # https://github.com/gevent/gevent
 gunicorn # https://github.com/benoitc/gunicorn
 psycopg2-binary # https://github.com/psycopg/psycopg2
 sentry-sdk # https://github.com/getsentry/sentry-python

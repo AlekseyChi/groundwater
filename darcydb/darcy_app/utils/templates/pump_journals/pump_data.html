@@ -1,0 +1,23 @@
+<h4>Таблица наблюдений за снижением уровня подземных вод во время опыта</h4>
+<p>Статический уровень воды на начало откачки {{ stat_wat }} м.</p>
+<table class="table-journal" style="font-size: 10pt">
+  <tr>
+    <th rowspan="2">Дата</th>
+    <th colspan="2">Время от начала откачки</th>
+    <th rowspan="2">Динамический уровень, м</th>
+    <th rowspan="2">Понижение, м</th>
+    <th rowspan="2">Дебит, м<sup>3</sup>/ч</th>
+    <th rowspan="2">Примечание</th>
+  </tr>
+  <tr>
+    <th>Часы</th>
+    <th>Минуты</th>
+  </tr>
+  {% for row in pump_data %}
+  <tr>
+    {% for value in row %}
+    <td>{{ value }}</td>
+    {% endfor %}
+  </tr>
+  {% endfor %}
+</table>

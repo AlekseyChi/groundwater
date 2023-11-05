@@ -1,0 +1,10 @@
+{% if geophysics_data %}
+<h4>ГЕОФИЗИЧЕСКИЕ ИССЛЕДОВАНИЯ</h4>
+<div class="info">
+  {% for key, value in geophysics_data.items() %}
+  <p>
+    <span><strong>{{ key }}</strong></span> <span> {{ value }}</span>
+  </p>
+  {% endfor %}
+</div>
+{% endif %}
