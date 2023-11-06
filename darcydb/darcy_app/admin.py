@@ -89,6 +89,7 @@ from .resources import (
     WellResource,
     WellsAquiferUsageResource,
     WellsChemResource,
+    WellsConditionResource,
     WellsEfwResource,
     WellsGeophysicsResource,
     WellsLithologyResource,
@@ -723,7 +724,7 @@ class DictDocOrganizationsAdmin(ImportExportModelAdmin):
 
 @register(WellsCondition)
 class WellsConditionAdmin(ImportExportModelAdmin):
-    pass
+    resource_class = WellsConditionResource
 
 
 darcy_admin.register(Wells, WellsAdmin)
