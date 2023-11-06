@@ -9,7 +9,14 @@ from django.utils.safestring import mark_safe
 from import_export.admin import ImportExportModelAdmin
 from jet.admin import CompactInline
 
-from .filters import DocSourceFilter, DocTypeFilter, TypeEfwFilter, WellsTypeFilter
+from .filters import (
+    BalanceTypeFilter,
+    DictEquipmentTypeFilter,
+    DocSourceFilter,
+    DocTypeFilter,
+    TypeEfwFilter,
+    WellsTypeFilter,
+)
 from .forms import (
     BalanceForm,
     DictEquipmentForm,
@@ -28,8 +35,69 @@ from .forms import (
     WellsWaterDepthForm,
     WellsWaterDepthPumpForm,
 )
-from .models import *
-from .resources import *
+from .models import (
+    AquiferCodes,
+    Attachments,
+    Balance,
+    ChemCodes,
+    DictDocOrganizations,
+    DictEntities,
+    DictEquipment,
+    Documents,
+    DocumentsPath,
+    Entities,
+    Fields,
+    Intakes,
+    License,
+    LicenseToWells,
+    WaterUsers,
+    WaterUsersChange,
+    Wells,
+    WellsAquifers,
+    WellsAquiferUsage,
+    WellsChem,
+    WellsCondition,
+    WellsConstruction,
+    WellsDepression,
+    WellsDepth,
+    WellsDrilledData,
+    WellsEfw,
+    WellsGeophysics,
+    WellsLithology,
+    WellsLugHeight,
+    WellsRate,
+    WellsRegime,
+    WellsSample,
+    WellsTemperature,
+    WellsWaterDepth,
+)
+from .resources import (
+    AquiferCodesResource,
+    BalanceResource,
+    ChemCodesResource,
+    DictDocOrganizationsResource,
+    DictEntitiesResource,
+    DictEquipmentResource,
+    DocumentsResource,
+    EntitiesResource,
+    FieldsResource,
+    IntakesResource,
+    LicenseResource,
+    LicenseToWellsResource,
+    WaterUsersChangeResource,
+    WaterUsersResouce,
+    WellResource,
+    WellsAquiferUsageResource,
+    WellsChemResource,
+    WellsConditionResource,
+    WellsEfwResource,
+    WellsGeophysicsResource,
+    WellsLithologyResource,
+    WellsLugHeightResource,
+    WellsRegimeResource,
+    WellsSampleResource,
+    WellsTemperatureResource,
+)
 from .utils.passport_gen import generate_passport
 from .utils.pump_journals_gen import generate_pump_journal
 
@@ -204,7 +272,8 @@ class WellsRateInline(WellsRatePumpInline):
 class WellsDepressionInline(nested_admin.NestedTabularInline):
     """
     Inline tab for WellsDepression  model
-    """    
+    """
+
     model = WellsDepression
     form = WellsDepressionForm
     inlines = [WellsWaterDepthPumpInline, WellsRatePumpInline]
@@ -336,6 +405,7 @@ class WellsAdmin(nested_admin.NestedModelAdmin, ImportExportModelAdmin):
         "name_subject",
         "comments",
     )
+    # readonly_fields=('extra',)
     list_display = (
         "__str__",
         "typo",
@@ -422,7 +492,10 @@ class IntakesAdmin(ImportExportModelAdmin):
     form = IntakesForm
     model = Intakes
     inlines = [WellsInline]
-    list_display = ("intake_name",)
+    list_display = (
+        "id",
+        "intake_name",
+    )
     search_fields = ("intake_name",)
 
 
@@ -437,6 +510,9 @@ class BalanceInline(nested_admin.NestedGenericTabularInline):
 @register(Balance)
 class BalanceAdmin(ImportExportModelAdmin):
     resource_class = BalanceResource
+    form = BalanceForm
+    list_display = ("id", "aquifer", "typo", "a", "b", "c1", "c2", "content_type")
+    list_filter = (BalanceTypeFilter, "aquifer")
 
 
 @register(Fields)
@@ -558,7 +634,11 @@ class WaterUsersAdmin(nested_admin.NestedModelAdmin, ImportExportModelAdmin):
     resource_class = WaterUsersResouce
     model = WaterUsers
     inlines = [WaterUsersChangeInline]
-    list_display = search_fields = list_filter = ("name",)
+    list_display = (
+        "id",
+        "name",
+    )
+    search_fields = ("name",)
 
 
 # License
@@ -570,7 +650,11 @@ class LicenseAdmin(nested_admin.NestedModelAdmin, ImportExportModelAdmin):
     resource_class = LicenseResource
     model = License
     inlines = [LicenseToWellsInline, WaterUsersChangeInline]
-    list_display = ("name", "date_start", "date_end",)
+    list_display = (
+        "name",
+        "date_start",
+        "date_end",
+    )
     search_fields = ("name", "date_start", "date_end", "department")
     list_filter = ("name", "date_start", "date_end")
 
@@ -590,6 +674,8 @@ class DictEquipmentAdmin(nested_admin.NestedModelAdmin, ImportExportModelAdmin):
     resource_class = DictEquipmentResource
     model = DictEquipment
     form = DictEquipmentForm
+    list_display = ("id", "typo", "name", "brand")
+    list_filter = (DictEquipmentTypeFilter, "brand")
 
 
 @register(DictEntities)
@@ -600,6 +686,7 @@ class DictEntitiesAdmin(ImportExportModelAdmin):
         "entity__name",
     )
     list_display = ("id", "name", "entity")
+    list_filter = ("entity",)
 
 
 @register(Entities)
@@ -619,12 +706,25 @@ class AquiferCodesAdmin(ImportExportModelAdmin):
 class ChemCodesAdmin(ImportExportModelAdmin):
     resource_class = ChemCodesResource
     list_display = ("chem_id", "chem_name", "chem_formula", "chem_pdk", "chem_measure")
+    search_fields = ("chem_name", "chem_formula")
+    list_filter = ("chem_pdk", "chem_measure")
 
 
 @register(WellsAquiferUsage)
 class WellsAquiferUsageAdmin(ImportExportModelAdmin):
     resource_class = WellsAquiferUsageResource
     list_display = ("id", "well", "aquifer")
+
+
+@register(DictDocOrganizations)
+class DictDocOrganizationsAdmin(ImportExportModelAdmin):
+    resource_class = DictDocOrganizationsResource
+    list_display = ("id", "name")
+
+
+@register(WellsCondition)
+class WellsConditionAdmin(ImportExportModelAdmin):
+    resource_class = WellsConditionResource
 
 
 darcy_admin.register(Wells, WellsAdmin)

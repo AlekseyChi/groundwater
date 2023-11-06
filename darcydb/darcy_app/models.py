@@ -117,6 +117,7 @@ class Entities(BaseModel):
 class DictEntities(BaseModel):
     """
     Справочник Сущностей
+    fields = ["id", "name", "entity"]
     """
 
     name = models.CharField(max_length=250, verbose_name="Значение")
@@ -153,6 +154,11 @@ class DictEquipment(BaseModel):
 
 
 class DictDocOrganizations(BaseModel):
+    """
+    Организации
+    fields = ["id", "name"]
+    """
+
     name = models.TextField(verbose_name="Название организации", unique=True)
 
     class Meta:
@@ -172,7 +178,8 @@ class Documents(BaseModel):
     Модель также предоставляет связь "многие ко многим" для связанных
     документов, а также универсальный внешний ключ для связи с различными
     типами связанных объектов.
-    fields = ["id", "name", "typo", "source", "org_executor", "org_customer", "creation_date", "creation_place", "number_rgf", "number_tfgi", "authors", "links", "content_type", "object_id"]
+    fields = ["id", "name", "typo", "source", "org_executor", "org_customer", "creation_date", "creation_place",
+    "number_rgf", "number_tfgi", "authors", "links", "content_type", "object_id"]
     """
 
     name = models.CharField(max_length=1200, verbose_name="Название документа")
@@ -432,7 +439,8 @@ class WellsDrilledData(BaseModel):
     Модель для представления режимных наблюдений скважин. Содержит внешний
     ключ для скважины, дату замера, связь с документацией и обобщенные связи
     с глубиной УГВ и дебитом (или другими возможными режимными измерениями).
-    fields = ["id", "well", "date_start", "date_end", "drill_type", "drill_rig", "organization", "doc", "waterdepths", "rates", "depths", "conditions"]
+    fields = ["id", "well", "date_start", "date_end", "drill_type", "drill_rig", "organization", "doc",
+    "waterdepths", "rates", "depths", "conditions"]
     """
 
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
@@ -465,7 +473,8 @@ class WellsDrilledData(BaseModel):
 class WellsGeophysics(BaseModel):
     """
     Геофизические исследования
-    fields = ["id", "well", "date", "organization", "researches", "conclusion", "depths", "waterdepths", "attachments", "doc"]
+    fields = ["id", "well", "date", "organization", "researches", "conclusion", "depths", "waterdepths",
+    "attachments", "doc"]
     """
 
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
@@ -603,6 +612,7 @@ class WellsCondition(BaseModel):
     """
     Модель для представления замеров глубины скважин. Содержит значения глубины
     и обобщенные связи с другими возможными моделями.
+    fields = ["id", "condition", "content_type", "object_id"]
     """
 
     condition = models.ForeignKey("DictEntities", on_delete=models.DO_NOTHING, verbose_name="Тех. состояние")
@@ -618,7 +628,7 @@ class WellsCondition(BaseModel):
         unique_together = (("object_id", "content_type"),)
 
     def __str__(self):
-        return ""
+        return f"WellsCondition {self.pk}"
 
 
 class WellsLugHeight(BaseModel):
@@ -680,7 +690,8 @@ class WellsAquifers(BaseModel):
 class WellsLithology(BaseModel):
     """
     Литологическая колонка
-    fields = ["id", "well", "rock", "color", "composition", "structure", "mineral", "secondary_change", "cement", "fracture", "weathering", "caverns", "inclusions", "bot_elev", "doc"]
+    fields = ["id", "well", "rock", "color", "composition", "structure", "mineral", "secondary_change",
+    "cement", "fracture", "weathering", "caverns", "inclusions", "bot_elev", "doc"]
     """
 
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
@@ -790,7 +801,8 @@ class WellsEfw(BaseModel):
     глубине загрузки оборудования, продолжительности опыта и дебите.
     Через внешний ключ с Documents осуществляется связь ОФР с
     актами ОФР и другой документацией, связанной с проведением ОФР
-    fields = ["id", "well", "date", "type_efw", "pump_type", "level_meter", "pump_depth", "method_measure", "rate_measure", "pump_time", "vessel_capacity", "vessel_time", "doc", "waterdepths", "lugs"]
+    fields = ["id", "well", "date", "type_efw", "pump_type", "level_meter", "pump_depth", "method_measure",
+    "rate_measure", "pump_time", "vessel_capacity", "vessel_time", "doc", "waterdepths", "lugs"]
     """
 
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
@@ -880,7 +892,7 @@ class WellsDepression(BaseModel):
         verbose_name = "Журнал ОФР"
         verbose_name_plural = "Журнал ОФР"
         db_table = "wells_depression"
-        unique_together = (("efw",),) # WTF ?
+        unique_together = (("efw",),)  # WTF ?
 
     def __str__(self):
         return str(self.pk)
@@ -1052,8 +1064,8 @@ class Attachments(BaseModel):
         if settings.DEBUG:
             storage, path = (
                 self.path.storage,
-                self.path.path, # ERROR? # E1101: Instance of 'Attachments' has no 'path' member (no-member)
-            )  
+                self.path.path,  # ERROR? # E1101: Instance of 'Attachments' has no 'path' member (no-member)
+            )
             super().delete(*args, **kwargs)
             storage.delete(path)
         else:
@@ -1091,6 +1103,7 @@ class License(BaseModel):
     Лицензии
     fields = ["id", "name", "department", "date_start", "date_end", "comments", "gw_purpose", "docs"]
     """
+
     name = models.CharField(unique=True, max_length=11, verbose_name="Номер лицензии")
     department = models.ForeignKey(
         "DictDocOrganizations", models.DO_NOTHING, db_column="department", verbose_name="Орган, выдавший лицензию"
