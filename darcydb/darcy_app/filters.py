@@ -4,6 +4,43 @@ from django.contrib import admin
 
 from .models import DictDocOrganizations, DictEntities
 
+__all__ = [
+    "WellsTypeFilter",
+    "TypeEfwFilter",
+    "DocTypeFilter",
+    "DocSourceFilter",
+    "DictEquipmentTypeFilter",
+    "BalanceTypeFilter",
+]
+
+
+class BalanceTypeFilter(admin.SimpleListFilter):
+    title = "Тип подземных вод"
+    parameter_name = "typo"
+
+    def lookups(self, request, model_admin):
+        return DictEntities.objects.filter(entity__name="тип подземных вод").values_list("id", "name")
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(typo=self.value())
+        else:
+            return queryset
+
+
+class DictEquipmentTypeFilter(admin.SimpleListFilter):
+    title = "Тип оборудования"
+    parameter_name = "typo"
+
+    def lookups(self, request, model_admin):
+        return DictEntities.objects.filter(entity__name="тип оборудования").values_list("id", "name")
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(typo=self.value())
+        else:
+            return queryset
+
 
 class WellsTypeFilter(admin.SimpleListFilter):
     title = "Тип скважины"
