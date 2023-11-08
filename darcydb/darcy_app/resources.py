@@ -5,6 +5,7 @@ from import_export.widgets import DateWidget  # ForeignKeyWidget
 
 from .models import (
     AquiferCodes,
+    Attachments,
     Balance,
     ChemCodes,
     DictDocOrganizations,
@@ -22,13 +23,17 @@ from .models import (
     WellsAquiferUsage,
     WellsChem,
     WellsCondition,
+    WellsDepth,
+    WellsDrilledData,
     WellsEfw,
     WellsGeophysics,
     WellsLithology,
     WellsLugHeight,
+    WellsRate,
     WellsRegime,
     WellsSample,
     WellsTemperature,
+    WellsWaterDepth,
 )
 
 __all__ = [
@@ -57,30 +62,34 @@ __all__ = [
     "AquiferCodesResource",
     "DictDocOrganizationsResource",
     "WellsConditionResource",
+    "WellsRateResource",
+    "WellsDepthResource",
+    "AttachmentsResource",
+    "WellsDrilledDataResource",
 ]
 
 
 class WellResource(resources.ModelResource):
-    docs = fields.Field()
-    attachments = fields.Field()
+    # docs = fields.Field()
+    # attachments = fields.Field()
 
-    def dehydrate_docs(self, wells):
-        wanted_model = ContentType.objects.get(model="Documents".lower()).model_class()
-        try:
-            return wanted_model.objects.get(id=wells.id).pk  # noqa
-        except Exception:
-            return {}
-
-    def dehydrate_attachments(self, wells):
-        wanted_model = ContentType.objects.get(model="Attachments".lower()).model_class()
-        try:
-            return wanted_model.objects.get(id=wells.id).pk  # noqa
-        except Exception:
-            return {}
+    # def dehydrate_docs(self, wells):
+    #    wanted_model = ContentType.objects.get(model="Documents".lower()).model_class()
+    #    try:
+    #        return wanted_model.objects.get(id=wells.id).pk  # noqa
+    #    except Exception:
+    #        return {}
+    #
+    # def dehydrate_attachments(self, wells):
+    #    wanted_model = ContentType.objects.get(model="Attachments".lower()).model_class()
+    #    try:
+    #        return wanted_model.objects.get(id=wells.id).pk  # noqa
+    #    except Exception:
+    #        return {}
 
     class Meta:
         model = Wells
-        fields = ["id", "name", "typo", "head", "moved", "intake", "field", "geom", "docs", "attachments"]
+        fields = ["id", "name", "typo", "head", "moved", "intake", "field", "geom", "extra"]
 
 
 class WellsEfwResource(resources.ModelResource):
@@ -88,22 +97,22 @@ class WellsEfwResource(resources.ModelResource):
     Resource for WellsEfw model for admin import-export data
     """
 
-    waterdepths = fields.Field()
-    lugs = fields.Field()
-
-    def dehydrate_waterdepths(self, wellsefw):
-        wanted_model = ContentType.objects.get(model="WellsWaterDepth".lower()).model_class()
-        try:
-            return wanted_model.objects.get(id=wellsefw.id).pk  # noqa
-        except Exception:
-            return {}
-
-    def dehydrate_lugs(self, wellsefw):
-        wanted_model = ContentType.objects.get(model="WellsWaterDepth".lower()).model_class()
-        try:
-            return wanted_model.objects.get(id=wellsefw.id).pk  # noqa
-        except Exception:
-            return {}
+    # waterdepths = fields.Field()
+    # lugs = fields.Field()
+    #
+    # def dehydrate_waterdepths(self, wellsefw):
+    #    wanted_model = ContentType.objects.get(model="WellsWaterDepth".lower()).model_class()
+    #    try:
+    #        return wanted_model.objects.get(id=wellsefw.id).pk  # noqa
+    #    except Exception:
+    #        return {}
+    #
+    # def dehydrate_lugs(self, wellsefw):
+    #    wanted_model = ContentType.objects.get(model="WellsWaterDepth".lower()).model_class()
+    #    try:
+    #        return wanted_model.objects.get(id=wellsefw.id).pk  # noqa
+    #    except Exception:
+    #        return {}
 
     class Meta:
         model = WellsEfw
@@ -121,8 +130,6 @@ class WellsEfwResource(resources.ModelResource):
             "vessel_capacity",
             "vessel_time",
             "doc",
-            "waterdepths",
-            "lugs",
         ]
 
 
@@ -146,26 +153,26 @@ class FieldsResource(resources.ModelResource):
     Resource for Fields model for admin import-export data
     """
 
-    docs = fields.Field()
-    balances = fields.Field()
-
-    def dehydrate_docs(self, instance):
-        wanted_model = ContentType.objects.get(model="Documents".lower()).model_class()
-        try:
-            return wanted_model.objects.get(id=instance.id).pk  # noqa
-        except Exception:
-            return {}
-
-    def dehydrate_balances(self, instance):
-        wanted_model = ContentType.objects.get(model="Balance".lower()).model_class()
-        try:
-            return wanted_model.objects.get(id=instance.id).pk  # noqa
-        except Exception:
-            return {}
+    # docs = fields.Field()
+    # balances = fields.Field()
+    #
+    # def dehydrate_docs(self, instance):
+    #    wanted_model = ContentType.objects.get(model="Documents".lower()).model_class()
+    #    try:
+    #        return wanted_model.objects.get(id=instance.id).pk  # noqa
+    #    except Exception:
+    #        return {}
+    #
+    # def dehydrate_balances(self, instance):
+    #    wanted_model = ContentType.objects.get(model="Balance".lower()).model_class()
+    #    try:
+    #        return wanted_model.objects.get(id=instance.id).pk  # noqa
+    #    except Exception:
+    #        return {}
 
     class Meta:
         model = Fields
-        fields = ["id", "field_name", "geom", "docs", "balances"]
+        fields = ["id", "field_name", "geom"]
 
 
 class WellsSampleResource(resources.ModelResource):
@@ -173,26 +180,26 @@ class WellsSampleResource(resources.ModelResource):
     Resource for WellsSample model for admin import-export data
     """
 
-    chemvalues = fields.Field()
-    attachments = fields.Field()
-
-    def dehydrate_chemvalues(self, wellssample):
-        wanted_model = ContentType.objects.get(model="WellsChem".lower()).model_class()
-        try:
-            return wanted_model.objects.get(id=wellssample.id).pk  # noqa
-        except Exception:
-            return {}
-
-    def dehydrate_attachments(self, wellssample):
-        wanted_model = ContentType.objects.get(model="Attachments".lower()).model_class()
-        try:
-            return wanted_model.objects.get(id=wellssample.id).pk  # noqa
-        except Exception:
-            return {}
+    # chemvalues = fields.Field()
+    # attachments = fields.Field()
+    #
+    # def dehydrate_chemvalues(self, wellssample):
+    #    wanted_model = ContentType.objects.get(model="WellsChem".lower()).model_class()
+    #    try:
+    #        return wanted_model.objects.get(id=wellssample.id).pk  # noqa
+    #    except Exception:
+    #        return {}
+    #
+    # def dehydrate_attachments(self, wellssample):
+    #    wanted_model = ContentType.objects.get(model="Attachments".lower()).model_class()
+    #    try:
+    #        return wanted_model.objects.get(id=wellssample.id).pk  # noqa
+    #    except Exception:
+    #        return {}
 
     class Meta:
         model = WellsSample
-        fields = ["id", "well", "date", "name", "doc", "chemvalues", "attachments"]
+        fields = ["id", "well", "date", "name", "doc"]
 
 
 class LicenseToWellsResource(resources.ModelResource):
@@ -212,19 +219,19 @@ class LicenseResource(resources.ModelResource):
 
     date_start = fields.Field(column_name="date_start", attribute="date_start", widget=DateWidget("%Y-%m-%d"))
     date_end = fields.Field(column_name="date_end", attribute="date_end", widget=DateWidget("%Y-%m-%d"))
-    docs = fields.Field()
+    # docs = fields.Field()
 
-    def dehydrate_docs(self, licence):
-        wanted_model = ContentType.objects.get(model="Documents".lower()).model_class()
-        # wanted_model = apps.get_model("Documents", licence.content_type.model)
-        try:
-            return wanted_model.objects.get(id=licence.id).pk  # noqa
-        except Exception:
-            return {}
+    # def dehydrate_docs(self, licence):
+    #    wanted_model = ContentType.objects.get(model="Documents".lower()).model_class()
+    #    # wanted_model = apps.get_model("Documents", licence.content_type.model)
+    #    try:
+    #        return wanted_model.objects.get(id=licence.id).pk  # noqa
+    #    except Exception:
+    #        return {}
 
     class Meta:
         model = License
-        fields = ["id", "name", "department", "date_start", "date_end", "comments", "gw_purpose", "docs"]
+        fields = ["id", "name", "department", "date_start", "date_end", "comments", "gw_purpose"]
 
 
 class DocumentsResource(resources.ModelResource):
@@ -300,18 +307,18 @@ class WellsRegimeResource(resources.ModelResource):
     # well = fields.Field(column_name="well", attribute="well", widget=ForeignKeyWidget(Wells, "id"))
     date = fields.Field(column_name="date", attribute="date", widget=DateWidget("%Y-%m-%d"))
     # water_depth = fields.Field(column_name="water_depth")
-    water_depth = fields.Field()
+    # water_depth = fields.Field()
 
-    def dehydrate_water_depth(self, wellsregime):
-        wanted_model = ContentType.objects.get(model="WellsWaterDepth".lower()).model_class()
-        try:
-            return wanted_model.objects.get(id=wellsregime.object_id).pk
-        except Exception:
-            return {}
+    # def dehydrate_water_depth(self, wellsregime):
+    #    wanted_model = ContentType.objects.get(model="WellsWaterDepth".lower()).model_class()
+    #    try:
+    #        return wanted_model.objects.get(id=wellsregime.object_id).pk
+    #    except Exception:
+    #        return {}
 
     class Meta:
         model = WellsRegime
-        fields = ("id", "well", "date", "doc", "water_depth")
+        fields = ("id", "well", "date", "doc")
         # https://django-import-export.readthedocs.io/en/latest/advanced_usage.html#create-or-update-model-instances
         # import_id_fields = ("well", "date",) # ???
         # To define which fields identify an instance, use the import_id_fields meta attribute.
@@ -408,22 +415,22 @@ class WellsGeophysicsResource(resources.ModelResource):
     Resource for WellsGeophysics model for admin import-export data
     """
 
-    waterdepths = fields.Field()
-    attachments = fields.Field()
-
-    def dehydrate_waterdepths(self, wellsgeophysics):
-        wanted_model = ContentType.objects.get(model="WellsWaterDepth".lower()).model_class()
-        try:
-            return wanted_model.objects.get(id=wellsgeophysics.id).pk
-        except Exception:
-            return {}
-
-    def dehydrate_attachments(self, wellsgeophysics):
-        wanted_model = ContentType.objects.get(model="Attachments".lower()).model_class()
-        try:
-            return wanted_model.objects.get(id=wellsgeophysics.id).pk
-        except Exception:
-            return {}
+    # waterdepths = fields.Field()
+    # attachments = fields.Field()
+    #
+    # def dehydrate_waterdepths(self, wellsgeophysics):
+    #    wanted_model = ContentType.objects.get(model="WellsWaterDepth".lower()).model_class()
+    #    try:
+    #        return wanted_model.objects.get(id=wellsgeophysics.id).pk
+    #    except Exception:
+    #        return {}
+    #
+    # def dehydrate_attachments(self, wellsgeophysics):
+    #    wanted_model = ContentType.objects.get(model="Attachments".lower()).model_class()
+    #    try:
+    #        return wanted_model.objects.get(id=wellsgeophysics.id).pk
+    #    except Exception:
+    #        return {}
 
     class Meta:
         model = WellsGeophysics
@@ -434,9 +441,6 @@ class WellsGeophysicsResource(resources.ModelResource):
             "organization",
             "researches",
             "conclusion",
-            "depths",
-            "waterdepths",
-            "attachments",
             "doc",
         ]
 
@@ -458,7 +462,7 @@ class WellsLugHeightResource(resources.ModelResource):
 
 class WellsChemResource(resources.ModelResource):
     """
-    Resource for WellsLugHeight model for admin import-export data
+    Resource for WellsChemResource model for admin import-export data
     """
 
     def before_import_row(self, row, **kwargs):
@@ -526,3 +530,86 @@ class WellsConditionResource(resources.ModelResource):
     class Meta:
         model = WellsCondition
         fields = ["id", "condition", "content_type", "content_type__model", "object_id"]
+
+
+class WellsRateResource(resources.ModelResource):
+    """
+    Resource for WellsRate model for admin import-export data
+    """
+
+    def before_import_row(self, row, **kwargs):
+        _model = row.get("content_type__model")
+        ct_model = ContentType.objects.get(model=str(_model))
+        row["content_type"] = int(ct_model.id)
+
+    class Meta:
+        model = WellsRate
+        fields = ["id", "time_measure", "rate", "content_type", "content_type__model", "object_id"]
+
+
+class WellsDepthResource(resources.ModelResource):
+    """
+    Resource for WellsDepth model for admin import-export data
+    """
+
+    def before_import_row(self, row, **kwargs):
+        _model = row.get("content_type__model")
+        ct_model = ContentType.objects.get(model=str(_model))
+        row["content_type"] = int(ct_model.id)
+
+    class Meta:
+        model = WellsDepth
+        fields = ["id", "depth", "content_type", "content_type__model", "object_id"]
+
+
+class AttachmentsResource(resources.ModelResource):
+    """
+    Resource for Attachments model for admin import-export data
+    """
+
+    def before_import_row(self, row, **kwargs):
+        _model = row.get("content_type__model")
+        ct_model = ContentType.objects.get(model=str(_model))
+        row["content_type"] = int(ct_model.id)
+
+    class Meta:
+        model = Attachments
+        fields = ["id", "img", "content_type", "content_type__model", "object_id"]
+
+
+class WellsWaterDepthResource(resources.ModelResource):
+    """
+    Resource for WellsWaterDepth model for admin import-export data
+    """
+
+    def before_import_row(self, row, **kwargs):
+        _model = row.get("content_type__model")
+        ct_model = ContentType.objects.get(model=str(_model))
+        row["content_type"] = int(ct_model.id)
+
+    class Meta:
+        model = WellsWaterDepth
+        fields = [
+            "id",
+            "type_level",
+            "time_measure",
+            "water_depth",
+            "content_type",
+            "content_type__model",
+            "object_id",
+        ]
+
+
+class WellsDrilledDataResource(resources.ModelResource):
+    """
+    Resource for WellsDrilledData model for admin import-export data
+    """
+
+    def before_import_row(self, row, **kwargs):
+        _model = row.get("content_type__model")
+        ct_model = ContentType.objects.get(model=str(_model))
+        row["content_type"] = int(ct_model.id)
+
+    class Meta:
+        model = WellsDrilledData
+        fields = ["id", "well", "date_start", "date_end", "drill_type", "drill_rig", "organization", "doc"]
