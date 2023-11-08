@@ -73,6 +73,7 @@ from .models import (
 )
 from .resources import (
     AquiferCodesResource,
+    AttachmentsResource,
     BalanceResource,
     ChemCodesResource,
     DictDocOrganizationsResource,
@@ -90,13 +91,17 @@ from .resources import (
     WellsAquiferUsageResource,
     WellsChemResource,
     WellsConditionResource,
+    WellsDepthResource,
+    WellsDrilledDataResource,
     WellsEfwResource,
     WellsGeophysicsResource,
     WellsLithologyResource,
     WellsLugHeightResource,
+    WellsRateResource,
     WellsRegimeResource,
     WellsSampleResource,
     WellsTemperatureResource,
+    WellsWaterDepthResource,
 )
 from .utils.passport_gen import generate_passport
 from .utils.pump_journals_gen import generate_pump_journal
@@ -148,7 +153,7 @@ class AttachmentsInline(nested_admin.NestedGenericTabularInline):
         "image_tag",
     )
     readonly_fields = ("image_tag",)
-    extra = 1
+    extra = 0
 
 
 class DocumentsPathInline(nested_admin.NestedTabularInline):
@@ -157,7 +162,7 @@ class DocumentsPathInline(nested_admin.NestedTabularInline):
     """
 
     model = DocumentsPath
-    extra = 1
+    extra = 0
 
     def presigned_url(self, instance):
         return instance.presigned_url
@@ -171,7 +176,7 @@ class DocumentsInline(nested_admin.NestedGenericStackedInline):
     form = DocumentsForm
     model = Documents
     inlines = [DocumentsPathInline]
-    extra = 1
+    extra = 0
 
 
 class WellsAquifersInline(nested_admin.NestedTabularInline):
@@ -181,7 +186,7 @@ class WellsAquifersInline(nested_admin.NestedTabularInline):
 
     model = WellsAquifers
     form = WellsAquifersForm
-    extra = 1
+    extra = 0
 
 
 class WellsConstructionInline(nested_admin.NestedTabularInline):
@@ -192,7 +197,7 @@ class WellsConstructionInline(nested_admin.NestedTabularInline):
     form = WellsConstructionForm
     model = WellsConstruction
     # classes = ("collapse",)
-    extra = 1
+    extra = 0
 
 
 class WellsWaterDepthPumpInline(nested_admin.NestedGenericTabularInline):
@@ -202,7 +207,7 @@ class WellsWaterDepthPumpInline(nested_admin.NestedGenericTabularInline):
 
     model = WellsWaterDepth
     form = WellsWaterDepthPumpForm
-    extra = 1
+    extra = 0
     max_num = 1000
     # min_num = 1
 
@@ -224,7 +229,7 @@ class WellsDepthInline(nested_admin.NestedGenericTabularInline):
     form = WellsWaterDepthForm
     max_num = 1
     model = WellsDepth
-    extra = 1
+    extra = 0
     max_num = 1
 
 
@@ -234,13 +239,14 @@ class WellsLugHeightInline(nested_admin.NestedGenericTabularInline):
     """
 
     model = WellsLugHeight
-    extra = 1
+    extra = 0
     max_num = 1
 
 
 @register(WellsLugHeight)
 class WellsLugHeightAdmin(ImportExportModelAdmin):
     resource_class = WellsLugHeightResource
+    list_display = ("id", "lug_height", "content_type")
 
 
 class WellsDrilledDataInline(nested_admin.NestedTabularInline):
@@ -250,7 +256,7 @@ class WellsDrilledDataInline(nested_admin.NestedTabularInline):
 
     model = WellsDrilledData
     inlines = [WellsWaterDepthDrilledInline, WellsDepthInline]
-    extra = 1
+    extra = 0
     max_num = 1
 
 
@@ -260,13 +266,13 @@ class WellsRatePumpInline(nested_admin.NestedGenericTabularInline):
     """
 
     model = WellsRate
-    extra = 1
+    extra = 0
 
 
 class WellsRateInline(WellsRatePumpInline):
     model = WellsRate
     form = WellsRateForm
-    extra = 1
+    extra = 0
 
 
 class WellsDepressionInline(nested_admin.NestedTabularInline):
@@ -277,7 +283,7 @@ class WellsDepressionInline(nested_admin.NestedTabularInline):
     model = WellsDepression
     form = WellsDepressionForm
     inlines = [WellsWaterDepthPumpInline, WellsRatePumpInline]
-    extra = 1
+    extra = 0
     max_num = 1
 
 
@@ -289,7 +295,7 @@ class WellsEfwInlines(nested_admin.NestedStackedInline):
     form = WellsEfwForm
     model = WellsEfw
     inlines = [WellsLugHeightInline, WellsWaterDepthDrilledInline, WellsDepressionInline]
-    extra = 1
+    extra = 0
 
     def get_extra(self, request, obj=None, **kwargs):
         count = self.model.objects.filter(well=obj).count()
@@ -304,7 +310,7 @@ class WellsChemInline(nested_admin.NestedGenericTabularInline):
     """
 
     model = WellsChem
-    extra = 1
+    extra = 0
 
 
 @register(WellsChem)
@@ -319,7 +325,7 @@ class WellsSampleInline(nested_admin.NestedStackedInline):
 
     model = WellsSample
     inlines = [WellsChemInline, AttachmentsInline]
-    extra = 1
+    extra = 0
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -344,7 +350,7 @@ class WellsGeophysicsInline(nested_admin.NestedStackedInline):
 
     model = WellsGeophysics
     inlines = [WellsDepthInline, WellsWaterDepthDrilledInline, AttachmentsInline]
-    extra = 1
+    extra = 0
     max_num = 1
 
 
@@ -360,7 +366,7 @@ class WellsLithologyInline(nested_admin.NestedTabularInline):
 
     model = WellsLithology
     form = WellsLithologyForm
-    extra = 1
+    extra = 0
 
 
 class LicenseToWellsInline(nested_admin.NestedTabularInline):
@@ -369,7 +375,13 @@ class LicenseToWellsInline(nested_admin.NestedTabularInline):
     """
 
     model = LicenseToWells
-    extra = 1
+    extra = 0
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @register(Wells)
@@ -407,6 +419,7 @@ class WellsAdmin(nested_admin.NestedModelAdmin, ImportExportModelAdmin):
     )
     # readonly_fields=('extra',)
     list_display = (
+        "id",
         "__str__",
         "typo",
     )
@@ -467,7 +480,7 @@ class DocumentsAdmin(nested_admin.NestedModelAdmin, ImportExportModelAdmin):
     form = DocumentsForm
     model = Documents
     inlines = [DocumentsPathInline]
-    list_display = ("typo", "name", "creation_date", "source")
+    list_display = ("id", "typo", "name", "creation_date", "source", "content_type")
     list_filter = (DocTypeFilter, "creation_date", DocSourceFilter)
     search_fields = ("name",)
 
@@ -483,7 +496,7 @@ class WellsInline(CompactInline):
     form = WellsForm
     model = Wells
     show_change_link = True
-    extra = 1
+    extra = 0
 
 
 @register(Intakes)
@@ -492,11 +505,20 @@ class IntakesAdmin(ImportExportModelAdmin):
     form = IntakesForm
     model = Intakes
     inlines = [WellsInline]
-    list_display = (
-        "id",
-        "intake_name",
-    )
+
     search_fields = ("intake_name",)
+
+    @admin.display(
+        description="geom valid?",
+        boolean=True,
+    )
+    def geom_valid(self, obj):
+        if obj.geom:
+            if obj.geom.valid:
+                return True
+        return False
+
+    list_display = ("id", "intake_name", "geom_valid")
 
 
 # Fields
@@ -504,7 +526,7 @@ class IntakesAdmin(ImportExportModelAdmin):
 class BalanceInline(nested_admin.NestedGenericTabularInline):
     model = Balance
     form = BalanceForm
-    extra = 1
+    extra = 0
 
 
 @register(Balance)
@@ -517,11 +539,21 @@ class BalanceAdmin(ImportExportModelAdmin):
 
 @register(Fields)
 class FieldsAdmin(nested_admin.NestedModelAdmin, ImportExportModelAdmin):
+    @admin.display(
+        description="geom valid?",
+        boolean=True,
+    )
+    def geom_valid(self, obj):
+        if obj.geom:
+            if obj.geom.valid:
+                return True
+        return False
+
     resource_class = FieldsResource
     form = FieldsForm
     model = Fields
     inlines = [DocumentsInline, BalanceInline]
-    list_display = ("field_name",)
+    list_display = ("id", "field_name", "geom_valid")
     search_fields = ("field_name",)
 
 
@@ -534,7 +566,7 @@ class WellsEfwAdmin(nested_admin.NestedModelAdmin, ImportExportModelAdmin):
     form = WellsEfwForm
     model = WellsEfw
     inlines = [WellsLugHeightInline, WellsWaterDepthDrilledInline, WellsDepressionInline]
-    list_display = ("well", "date", "type_efw")
+    list_display = ("id", "well", "date", "type_efw")
     list_filter = ("date", "well", TypeEfwFilter)
 
     def save_related(self, request, form, formsets, change):
@@ -574,6 +606,7 @@ class WellsWaterDepthInline(WellsWaterDepthDrilledInline):
 @register(WellsTemperature)
 class WellsTemperatureAdmin(ImportExportModelAdmin):
     resource_class = WellsTemperatureResource
+    list_display = ("id", "time_measure", "temperature", "content_type", "object_id")
 
 
 class WellsTemperatureInline(nested_admin.NestedGenericTabularInline):
@@ -583,7 +616,7 @@ class WellsTemperatureInline(nested_admin.NestedGenericTabularInline):
 
     model = WellsTemperature
     form = WellsTemperatureForm
-    extra = 1
+    extra = 0
 
 
 @register(WellsRegime)
@@ -618,6 +651,8 @@ class WellsSampleAdmin(nested_admin.NestedModelAdmin, ImportExportModelAdmin):
 @register(WaterUsersChange)
 class WaterUsersChangeAdmin(ImportExportModelAdmin):
     resource_class = WaterUsersChangeResource
+    list_display = ("id", "water_user", "date", "license")
+    search_fields = ("water_user__name",)
 
 
 class WaterUsersChangeInline(nested_admin.NestedTabularInline):
@@ -626,7 +661,7 @@ class WaterUsersChangeInline(nested_admin.NestedTabularInline):
     """
 
     model = WaterUsersChange
-    extra = 1
+    extra = 0
 
 
 @register(WaterUsers)
@@ -634,10 +669,7 @@ class WaterUsersAdmin(nested_admin.NestedModelAdmin, ImportExportModelAdmin):
     resource_class = WaterUsersResouce
     model = WaterUsers
     inlines = [WaterUsersChangeInline]
-    list_display = (
-        "id",
-        "name",
-    )
+    list_display = ("id", "name", "position")
     search_fields = ("name",)
 
 
@@ -649,7 +681,7 @@ class WaterUsersAdmin(nested_admin.NestedModelAdmin, ImportExportModelAdmin):
 class LicenseAdmin(nested_admin.NestedModelAdmin, ImportExportModelAdmin):
     resource_class = LicenseResource
     model = License
-    inlines = [LicenseToWellsInline, WaterUsersChangeInline]
+    inlines = [WaterUsersChangeInline]
     list_display = (
         "name",
         "date_start",
@@ -657,6 +689,12 @@ class LicenseAdmin(nested_admin.NestedModelAdmin, ImportExportModelAdmin):
     )
     search_fields = ("name", "date_start", "date_end", "department")
     list_filter = ("name", "date_start", "date_end")
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related(
+            "department",
+        ).prefetch_related("wateruserschange_set", "docs")
 
 
 @register(LicenseToWells)
@@ -719,12 +757,52 @@ class WellsAquiferUsageAdmin(ImportExportModelAdmin):
 @register(DictDocOrganizations)
 class DictDocOrganizationsAdmin(ImportExportModelAdmin):
     resource_class = DictDocOrganizationsResource
+    search_fields = ("name",)
     list_display = ("id", "name")
 
 
 @register(WellsCondition)
 class WellsConditionAdmin(ImportExportModelAdmin):
     resource_class = WellsConditionResource
+
+
+@register(WellsRate)
+class WellsRateAdmin(ImportExportModelAdmin):
+    resource_class = WellsRateResource
+    model = WellsRate
+    list_display = ["id", "time_measure", "rate", "content_type"]
+
+
+@register(WellsDepth)
+class WellsDepthAdmin(ImportExportModelAdmin):
+    resource_class = WellsDepthResource
+    list_display = ("id", "depth", "content_type", "object_id")
+
+
+@register(Attachments)
+class AttachmentsAdmin(ImportExportModelAdmin):
+    resource_class = AttachmentsResource
+    list_display = ("id", "img", "content_type", "object_id")
+
+
+@register(WellsWaterDepth)
+class WellsWaterDepthAdmin(ImportExportModelAdmin):
+    resource_class = WellsWaterDepthResource
+    list_display = ("id", "type_level", "time_measure", "water_depth", "content_type", "object_id")
+
+
+@register(WellsDrilledData)
+class WellsDrilledDataAdmin(ImportExportModelAdmin):
+    resource_class = WellsDrilledDataResource
+    list_display = ("id", "well", "date_start", "date_end", "drill_type", "drill_rig", "organization")
+
+
+@register(WellsDepression)
+class WellsDepressionAdmin(ImportExportModelAdmin):
+    list_display = (
+        "id",
+        "efw",
+    )
 
 
 darcy_admin.register(Wells, WellsAdmin)

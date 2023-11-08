@@ -107,7 +107,7 @@ class Entities(BaseModel):
 
     class Meta:
         verbose_name = "Сущность"
-        verbose_name_plural = "Сущности"
+        verbose_name_plural = "►Справочник Сущности"
         db_table = "entities"
 
     def __str__(self):
@@ -125,7 +125,7 @@ class DictEntities(BaseModel):
 
     class Meta:
         verbose_name = "Справочник сущностей"
-        verbose_name_plural = "Справочник сущностей"
+        verbose_name_plural = "►Справочник Типы сущностей"
         db_table = "dict_entities"
         unique_together = (("name", "entity"),)
 
@@ -145,7 +145,7 @@ class DictEquipment(BaseModel):
 
     class Meta:
         verbose_name = "Справочник оборудования"
-        verbose_name_plural = "Справочник обородувания"
+        verbose_name_plural = "►Справочник обородувания"
         db_table = "dict_equipment"
         unique_together = (("brand", "typo"),)
 
@@ -163,7 +163,7 @@ class DictDocOrganizations(BaseModel):
 
     class Meta:
         verbose_name = "Организация"
-        verbose_name_plural = "Организации"
+        verbose_name_plural = "►Справочник организаций"
         db_table = "dict_doc_organization"
 
     def __str__(self):
@@ -226,7 +226,7 @@ class Documents(BaseModel):
 
     class Meta:
         verbose_name = "Документ"
-        verbose_name_plural = "Документация"
+        verbose_name_plural = "●Документы"
         db_table = "documents"
         unique_together = (
             (
@@ -312,7 +312,7 @@ class AquiferCodes(models.Model):
 
     class Meta:
         verbose_name = "Гидрогеологическое подразделение"
-        verbose_name_plural = "Справочник гидрогеологических подразделений"
+        verbose_name_plural = "►Справочник гидрогеологических подразделений"
         db_table = "aquifer_codes"
 
     def __str__(self):
@@ -325,7 +325,7 @@ class Wells(BaseModel):
     такую как их номер скважины (ГВК), название,
     тип, абсолютная отметка, водоносный горизонт, название водозабора и
     геометрическое представление.
-    fields = ["id", "name", "typo", "head", "moved", "intake", "field", "geom", "docs", "attachments"]
+    fields = ["id", "name", "typo", "head", "moved", "intake", "field", "geom"]
     """
 
     name = models.CharField(max_length=50, blank=True, null=True, verbose_name="Название скважины")
@@ -360,10 +360,16 @@ class Wells(BaseModel):
         db_table = "wells"
 
     def __str__(self):
-        name_gwk = self.extra.get("name_gwk")
-        if name_gwk:
-            name_gwk = f"ГВК: {name_gwk}"
-        return f"{str(self.uuid)[-5:]} {name_gwk}"
+        try:
+            try:
+                name_gwk = self.extra.get("name_gwk")
+            except Exception:
+                name_gwk = ""
+            if name_gwk:
+                name_gwk = f"ГВК: {name_gwk}"
+            return f"{str(self.uuid)[-5:]} {name_gwk}"
+        except Exception:
+            return f"well {self.pk}"
 
 
 class WellsAquiferUsage(BaseModel):
@@ -397,9 +403,9 @@ class Intakes(BaseModel):
 
     class Meta:
         verbose_name = "Водозабор"
-        verbose_name_plural = "Водозаборы"
+        verbose_name_plural = "►Справочник Водозаборы"
         db_table = "intakes"
-        ordering = ("intake_name",)
+        # ordering = ("intake_name",)
 
     def __str__(self):
         return self.intake_name
@@ -410,7 +416,7 @@ class WellsRegime(BaseModel):
     Модель для представления режимных наблюдений скважин. Содержит внешний
     ключ для скважины, дату замера, связь с документацией и обобщенные связи
     с глубиной УГВ и дебитом (или другими возможными режимными измерениями).
-    fields = ["id", "well", "date", "doc", "waterdepths", "rates"]
+    fields = ["id", "well", "date", "doc"]
     """
 
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
@@ -439,8 +445,7 @@ class WellsDrilledData(BaseModel):
     Модель для представления режимных наблюдений скважин. Содержит внешний
     ключ для скважины, дату замера, связь с документацией и обобщенные связи
     с глубиной УГВ и дебитом (или другими возможными режимными измерениями).
-    fields = ["id", "well", "date_start", "date_end", "drill_type", "drill_rig", "organization", "doc",
-    "waterdepths", "rates", "depths", "conditions"]
+    fields = ["id", "well", "date_start", "date_end", "drill_type", "drill_rig", "organization", "doc"]
     """
 
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
@@ -473,8 +478,7 @@ class WellsDrilledData(BaseModel):
 class WellsGeophysics(BaseModel):
     """
     Геофизические исследования
-    fields = ["id", "well", "date", "organization", "researches", "conclusion", "depths", "waterdepths",
-    "attachments", "doc"]
+    fields = ["id", "well", "date", "organization", "researches", "conclusion", "doc"]
     """
 
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
@@ -506,7 +510,7 @@ class WellsWaterDepth(BaseModel):
     """
     Модель для представления замеров глубины УГВ. Содержит значения
     глубины УГВ и обобщенные связи с другими возможными моделями.
-    fields = ["id", "type_level", "time_measure", "water_depth"]
+    fields = ["id", "type_level", "time_measure", "water_depth", "content_type", "object_id"]
     """
 
     type_level = models.BooleanField(verbose_name="Статический", blank=True, null=True, default=False)
@@ -524,7 +528,7 @@ class WellsWaterDepth(BaseModel):
 
     class Meta:
         verbose_name = "Замер уровня подземных вод"
-        verbose_name_plural = "Замеры уровня подземных вод"
+        verbose_name_plural = "●Замеры уровня подземных вод"
         db_table = "wells_water_depth"
         unique_together = (("object_id", "content_type", "time_measure"),)
 
@@ -550,7 +554,7 @@ class WellsRate(BaseModel):
 
     class Meta:
         verbose_name = "Замер дебита"
-        verbose_name_plural = "Замеры дебита"
+        verbose_name_plural = "●Замеры дебита"
         db_table = "wells_rate"
         unique_together = (("object_id", "content_type", "time_measure"),)
 
@@ -576,7 +580,7 @@ class WellsTemperature(BaseModel):
 
     class Meta:
         verbose_name = "Замер температуры подземных вод"
-        verbose_name_plural = "Замеры температуры подземных вод"
+        verbose_name_plural = "●Замеры температуры подземных вод"
         db_table = "wells_temperature"
         unique_together = (("object_id", "content_type", "time_measure"),)
 
@@ -588,6 +592,7 @@ class WellsDepth(BaseModel):
     """
     Модель для представления замеров глубины скважин. Содержит значения глубины
     и обобщенные связи с другими возможными моделями.
+    fields = ["id", "depth", "content_type", "object_id"]
     """
 
     depth = models.DecimalField(
@@ -600,7 +605,7 @@ class WellsDepth(BaseModel):
 
     class Meta:
         verbose_name = "Глубина скважины"
-        verbose_name_plural = "Глубина скважин"
+        verbose_name_plural = "●Глубина скважин"
         db_table = "wells_depth"
         unique_together = (("object_id", "content_type"),)
 
@@ -623,7 +628,7 @@ class WellsCondition(BaseModel):
 
     class Meta:
         verbose_name = "Тех.состояние скважины"
-        verbose_name_plural = "Тех.состояние скважин"
+        verbose_name_plural = "●Тех.состояние скважин"
         db_table = "wells_condition"
         unique_together = (("object_id", "content_type"),)
 
@@ -647,12 +652,12 @@ class WellsLugHeight(BaseModel):
 
     class Meta:
         verbose_name = "Высота оголовка скважины"
-        verbose_name_plural = "Высоты оголовков скважин"
+        verbose_name_plural = "●Высоты оголовков скважин"
         db_table = "wells_lug_height"
         unique_together = (("object_id", "content_type"),)
 
     def __str__(self):
-        return ""
+        return f"Высота оголовка id: {self.pk}"
 
 
 class WellsAquifers(BaseModel):
@@ -802,7 +807,7 @@ class WellsEfw(BaseModel):
     Через внешний ключ с Documents осуществляется связь ОФР с
     актами ОФР и другой документацией, связанной с проведением ОФР
     fields = ["id", "well", "date", "type_efw", "pump_type", "level_meter", "pump_depth", "method_measure",
-    "rate_measure", "pump_time", "vessel_capacity", "vessel_time", "doc", "waterdepths", "lugs"]
+    "rate_measure", "pump_time", "vessel_capacity", "vessel_time", "doc"]
     """
 
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
@@ -904,7 +909,7 @@ class WellsSample(BaseModel):
     Содержит информацию о дате отбора пробы и номере пробы.
     Через внешний ключ с Documents осуществляется связь опробований скважин
     с химическими протоколами (исследованиями этой пробы)
-    fields = ["id", "well", "date", "name", "doc", "chemvalues", "attachments"]
+    fields = ["id", "well", "date", "name", "doc"]
     """
 
     well = models.ForeignKey("Wells", models.CASCADE, verbose_name="Номер скважины")
@@ -943,7 +948,7 @@ class ChemCodes(models.Model):
 
     class Meta:
         verbose_name = "Показатель хим. состава"
-        verbose_name_plural = "Справочник показателей хим. состава"
+        verbose_name_plural = "►Справочник показателей хим.состава"
         db_table = "chem_codes"
         ordering = ("chem_name",)
 
@@ -975,7 +980,7 @@ class WellsChem(BaseModel):
 
     class Meta:
         verbose_name = "Гидрогеохимия"
-        verbose_name_plural = "Гидрогеохимия"
+        verbose_name_plural = "●Гидрогеохимия"
         db_table = "wells_chem"
         unique_together = (("parameter", "object_id", "content_type"),)
         ordering = ("parameter__chem_name",)
@@ -987,7 +992,7 @@ class WellsChem(BaseModel):
 class Fields(BaseModel):
     """
     Месторождения подземных вод
-    fields = ["id", "field_name", "geom", "docs", "balances"]
+    fields = ["id", "field_name", "geom"]
     --------
     Полигон
     """
@@ -1009,7 +1014,7 @@ class Fields(BaseModel):
 
     class Meta:
         verbose_name = "Месторождение подземных вод"
-        verbose_name_plural = "Месторождения подземных вод"
+        verbose_name_plural = "►Справочник Месторождения подземных вод"
         db_table = "fields"
         ordering = ("field_name",)
 
@@ -1034,7 +1039,7 @@ class Balance(BaseModel):
 
     class Meta:
         verbose_name = "Утвержденные запасы"
-        verbose_name_plural = "Утвержденные запасы"
+        verbose_name_plural = "●Утвержденные запасы"
         db_table = "fields_balance"
 
     def __str__(self):
@@ -1042,6 +1047,12 @@ class Balance(BaseModel):
 
 
 class Attachments(BaseModel):
+    """
+    Вложения
+    ----------------
+    fields = ["id", "img", "content_type", "object_id"]
+    """
+
     img = models.FileField(
         upload_to="images/",
         storage=YandexObjectStorage() if not settings.DEBUG else FileSystemStorage(location=settings.MEDIA_ROOT),
@@ -1054,7 +1065,7 @@ class Attachments(BaseModel):
 
     class Meta:
         verbose_name = "Вложение"
-        verbose_name_plural = "Вложения"
+        verbose_name_plural = "●Вложения"
         db_table = "attachments"
 
     def image_tag(self):
@@ -1101,7 +1112,7 @@ class Attachments(BaseModel):
 class License(BaseModel):
     """
     Лицензии
-    fields = ["id", "name", "department", "date_start", "date_end", "comments", "gw_purpose", "docs"]
+    fields = ["id", "name", "department", "date_start", "date_end", "comments", "gw_purpose"]
     """
 
     name = models.CharField(unique=True, max_length=11, verbose_name="Номер лицензии")
@@ -1117,7 +1128,7 @@ class License(BaseModel):
 
     class Meta:
         verbose_name = "Лицензия"
-        verbose_name_plural = "Лицензии"
+        verbose_name_plural = "►Справочник Лицензии"
         db_table = "license"
 
     def __str__(self):
@@ -1141,7 +1152,7 @@ class LicenseToWells(BaseModel):
         unique_together = (("well", "license"),)
 
     def __str__(self):
-        return f"{self.well} - {self.license}"
+        return f"{self.pk}"
 
 
 class WaterUsers(BaseModel):
@@ -1156,7 +1167,7 @@ class WaterUsers(BaseModel):
 
     class Meta:
         verbose_name = "Водопользователь"
-        verbose_name_plural = "Водопользователи"
+        verbose_name_plural = "►Справочник Водопользователи"
         db_table = "water_users"
 
     def __str__(self):
