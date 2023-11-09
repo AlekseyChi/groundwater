@@ -11,7 +11,7 @@ amqp==5.1.1
 anyio==4.0.0
     # via watchfiles
 argon2-cffi==23.1.0
-    # via -r base.in
+    # via -r requirements/base.in
 argon2-cffi-bindings==21.2.0
     # via argon2-cffi
 asgiref==3.7.2
@@ -35,11 +35,11 @@ backcall==0.2.0
     # via ipython
 billiard==4.1.0
     # via celery
-black==23.10.1
-    # via -r local.in
+black==23.11.0
+    # via -r requirements/local.in
 boto3==1.28.70
     # via
-    #   -r base.in
+    #   -r requirements/base.in
     #   django-storages
 botocore==1.31.70
     # via
@@ -49,7 +49,7 @@ brotli==1.1.0
     # via fonttools
 celery==5.3.4
     # via
-    #   -r base.in
+    #   -r requirements/base.in
     #   django-celery-beat
     #   flower
 certifi==2023.7.22
@@ -91,10 +91,10 @@ contourpy==1.1.1
     # via matplotlib
 coverage==7.3.2
     # via
-    #   -r local.in
+    #   -r requirements/local.in
     #   django-coverage-plugin
 crispy-bootstrap5==0.7
-    # via -r base.in
+    # via -r requirements/base.in
 cron-descriptor==1.4.0
     # via django-celery-beat
 cryptography==41.0.5
@@ -119,7 +119,7 @@ distlib==0.3.7
     # via virtualenv
 django==4.1.12
     # via
-    #   -r base.in
+    #   -r requirements/base.in
     #   crispy-bootstrap5
     #   django-allauth
     #   django-celery-beat
@@ -139,45 +139,45 @@ django==4.1.12
     #   django-timezone-field
     #   djangorestframework
     #   drf-spectacular
-django-allauth==0.57.0
-    # via -r base.in
+django-allauth==0.58.2
+    # via -r requirements/base.in
 django-celery-beat==2.5.0
-    # via -r base.in
+    # via -r requirements/base.in
 django-cors-headers==4.3.0
-    # via -r base.in
+    # via -r requirements/base.in
 django-coverage-plugin==3.1.0
-    # via -r local.in
+    # via -r requirements/local.in
 django-crispy-forms==2.0
     # via
-    #   -r base.in
+    #   -r requirements/base.in
     #   crispy-bootstrap5
 django-crum==0.7.9
-    # via -r base.in
+    # via -r requirements/base.in
 django-debug-toolbar==4.2.0
-    # via -r local.in
+    # via -r requirements/local.in
 django-environ==0.11.2
-    # via -r base.in
+    # via -r requirements/base.in
 django-extensions==3.2.3
-    # via -r base.in
+    # via -r requirements/base.in
 django-filter==23.3
-    # via -r base.in
+    # via -r requirements/base.in
 django-import-export==3.3.1
-    # via -r base.in
+    # via -r requirements/base.in
 django-jet-reboot==1.3.3
-    # via -r base.in
+    # via -r requirements/base.in
 django-model-utils==4.3.1
-    # via -r base.in
+    # via -r requirements/base.in
 django-nested-admin==4.0.2
-    # via -r base.in
+    # via -r requirements/base.in
 django-redis==5.4.0
-    # via -r base.in
+    # via -r requirements/base.in
 django-simple-history==3.4.0
-    # via -r base.in
+    # via -r requirements/base.in
 django-storages[boto3]==1.14.2
-    # via -r base.in
+    # via -r requirements/base.in
 django-stubs==4.2.6
     # via
-    #   -r local.in
+    #   -r requirements/local.in
     #   djangorestframework-stubs
 django-stubs-ext==4.2.5
     # via django-stubs
@@ -185,14 +185,14 @@ django-timezone-field==6.0.1
     # via django-celery-beat
 djangorestframework==3.14.0
     # via
-    #   -r base.in
+    #   -r requirements/base.in
     #   drf-spectacular
 djangorestframework-stubs==3.14.4
-    # via -r local.in
+    # via -r requirements/local.in
 docutils==0.20.1
     # via sphinx
 drf-spectacular==0.26.5
-    # via -r base.in
+    # via -r requirements/base.in
 et-xmlfile==1.1.0
     # via openpyxl
 exceptiongroup==1.1.3
@@ -203,7 +203,7 @@ exceptiongroup==1.1.3
 executing==2.0.0
     # via stack-data
 factory-boy==3.3.0
-    # via -r local.in
+    # via -r requirements/local.in
 faker==19.12.0
     # via factory-boy
 filelock==3.12.4
@@ -212,20 +212,20 @@ fiona==1.9.5
     # via geopandas
 flake8==6.1.0
     # via
-    #   -r local.in
+    #   -r requirements/local.in
     #   flake8-isort
-flake8-isort==6.1.0
-    # via -r local.in
+flake8-isort==6.1.1
+    # via -r requirements/local.in
 flower==2.0.1
-    # via -r base.in
+    # via -r requirements/base.in
 fonttools[woff]==4.43.1
     # via
     #   matplotlib
     #   weasyprint
 geopandas==0.14.0
-    # via -r base.in
+    # via -r requirements/base.in
 hiredis==2.2.3
-    # via -r base.in
+    # via -r requirements/base.in
 html5lib==1.1
     # via weasyprint
 humanize==4.8.0
@@ -243,7 +243,7 @@ inflection==0.5.1
 iniconfig==2.0.0
     # via pytest
 ipdb==0.13.13
-    # via -r local.in
+    # via -r requirements/local.in
 ipython==8.16.1
     # via ipdb
 isort==5.12.0
@@ -254,7 +254,7 @@ jedi==0.19.1
     # via ipython
 jinja2==3.1.2
     # via
-    #   -r base.in
+    #   -r requirements/base.in
     #   sphinx
 jmespath==1.0.1
     # via
@@ -274,18 +274,18 @@ lxml==4.9.3
     # via python-docx
 markdown==3.5
     # via
-    #   -r base.in
+    #   -r requirements/base.in
     #   markdown-katex
 markdown-katex==202112.1034
-    # via -r base.in
+    # via -r requirements/base.in
 markuppy==1.14
     # via tablib
 markupsafe==2.1.3
     # via
     #   jinja2
     #   werkzeug
-matplotlib==3.8.0
-    # via -r base.in
+matplotlib==3.8.1
+    # via -r requirements/base.in
 matplotlib-inline==0.1.6
     # via ipython
 mccabe==0.7.0
@@ -294,7 +294,7 @@ mccabe==0.7.0
     #   pylint
 mypy==1.6.1
     # via
-    #   -r local.in
+    #   -r requirements/local.in
     #   djangorestframework-stubs
 mypy-extensions==1.0.0
     # via
@@ -324,7 +324,7 @@ packaging==23.2
     #   sphinx
 pandas==2.1.1
     # via
-    #   -r base.in
+    #   -r requirements/base.in
     #   geopandas
 parso==0.8.3
     # via jedi
@@ -333,14 +333,14 @@ pathlib2==2.3.7.post1
 pathspec==0.11.2
     # via black
 pdf2image==1.16.3
-    # via -r base.in
+    # via -r requirements/base.in
 pexpect==4.8.0
     # via ipython
 pickleshare==0.7.5
     # via ipython
 pillow==10.1.0
     # via
-    #   -r base.in
+    #   -r requirements/base.in
     #   matplotlib
     #   pdf2image
     #   tilemapbase
@@ -353,7 +353,7 @@ platformdirs==3.11.0
 pluggy==1.3.0
     # via pytest
 pre-commit==3.5.0
-    # via -r local.in
+    # via -r requirements/local.in
 prometheus-client==0.17.1
     # via flower
 prompt-toolkit==3.0.39
@@ -361,7 +361,7 @@ prompt-toolkit==3.0.39
     #   click-repl
     #   ipython
 psycopg2-binary==2.9.9
-    # via -r local.in
+    # via -r requirements/local.in
 ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.2
@@ -388,9 +388,9 @@ pylint==3.0.2
     #   pylint-django
     #   pylint-plugin-utils
 pylint-celery==0.3
-    # via -r local.in
+    # via -r requirements/local.in
 pylint-django==2.5.5
-    # via -r local.in
+    # via -r requirements/local.in
 pylint-plugin-utils==0.8.2
     # via
     #   pylint-celery
@@ -403,13 +403,13 @@ pyproj==3.6.1
     # via geopandas
 pytest==7.4.3
     # via
-    #   -r local.in
+    #   -r requirements/local.in
     #   pytest-django
     #   pytest-sugar
-pytest-django==4.5.2
-    # via -r local.in
+pytest-django==4.7.0
+    # via -r requirements/local.in
 pytest-sugar==0.9.7
-    # via -r local.in
+    # via -r requirements/local.in
 python-crontab==3.0.0
     # via django-celery-beat
 python-dateutil==2.8.2
@@ -420,12 +420,12 @@ python-dateutil==2.8.2
     #   matplotlib
     #   pandas
     #   python-crontab
-python-docx==1.0.1
-    # via -r base.in
+python-docx==1.1.0
+    # via -r requirements/base.in
 python-monkey-business==1.0.0
     # via django-nested-admin
 python-slugify==8.0.1
-    # via -r base.in
+    # via -r requirements/base.in
 python3-openid==3.2.0
     # via django-allauth
 pytz==2023.3.post1
@@ -440,7 +440,7 @@ pyyaml==6.0.1
     #   tablib
 redis==5.0.1
     # via
-    #   -r base.in
+    #   -r requirements/base.in
     #   django-redis
 referencing==0.30.2
     # via
@@ -478,7 +478,7 @@ snowballstemmer==2.2.0
     # via sphinx
 sphinx==7.2.6
     # via
-    #   -r local.in
+    #   -r requirements/local.in
     #   sphinx-autobuild
     #   sphinxcontrib-applehelp
     #   sphinxcontrib-devhelp
@@ -486,7 +486,7 @@ sphinx==7.2.6
     #   sphinxcontrib-qthelp
     #   sphinxcontrib-serializinghtml
 sphinx-autobuild==2021.3.14
-    # via -r local.in
+    # via -r requirements/local.in
 sphinxcontrib-applehelp==1.0.7
     # via sphinx
 sphinxcontrib-devhelp==1.0.5
@@ -514,7 +514,7 @@ termcolor==2.3.0
 text-unidecode==1.3
     # via python-slugify
 tilemapbase==0.4.7
-    # via -r base.in
+    # via -r requirements/base.in
 tinycss2==1.2.1
     # via
     #   cssselect2
@@ -577,20 +577,20 @@ virtualenv==20.24.6
 watchdog==3.0.0
     # via werkzeug
 watchfiles==0.21.0
-    # via -r local.in
+    # via -r requirements/local.in
 wcwidth==0.2.8
     # via prompt-toolkit
 weasyprint==60.1
-    # via -r base.in
+    # via -r requirements/base.in
 webencodings==0.5.1
     # via
     #   cssselect2
     #   html5lib
     #   tinycss2
 werkzeug[watchdog]==3.0.1
-    # via -r local.in
+    # via -r requirements/local.in
 whitenoise==6.6.0
-    # via -r base.in
+    # via -r requirements/base.in
 xlrd==2.0.1
     # via tablib
 xlwt==1.3.0

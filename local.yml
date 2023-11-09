@@ -10,6 +10,8 @@ services:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
     image: darcydb_local_django
+    restart: on-failure:3
+
     container_name: darcydb_local_django
     depends_on:
       - postgres
@@ -28,6 +30,8 @@ services:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
     image: darcydb_production_postgres
+    restart: on-failure:3
+
     container_name: darcydb_local_postgres
     volumes:
       - darcydb_local_postgres_data:/var/lib/postgresql/data
@@ -38,7 +42,8 @@ services:
   pgadmin:
     container_name: pgadmin4_local
     image: dpage/pgadmin4
-    restart: always
+    restart: on-failure:3
+
     expose:
       - '80'
     env_file:
@@ -54,6 +59,8 @@ services:
     build:
       context: .
       dockerfile: ./compose/local/docs/Dockerfile
+    restart: on-failure:3
+
     env_file:
       - ./.envs/.local/.django
     volumes:
@@ -66,12 +73,16 @@ services:
 
   redis:
     image: redis:6
+    restart: on-failure:3
+
     container_name: darcydb_local_redis
 
   celeryworker:
     <<: *django
     image: darcydb_local_celeryworker
     container_name: darcydb_local_celeryworker
+    restart: on-failure:3
+
     depends_on:
       - redis
       - postgres
@@ -82,6 +93,8 @@ services:
     <<: *django
     image: darcydb_local_celerybeat
     container_name: darcydb_local_celerybeat
+    restart: on-failure:3
+
     depends_on:
       - redis
       - postgres
@@ -92,6 +105,8 @@ services:
     <<: *django
     image: darcydb_local_flower
     container_name: darcydb_local_flower
+    restart: on-failure:3
+
     ports:
       - '5555:5555'
     command: /start-flower

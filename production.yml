@@ -15,6 +15,8 @@ services:
       dockerfile: ./compose/production/django/Dockerfile
 
     image: darcydb_production_django
+    restart: on-failure:3
+
     volumes:
       - production_django_media:/app/darcydb/media
     depends_on:
@@ -32,6 +34,8 @@ services:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
     image: darcydb_production_postgres
+    restart: on-failure:3
+
     volumes:
       - production_postgres_data:/var/lib/postgresql/data
       - production_postgres_data_backups:/backups
@@ -43,7 +47,8 @@ services:
   pgadmin:
     container_name: pgadmin4_local
     image: dpage/pgadmin4
-    restart: always
+    restart: on-failure:3
+
     env_file:
       - ./.envs/.production/.pgadmin
     volumes:
@@ -58,6 +63,8 @@ services:
       context: .
       dockerfile: ./compose/production/traefik/Dockerfile
     image: darcydb_production_traefik
+    restart: on-failure:3
+
     depends_on:
       - django
     volumes:
@@ -73,12 +80,16 @@ services:
 
   redis:
     image: redis:6
+    restart: on-failure:3
+
     networks:
       - darcy_network
 
   celeryworker:
     <<: *django
     image: darcydb_production_celeryworker
+    restart: on-failure:3
+
     command: /start-celeryworker
     networks:
       - darcy_network
@@ -86,6 +97,8 @@ services:
   celerybeat:
     <<: *django
     image: darcydb_production_celerybeat
+    restart: on-failure:3
+
     command: /start-celerybeat
     networks:
       - darcy_network
@@ -93,6 +106,8 @@ services:
   flower:
     <<: *django
     image: darcydb_production_flower
+    restart: on-failure:3
+
     command: /start-flower
     networks:
       - darcy_network
@@ -102,6 +117,8 @@ services:
       context: .
       dockerfile: ./compose/production/nginx/Dockerfile
     image: darcydb_local_nginx
+    restart: on-failure:3
+
     depends_on:
       - django
     volumes:
