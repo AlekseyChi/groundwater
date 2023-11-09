@@ -1,0 +1,135 @@
+version: '3'
+
+volumes:
+  production_postgres_data: {}
+  production_postgres_data_backups: {}
+  production_traefik: {}
+  production_django_media: {}
+  production_pgadmin_data: {}
+  production_webmin_data: {}
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+
+    image: darcydb_production_django
+    restart: on-failure:3
+
+    volumes:
+      - production_django_media:/app/darcydb/media
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+    command: /start
+    networks:
+      - darcy_network
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: darcydb_production_postgres
+    restart: on-failure:3
+
+    volumes:
+      - production_postgres_data:/var/lib/postgresql/data
+      - production_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.production/.postgres
+    networks:
+      - darcy_network
+
+  pgadmin:
+    container_name: pgadmin4_local
+    image: dpage/pgadmin4
+    restart: on-failure:3
+
+    env_file:
+      - ./.envs/.production/.pgadmin
+    volumes:
+      - production_pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - darcy_network
+
+  traefik:
+    build:
+      context: .
+      dockerfile: ./compose/production/traefik/Dockerfile
+    image: darcydb_production_traefik
+    restart: on-failure:3
+
+    depends_on:
+      - django
+    volumes:
+      - production_traefik:/etc/traefik/acme
+    expose:
+      - '10000'
+    ports:
+      - '0.0.0.0:80:80'
+      - '0.0.0.0:443:443'
+      - '0.0.0.0:5555:5555'
+    networks:
+      - darcy_network
+
+  redis:
+    image: redis:6
+    restart: on-failure:3
+
+    networks:
+      - darcy_network
+
+  celeryworker:
+    <<: *django
+    image: darcydb_production_celeryworker
+    restart: on-failure:3
+
+    command: /start-celeryworker
+    networks:
+      - darcy_network
+
+  celerybeat:
+    <<: *django
+    image: darcydb_production_celerybeat
+    restart: on-failure:3
+
+    command: /start-celerybeat
+    networks:
+      - darcy_network
+
+  flower:
+    <<: *django
+    image: darcydb_production_flower
+    restart: on-failure:3
+
+    command: /start-flower
+    networks:
+      - darcy_network
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./compose/production/nginx/Dockerfile
+    image: darcydb_local_nginx
+    restart: on-failure:3
+
+    depends_on:
+      - django
+    volumes:
+      - production_django_media:/usr/share/nginx/media
+    networks:
+      - darcy_network
+
+networks:
+  darcy_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+          gateway: 172.18.0.1
