@@ -103,7 +103,7 @@ django==4.1.12
     #   django-timezone-field
     #   djangorestframework
     #   drf-spectacular
-django-allauth==0.57.0
+django-allauth==0.58.2
     # via -r requirements/base.in
 django-celery-beat==2.5.0
     # via -r requirements/base.in
