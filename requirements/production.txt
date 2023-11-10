@@ -222,7 +222,7 @@ packaging==23.2
     #   geopandas
     #   gunicorn
     #   matplotlib
-pandas==2.1.1
+pandas==2.1.3
     # via
     #   -r requirements/base.in
     #   geopandas
@@ -311,6 +311,7 @@ shapely==2.0.2
     # via geopandas
 six==1.16.0
     # via
+    #   django-jet-reboot
     #   fiona
     #   html5lib
     #   pathlib2

@@ -322,7 +322,7 @@ packaging==23.2
     #   pytest
     #   pytest-sugar
     #   sphinx
-pandas==2.1.1
+pandas==2.1.3
     # via
     #   -r requirements/base.in
     #   geopandas
@@ -466,6 +466,7 @@ shapely==2.0.2
 six==1.16.0
     # via
     #   asttokens
+    #   django-jet-reboot
     #   fiona
     #   html5lib
     #   livereload
