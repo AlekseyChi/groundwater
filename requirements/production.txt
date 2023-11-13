@@ -222,7 +222,7 @@ packaging==23.2
     #   geopandas
     #   gunicorn
     #   matplotlib
-pandas==2.1.1
+pandas==2.1.3
     # via
     #   -r requirements/base.in
     #   geopandas
