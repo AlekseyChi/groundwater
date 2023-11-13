@@ -84,10 +84,10 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    "darcydb.users",
-    "darcydb.darcy_app",
-    "darcydb.legacy",
-    "darcydb.fts",
+    "darcydb.users.apps.UsersConfig",
+    "darcydb.darcy_app.apps.DarcyAppConfig",
+    "darcydb.legacy.apps.LegacyConfig",
+    "darcydb.fts.apps.FtsConfig",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -321,6 +321,12 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+        "darcydb.darcy_app.renderers.CustomBrowsableAPIRenderer",  # Custom renderer
+    ],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+    "PAGE_SIZE": 100,
 }
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
@@ -336,7 +342,19 @@ SPECTACULAR_SETTINGS = {
 }
 # Your stuff...
 X_FRAME_OPTIONS = "SAMEORIGIN"
-JET_DEFAULT_THEME = "default"
+JET_THEMES = [
+    {
+        "theme": "default",  # theme folder name
+        "color": "#47bac1",  # color of the theme's button in user menu
+        "title": "Default",  # theme title
+    },
+    {"theme": "green", "color": "#44b78b", "title": "Green"},
+    {"theme": "light-green", "color": "#2faa60", "title": "Light Green"},
+    {"theme": "light-violet", "color": "#a464c4", "title": "Light Violet"},
+    {"theme": "light-blue", "color": "#5EADDE", "title": "Light Blue"},
+    {"theme": "light-gray", "color": "#222", "title": "Light Gray"},
+]
+# JET_DEFAULT_THEME = "default"
 JET_SIDE_MENU_COMPACT = True
 JET_CHANGE_FORM_SIBLING_LINKS = False
 JET_SIDE_MENU_ITEMS = {  # A list of application or custom item dicts
