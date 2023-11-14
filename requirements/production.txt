@@ -11,7 +11,9 @@ argon2-cffi==23.1.0
 argon2-cffi-bindings==21.2.0
     # via argon2-cffi
 asgiref==3.7.2
-    # via django
+    # via
+    #   django
+    #   django-cors-headers
 async-timeout==4.0.3
     # via redis
 attrs==23.1.0
@@ -113,7 +115,7 @@ django-anymail==10.1
     # via -r requirements/production.in
 django-celery-beat==2.5.0
     # via -r requirements/base.in
-django-cors-headers==4.3.0
+django-cors-headers==4.3.1
     # via -r requirements/base.in
 django-crispy-forms==2.0
     # via

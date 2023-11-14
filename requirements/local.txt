@@ -15,7 +15,9 @@ argon2-cffi==23.1.0
 argon2-cffi-bindings==21.2.0
     # via argon2-cffi
 asgiref==3.7.2
-    # via django
+    # via
+    #   django
+    #   django-cors-headers
 astroid==3.0.1
     # via
     #   pylint
@@ -143,7 +145,7 @@ django-allauth==0.58.2
     # via -r requirements/base.in
 django-celery-beat==2.5.0
     # via -r requirements/base.in
-django-cors-headers==4.3.0
+django-cors-headers==4.3.1
     # via -r requirements/base.in
 django-coverage-plugin==3.1.0
     # via -r requirements/local.in
