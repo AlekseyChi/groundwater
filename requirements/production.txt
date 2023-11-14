@@ -159,7 +159,7 @@ fonttools[woff]==4.43.1
     # via
     #   matplotlib
     #   weasyprint
-geopandas==0.14.0
+geopandas==0.14.1
     # via -r requirements/base.in
 gevent==23.9.1
     # via -r requirements/production.in
