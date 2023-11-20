@@ -37,11 +37,11 @@ billiard==4.2.0
     # via celery
 black==23.11.0
     # via -r requirements/local.in
-boto3==1.28.70
+boto3==1.29.4
     # via
     #   -r requirements/base.in
     #   django-storages
-botocore==1.31.70
+botocore==1.32.4
     # via
     #   boto3
     #   s3transfer
