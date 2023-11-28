@@ -294,7 +294,7 @@ mccabe==0.7.0
     # via
     #   flake8
     #   pylint
-mypy==1.7.0
+mypy==1.7.1
     # via
     #   -r requirements/local.in
     #   djangorestframework-stubs
