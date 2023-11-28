@@ -49,7 +49,7 @@ botocore==1.32.4
     #   s3transfer
 brotli==1.1.0
     # via fonttools
-celery==5.3.5
+celery==5.3.6
     # via
     #   -r requirements/base.in
     #   django-celery-beat
@@ -268,7 +268,7 @@ jsonschema-specifications==2023.7.1
     # via jsonschema
 kiwisolver==1.4.5
     # via matplotlib
-kombu==5.3.3
+kombu==5.3.4
     # via celery
 livereload==2.6.3
     # via sphinx-autobuild
