@@ -514,7 +514,7 @@ class WellsWaterDepth(BaseModel):
     """
 
     type_level = models.BooleanField(verbose_name="Статический", blank=True, null=True, default=False)
-    time_measure = models.DurationField(verbose_name="Время замера")
+    time_measure = models.DurationField(verbose_name="Время замера", blank=True, null=True)
     water_depth = models.DecimalField(
         max_digits=6,
         decimal_places=2,
