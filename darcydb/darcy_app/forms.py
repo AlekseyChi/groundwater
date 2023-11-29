@@ -172,8 +172,8 @@ class WellsConstructionForm(forms.ModelForm):
 
 
 class WellsWaterDepthForm(forms.ModelForm):
-    time_measure = forms.TimeField(widget=AdminTimeWidget(), label="Время замера")
-    comments = forms.CharField(label="Примечания", max_length=300, required=False, widget=AdminTextInputWidget)
+    time_measure = forms.TimeField(widget=AdminTimeWidget(), label="Время замера", required=False)
+    comments = forms.CharField(label="Примечания", max_length=300, widget=AdminTextInputWidget, required=False)
 
     class Meta:
         model = WellsWaterDepth
@@ -187,7 +187,8 @@ class WellsWaterDepthForm(forms.ModelForm):
 
     def clean_time_measure(self):
         time_obj = self.cleaned_data["time_measure"]
-        return datetime.timedelta(hours=time_obj.hour, minutes=time_obj.minute, seconds=time_obj.second)
+        if time_obj:
+            return datetime.timedelta(hours=time_obj.hour, minutes=time_obj.minute, seconds=time_obj.second)
 
     def save(self, commit=True):
         instance = super().save(commit=False)
