@@ -307,7 +307,7 @@ rpds-py==0.10.6
     #   referencing
 s3transfer==0.7.0
     # via boto3
-sentry-sdk==1.37.1
+sentry-sdk==1.38.0
     # via -r requirements/production.in
 shapely==2.0.2
     # via geopandas
