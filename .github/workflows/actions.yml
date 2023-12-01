@@ -1,0 +1,43 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    # создание хранилища для ssh. На гитхабе лежит приватный, на сервере публичный
+    # приватный записывается в файл в среде github_actions, устанавливаются разрешения на чтение
+    # затем этот файл используется для авторизации на сервере по ssh
+    - name: Setup SSH
+      run: |
+        echo "$SSH_PRIVATE_KEY" > ssh_key
+        chmod 600 ssh_key
+        mkdir -p ~/.ssh
+        ssh-keyscan 158.160.47.225 >> ~/.ssh/known_hosts
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+    # пул репозитория на сервер
+    - name: Deploy to Server
+      run: |
+        ssh -i ./ssh_key actions@158.160.47.225 "cd .. && cd projects/enhyp_main/ && git pull origin deploy"
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+    # сборка образа
+    - name: Build and run Docker Compose
+      run: |
+        ssh -i ./ssh_key actions@158.160.47.225 "cd .. && cd projects/enhyp_main/ && docker compose up -d --build"
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+    # удаление кэша и старых образов
+    - name: Remove Unused Docker Containers and Images
+      run: |
+        ssh -i ./ssh_key actions@158.160.47.225 "docker system prune --all --force"
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
