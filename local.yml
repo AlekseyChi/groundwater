@@ -10,7 +10,7 @@ services:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
     image: darcydb_local_django
-    restart: on-failure:3
+    restart: on-failure:1
 
     container_name: darcydb_local_django
     depends_on:
