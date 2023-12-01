@@ -26,13 +26,13 @@ jobs:
     # пул репозитория на сервер
     - name: Deploy to Server
       run: |
-        ssh -i ./ssh_key actions@158.160.47.225 "cd .. && cd projects/enhyp_main/ && git pull origin deploy"
+        ssh -i ./ssh_key actions@158.160.47.225 "cd .. && cd master/groundwater/ && git pull origin deploy"
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
     # сборка образа
     - name: Build and run Docker Compose
       run: |
-        ssh -i ./ssh_key actions@158.160.47.225 "cd .. && cd projects/enhyp_main/ && docker compose up -d --build"
+        ssh -i ./ssh_key actions@158.160.47.225 "cd .. && cd master/groundwater/ && docker compose -f local.yml up -d --build"
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
     # удаление кэша и старых образов
