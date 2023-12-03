@@ -26,7 +26,7 @@ jobs:
     # пул репозитория на сервер
     - name: Deploy to Server
       run: |
-        ssh -i ./ssh_key actions@84.201.157.155 "cd .. && cd master/groundwater/ && git pull origin deploy"
+        ssh -i ./ssh_key actions@84.201.157.155 "cd .. && cd master/groundwater/ && git pull origin master"
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
     # сборка образа
