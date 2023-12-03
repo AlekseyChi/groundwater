@@ -20,24 +20,24 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > ssh_key
         chmod 600 ssh_key
         mkdir -p ~/.ssh
-        ssh-keyscan 158.160.47.225 >> ~/.ssh/known_hosts
+        ssh-keyscan 84.201.157.155 >> ~/.ssh/known_hosts
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
     # пул репозитория на сервер
     - name: Deploy to Server
       run: |
-        ssh -i ./ssh_key actions@158.160.47.225 "cd .. && cd master/groundwater/ && git pull origin deploy"
+        ssh -i ./ssh_key actions@84.201.157.155 "cd .. && cd master/groundwater/ && git pull origin deploy"
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
     # сборка образа
     - name: Build and run Docker Compose
       run: |
-        ssh -i ./ssh_key actions@158.160.47.225 "cd .. && cd master/groundwater/ && docker compose -f local.yml up -d --build"
+        ssh -i ./ssh_key actions@84.201.157.155 "cd .. && cd master/groundwater/ && docker compose -f local.yml up -d --build"
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
     # удаление кэша и старых образов
     - name: Remove Unused Docker Containers and Images
       run: |
-        ssh -i ./ssh_key actions@158.160.47.225 "docker system prune --all --force"
+        ssh -i ./ssh_key actions@84.201.157.155 "docker system prune --all --force"
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
